@@ -1,0 +1,22 @@
+<div>
+    <h1>Hola! {{name}}</h1>
+    {{#if role}}
+    {{#each productos}}
+    <div>
+        <p>ID: {{this.id}}</p>
+        <p>Nombre: {{this.title}}</p>
+        <p>Descripción: {{this.description}}</p>
+        <p>Código: {{this.code}}</p>
+        <p>Precio: {{this.price}}</p>
+        <p>Stock: {{this.stock}}</p>
+        <p>Categoría: {{this.category}}</p>
+        <p>Links imágenes: {{this.thumbnails}}</p>
+        <p>Estado: {{this.status}}</p>
+        <br>
+    </div>
+    {{/each}}
+    {{else}}
+    <p>No eres administrador, no tienes permiso para ver los productos</p>
+    {{/if}}
+</div>
+
