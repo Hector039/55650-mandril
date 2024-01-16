@@ -19,7 +19,7 @@ export class ProductManager {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "./archivoProductos.json";
+        this.#path = "../../../archivoProductos.json";
         this.#setUltimoId();
     }
 

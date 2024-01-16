@@ -15,7 +15,7 @@ export class CartManager {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "./archivoCarritos.json";
+        this.#path = "../../../archivoCarritos.json";
         this.#setUltimoId();
     }
 

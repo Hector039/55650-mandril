@@ -5,8 +5,12 @@ import viewsRouter from "./routes/views.route.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";//server para crear con HTTP
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 
-const PORT = 8080;
+dotenv.config()
+const PORT = process.env.PORT;
+const DB_URL = process.env.DB_URL;
 
 const app = express();
 app.use(express.json());
@@ -19,8 +23,9 @@ app.set("view engine", "handlebars");//indico que el motor que instancié es el 
 
 app.use(express.static(__dirname + "/public"));//indico estáticamente mi carpeta public
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     req.io = io;
+    req.io.broadcast = io;
     next();
 });
 
@@ -31,6 +36,15 @@ app.use("/api/carts", cartsRouter);
 const httpServer = app.listen(PORT, () => {//instancio solo el server http
     console.log(`Servidor escuchando en http://localhost: ${PORT}`)
 });
+
+mongoose
+    .connect(DB_URL)
+    .then(() => {
+        console.log("Base de datos conectada");
+    })
+    .catch((error) => {
+        console.log("Error en conexión a base de datos", error);
+    });
 
 const io = new Server(httpServer);//creo el socket server
 

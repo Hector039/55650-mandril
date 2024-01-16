@@ -32,6 +32,15 @@
 
     </form>
     <button id="addProductBtn">Agregar Producto</button>
+    <h3>Borrar producto:</h3>
+    <p>Copia y pega el ID del producto para borrarlo.</p>
+    <form>
+        <div>
+            <label>ID producto:</label>
+            <input type="text" id="product-delete" />
+        </div>
+    </form>
+    <button id="deleteProductBtn">Agregar Producto</button>
 </div>
 
 <div>
@@ -39,12 +48,11 @@
     <section id="product-container">
         {{#each productos}}
         <div id="product-card">
-            <p id="product-id">ID: {{this.id}}</p>
+            <p id="product-id">ID: {{this._id}}</p>
             <p id="product-title">Nombre: {{this.title}}</p>
             <p id="product-price">Precio: {{this.price}}</p>
             <p id="product-stock">Stock: {{this.stock}}</p>
             <br>
-            <button id="deleteProductBtn" onclick="deleteProduct({{this.id}})">Borrar Producto</button>
         </div>
         {{/each}}
     </section>
@@ -52,5 +60,5 @@
 
 
 <script src="/socket.io/socket.io.js"></script>{{!-- instancio el script de socket io en el cliente --}}
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>{{!-- script de Axios en el cliente --}}
 <script src="/js/realTimeProducts.js"></script>{{!-- mi js --}}

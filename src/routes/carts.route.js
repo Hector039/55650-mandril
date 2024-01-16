@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { CartManager } from "../CartManager.js";
-import { ProductManager } from "../ProductManager.js";
+import CartManager from "../dao/dbManagers/CartManager.js";
+import Products from "../dao/dbManagers/ProductManager.js";
 
 const router = Router();
 
 const cartManager = new CartManager();
-const productManager = new ProductManager();
+const productManager = new Products();
 
 router.post("/", async (req, res) => {
     try {
-        const newCart = await cartManager.createCart();
+        const newCart = await cartManager.saveCart();
 
         res.status(201).json({
             msg: "Carrito creado correctamente.",
@@ -26,69 +26,72 @@ router.get("/:cid", async (req, res) => {
     const { cid } = req.params;
 
     try {
-        const cartById = await cartManager.getCartById(parseInt(cid));
+        const cartById = await cartManager.getCartById(cid);
 
-        if (cartById) {
-            const temporalProducts = await productManager.getProducts();
-
-            const cartProducts = cartById.productos.map((prod) => {
-                return {
-                    product: temporalProducts.find((producto) => producto.id === prod.product),
-                    quantity: prod.quantity,
-                };
-            });
-
-            res.status(201).json({
-                msg: `Se encontró el carrito de ID: ${cid}`,
-                data: cartProducts
-            });
-            return;
-        }
-
-        res.status(404).json({
-            msg: "El carrito no existe, intente con otro ID."
-        })
+        res.status(201).json({
+            msg: `Se encontró el carrito de ID: ${cid}`,
+            data: cartById
+        });
 
     } catch (error) {
-        res.status(500).json({
+        res.status(400).json({
             error: error.message,
         });
     }
 });
 
+router.delete("/:cid", async (req, res) => {
+    const { cid } = req.params;
+
+    try {
+        const cartById = await cartManager.deleteCart(cid);
+
+        res.status(201).json({
+            msg: `Se eliminó el carrito de ID: ${cid}`,
+            data: cartById
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            error: error.message,
+        });
+    }
+}); 
+
 router.post("/:cid/product/:pid", async (req, res) => {
     const { cid, pid } = req.params;
 
     try {
-        const temporalProducts = await productManager.getProducts();
-        const productIndex = temporalProducts.findIndex((product) => product.id === parseInt(pid));
+        const productId = await productManager.getProductById(pid);
+        const cart = await cartManager.getCartById(cid);
 
-        const carts = await cartManager.getCarts();
-        const cartIndex = carts.findIndex((cart) => cart.id === parseInt(cid));
-
-        if (cartIndex < 0) {
-            res.status(404).json({
-                msg: `El carrito ${cid} no existe, intente con otro ID.`
+        if(!cart){
+            res.status(400).json({
+                error: `El carrito de ID: ${cid} no encontrado`,
             });
             return;
         }
 
-        if (productIndex < 0) {
-            res.status(404).json({
-                msg: `El producto ${pid} no existe, intente con otro ID.`
+        if(!productId){
+            res.status(400).json({
+                error: `El producto de ID: ${pid} no encontrado`,
             });
             return;
         }
 
-        const cartProducts = await cartManager.addProductToCart(cid, pid);
+        await cartManager.addProductToCart(cart, pid);
+        const cartUpdated = await cartManager.getCartById(cid);
+        const quantityProduct = cartUpdated.products.find((producto) => producto.product === pid)
 
         res.status(201).json({
             msg: `Se sumó un producto ${pid} en el carrito ${cid}.`,
-            data: cartProducts
+            data: cartUpdated,
+            producto: productId,
+            cantidad: quantityProduct.quantity
         });
 
     } catch (error) {
-        res.status(500).json({
+        res.status(400).json({
             error: error.message,
         });
     }

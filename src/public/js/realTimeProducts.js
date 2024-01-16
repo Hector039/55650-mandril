@@ -39,12 +39,18 @@ addProductBtn.addEventListener("click", () => {
 
 });
 
+const deleteButton = document.getElementById("deleteProductBtn");
 
-function deleteProduct(id) {
-    axios.delete(url + "/" + id)
+deleteButton.addEventListener("click", () => {
+
+    const productToDelete = document.getElementById("product-delete").value;
+
+    axios.delete(url + "/" + productToDelete)
         .then(res => console.log(res))
         .catch(error => console.log(error));
-};
+
+    document.getElementById("product-delete").value = "";
+});
 
 socket.on("updateList", (products) => {
 
@@ -56,12 +62,11 @@ socket.on("updateList", (products) => {
         data += `
 
         <div id="product-card">
-        <p id="product-id">ID: ${elem.id}</p>
+        <p id="product-id">ID: ${elem._id}</p>
         <p id="product-title">Nombre: ${elem.title}</p>
         <p id="product-price">Precio: ${elem.price}</p>
         <p id="product-stock">Stock: ${elem.stock}</p>
         <br>
-        <button id="deleteProductBtn" onclick="deleteProduct(${elem.id})">Borrar Producto</button>
         </div>
     `;
     });
@@ -69,3 +74,4 @@ socket.on("updateList", (products) => {
     productCardContainer.innerHTML = data;
 
 });
+
