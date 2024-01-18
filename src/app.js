@@ -2,6 +2,7 @@ import express from "express";
 import productsRouter from "./routes/products.route.js";
 import cartsRouter from "./routes/carts.route.js";
 import viewsRouter from "./routes/views.route.js";
+import chatRouter from "./routes/chat.route.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";//server para crear con HTTP
@@ -25,13 +26,13 @@ app.use(express.static(__dirname + "/public"));//indico estáticamente mi carpet
 
 app.use(function (req, res, next) {
     req.io = io;
-    req.io.broadcast = io;
     next();
 });
 
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/chat", chatRouter);
 
 const httpServer = app.listen(PORT, () => {//instancio solo el server http
     console.log(`Servidor escuchando en http://localhost: ${PORT}`)
@@ -51,8 +52,8 @@ const io = new Server(httpServer);//creo el socket server
 io.on("connection", socket => {
     console.log("se conectó un nuevo cliente");
 
-    socket.on("mensaje", datos => {//escucho el evento "mensaje" y muestro los datos enviados
-        console.log(datos);
+    socket.on("new-user", (email) => {
+        socket.broadcast.emit("new-user-connected", email);
     });
 
 });

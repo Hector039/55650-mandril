@@ -1,14 +1,14 @@
 const socket = io();
 
 const url = "http://localhost:8080/chat";
-const urlSession = "http://localhost:8080/session";
+
 let user = "";
 
 Swal.fire({
     title: "Inicia sesion!",
     text: "Ingresa tu email",
     input: "email",
-    confirmButtonText: "Cool",
+    confirmButtonText: "Ok!",
     allowOutsideClick: false,
     inputValidator: (value) => {
         if (!value) {
@@ -18,6 +18,10 @@ Swal.fire({
 }).then((result) => {
     if (result.value) {
         const email = result.value;
+
+        socket.emit("new-user", email);
+
+        user = email;
 
         axios.post(url, {
             email
@@ -30,17 +34,18 @@ Swal.fire({
     }
 });
 
-socket.on("new-user", (data) => {
+socket.on("messages-log", (data) => {
 
-    console.log("nuevo cliente conectado", data.user);
-    user = data.user
+    
 
     const chatLogs = document.getElementById("chat-window");
 
     let message = "";
+    
+    if (data.messages.length !== 0) {
 
-    data.messages.forEach((elem) => {
-        message += `
+        data.messages.forEach((elem) => {
+            message += `
     
         <div class="chat-message">
         <div class="message-bubble">
@@ -51,10 +56,13 @@ socket.on("new-user", (data) => {
 
         </div>
     `;
-    });
+        });
 
-    chatLogs.innerHTML = message;
+        chatLogs.innerHTML = message;
+    }
 
+
+    
 });
 
 const chatBox = document.getElementById("chatBox");
@@ -81,33 +89,11 @@ chatBox.addEventListener("keyup", async (e) => {
 });
 
 socket.on("new-user-connected", (data) => {
-        Swal.fire({
-            text: `${data.user} se ha conectado al chat`,
-            toast: true,
-            position: "top-end",
-            timer: 2000
-        });
-});
-
-socket.on("messages-log", (data) => {
-
-    const messagesLogs = document.getElementById("chat-window");
-
-    let message = "";
-
-    data.forEach((elem) => {
-        message += `
-    
-        <div class="chat-message">
-        <div class="message-bubble">
-
-        <div class="message-sender" >${elem.user}</div>
-        <p>${elem.message}</p>
-        </div>
-
-        </div>
-    `;
+    Swal.fire({
+        text: `${data} se ha conectado al chat`,
+        toast: true,
+        position: "top-end",
+        timer: 4000
     });
-
-    messagesLogs.innerHTML = message;
 });
+

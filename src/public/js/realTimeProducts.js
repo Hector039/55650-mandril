@@ -1,9 +1,8 @@
 const socket = io();//instancio el socket cliente
 
+const url = "http://localhost:8080/api/products";
+
 const addProductBtn = document.getElementById("addProductBtn");
-
-const url = "http://localhost:8080/realtimeproducts";
-
 
 addProductBtn.addEventListener("click", () => {
 

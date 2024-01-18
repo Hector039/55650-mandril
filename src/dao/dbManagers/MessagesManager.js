@@ -3,7 +3,7 @@ import messagesModel from "../models/messagesModel.js";
 export default class Messages {
 
     async getAllMessages() {
-        let messages = await messagesModel.find();
+        let messages = await messagesModel.find().lean();
         return messages;
     }
 

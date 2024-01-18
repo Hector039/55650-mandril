@@ -53,6 +53,10 @@ router.post("/", async (req, res) => {
             thumbnails
         });
 
+        const prodUpdated = await productManager.getAllProducts();
+
+        req.io.emit("updateList", prodUpdated)
+
         res.status(201).json({
             msg: "Producto creado correctamente.",
             data: newProduct
@@ -101,11 +105,14 @@ router.delete("/:pid", async (req, res) => {
     const { pid } = req.params;
 
     try {
-        const response = await productManager.deleteProduct(pid);
+        await productManager.deleteProduct(pid);
+
+        const prodUpdated = await productManager.getAllProducts();
+
+        req.io.emit("updateList", prodUpdated);
 
         res.status(201).json({
-            msg: "Producto eliminado correctamente.",
-            data: response
+            msg: `Producto ID: ${pid} eliminado correctamente.`,
         });
 
     } catch (error) {
@@ -114,6 +121,5 @@ router.delete("/:pid", async (req, res) => {
         })
     }
 });
-
 
 export default router;
