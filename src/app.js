@@ -29,9 +29,9 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
 app.use("/chat", chatRouter);
 
 const httpServer = app.listen(PORT, () => {//instancio solo el server http

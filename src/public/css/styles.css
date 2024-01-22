@@ -53,6 +53,32 @@ textarea {
     margin-bottom: 5px;
 }
 
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-container {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actual-page {
+    display: flex;
+    justify-content: center;
+    background-color: #2195f393;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.total-pag {
+    display: flex;
+    justify-content: center;
+}
+
 /* chat styles */
 .chat-container {
     display: flex;

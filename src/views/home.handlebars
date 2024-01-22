@@ -1,22 +1,32 @@
 <div>
-    <h1>Hola! {{name}}</h1>
-    {{#if role}}
-    {{#each productos}}
-    <div>
+    <h1>Listado de productos:</h1>
+    {{#each docs}}
+    <div id="product-card">
         <p>ID: {{this._id}}</p>
         <p>Nombre: {{this.title}}</p>
-        <p>Descripción: {{this.description}}</p>
-        <p>Código: {{this.code}}</p>
         <p>Precio: {{this.price}}</p>
-        <p>Stock: {{this.stock}}</p>
-        <p>Categoría: {{this.category}}</p>
         <p>Links imágenes: {{this.thumbnails}}</p>
-        <p>Estado: {{this.status}}</p>
-        <br>
+        <a href="/productdetail/{{this._id}}"><button>Ver detalles</button></a>
     </div>
     {{/each}}
-    {{else}}
-    <p>No eres administrador, no tienes permiso para ver los productos</p>
-    {{/if}}
-</div>
 
+    {{#if showPaginate}}
+    <div class="pagination">
+        <div class="pagination-container">
+            {{#if hasPrevPage}}
+            <a href="/?lim={{limit}}&pag={{prevPage}}"><button>{{prevPage}} <<< </button></a>
+            {{/if}}
+            <p class="actual-page">{{page}}</p>
+            {{#if hasNextPage}}
+            <a href="/?lim={{limit}}&pag={{nextPage}}"><button>>>> {{nextPage}}</button></a>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="total-pag">
+        <p>Total páginas: {{totalPages}}</p>
+    </div>
+
+    {{/if}}
+
+</div>

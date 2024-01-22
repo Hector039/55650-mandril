@@ -3,52 +3,80 @@ import cartModel from "../models/cartModel.js";
 export default class Carts {
 
     async getAllCarts() {
-        let carts = await cartModel.find().lean();
-        return carts;
+        try {
+            let carts = await cartModel.find().lean();
+            return carts;
+        } catch (error) {
+            throw error;
+        }
     }
 
     async getCartById(id) {
-        let cart = await cartModel.findById(id).lean();
-        return cart;
+        try {
+            let cart = await cartModel.findById(id).populate("products.product").lean();
+            return cart;
+        } catch (error) {
+            throw error;
+        }
     }
 
     async saveCart() {
-        let newCart = new cartModel();
-        let result = await newCart.save();
-        return result;
+        try {
+            let newCart = new cartModel();
+            let result = await newCart.save();
+            return result;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    async updateCart(id, cartProducts) {
-        const result = await cartModel.updateOne({ _id: id }, cartProducts);
-        return result;
+    async updateCart(cid, pid, quantity) {
+        try {
+            const result = await cartModel.updateOne({ _id : cid, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+            return result;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    async deleteCart(id) {
-        const result = await cartModel.findByIdAndDelete(id);
-        return result;
+    async deleteProductToCart(id, productToDelete) {
+        try {
+            await cartModel.findByIdAndUpdate(id, { $pull: { products: { product: productToDelete.product, quantity: productToDelete.quantity } } });
+            return;
+        } catch (error) {
+            throw error;
+        }
     }
+
+    async deleteAllProducts(id) {
+        try {
+            await cartModel.findByIdAndUpdate(id, { $push: { products: { $each: [], $slice: 0 } } });
+            return;
+        } catch (error) {
+            throw error;
+        }
+    };
 
     async addProductToCart(cart, pid) {
         try {
-
-            const cartIndexProduct = cart.products.findIndex((prod) => prod.product === pid);
             
+            const cartIndexProduct = cart.products.findIndex((prod) => prod.product === pid);
+
             if (cartIndexProduct < 0) {
 
-                const newProductToCart = {
-                    product: pid,
-                    quantity: 1
-                }
+                await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: 1 } } });
 
-                cart.products.push(newProductToCart);
-                console.log(cart);
             } else {
 
-                cart.products[cartIndexProduct].quantity++;
+                const quantity = cart.products[cartIndexProduct].quantity+1;
+
+                await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+
             }
 
-            const cartUpdated = await this.updateCart({_id: cart._id}, cart);
-            
+            const cartUpdated = await this.getCartById(cart._id);
+
+
             return cartUpdated;
 
         } catch (error) {

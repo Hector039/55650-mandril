@@ -1,22 +1,47 @@
-import { Router } from "express";
+import { Router, query } from "express";
 import Products from "../dao/dbManagers/ProductManager.js";
+import productsModel from "../dao/models/productModel.js";
 
 const router = Router();
 
 const productManager = new Products();
 
 router.get("/", async (req, res) => {
+    const { limit, sort, page, category } = req.query;
+
     try {
-        const temporalProducts = await productManager.getAllProducts();
+
+        let options = {
+            limit: limit === undefined ? 10 : parseInt(limit),
+            page: page === undefined ? 1 : parseInt(page),
+        };
+
+        if (sort !== undefined) {
+            options["sort"] = { price: sort };
+        };
+
+        const find = category === undefined ? {} : { category: category };
+
+        const report = await productsModel.paginate(find, options);
+        console.log(report);
 
         res.status(201).json({
-            total: temporalProducts.length === 0 ? "No hay productos cargados" : "Lista de todos los productos",
-            data: temporalProducts
-        })
+            status: "success",
+            payload: report.docs,
+            totalPages: report.totalPages,
+            prevPage: report.prevPage,
+            nextPage: report.nextPage,
+            page: report.page,
+            hasPrevPage: report.hasPrevPage,
+            hasNextPage: report.hasNextPage,
+            prevLink: report.hasPrevPage === false ? null : `/api/products?page=${report.prevPage}`,
+            nextLink: report.hasNextPage === false ? null : `/api/products?page=${report.nextPage}`
+        });
 
     } catch (error) {
         res.status(500).json({
-            error: error.message,
+            status: "Error",
+            error: error.message
         })
     }
 });
