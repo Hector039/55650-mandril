@@ -2,13 +2,13 @@ import { Router } from "express";
 import Products from "../dao/dbManagers/ProductManager.js";
 import Messages from "../dao/dbManagers/MessagesManager.js";
 import productsModel from "../dao/models/productModel.js";
+import CartManager from "../dao/dbManagers/CartManager.js";
 
 const router = Router();
 
 const messagesManager = new Messages();
-
 const productManager = new Products();
-
+const cartManager = new CartManager();
 
 router.get("/", async (req, res) => {
     const { lim, pag } = req.query;
@@ -54,11 +54,13 @@ router.get("/productdetail/:pid", async (req, res) => {
 
     try {
         const productById = await productManager.getProductById(pid);
+        const cartExample = "65a57434d6d3c222f881cb0b"
 
         res.render("productDetail", {
             title: "Detalle de Producto",
             style: "styles.css",
-            productById
+            productById,
+            cartExample,
         });
 
     } catch (error) {
@@ -75,7 +77,7 @@ router.get("/realtimeproducts", async (req, res) => {
         res.render("realTimeProducts", {
             title: "Productos",
             style: "styles.css",
-            productos
+            productos,
         });
 
     } catch (error) {
@@ -92,7 +94,7 @@ router.get("/chat", async (req, res) => {
         res.render("chat", {
             title: "Chat",
             style: "styles.css",
-            messageLog
+            messageLog,
         });
 
     } catch (error) {
@@ -100,7 +102,29 @@ router.get("/chat", async (req, res) => {
             error: error.message,
         })
     }
+});
 
+router.get("/carts/:cid", async (req, res) => {
+    const { cid } = req.params;
+
+    try {
+        const cart = await cartManager.getCartById(cid);
+        const cartProducts = cart.products;
+
+        const isCartEmpty = cartProducts.length > 0 ? true : false;
+        
+        res.render("carts", {
+            title: `Detalle del carrito`,
+            style: "styles.css",
+            cartProducts,
+            isCartEmpty,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+        })
+    }
 });
 
 export default router;

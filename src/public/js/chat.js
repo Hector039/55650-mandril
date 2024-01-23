@@ -36,8 +36,6 @@ Swal.fire({
 
 socket.on("messages-log", (data) => {
 
-    
-
     const chatLogs = document.getElementById("chat-window");
 
     let message = "";
@@ -60,9 +58,6 @@ socket.on("messages-log", (data) => {
 
         chatLogs.innerHTML = message;
     }
-
-
-    
 });
 
 const chatBox = document.getElementById("chatBox");

@@ -23,7 +23,6 @@ router.get("/", async (req, res) => {
         const find = category === undefined ? {} : { category: category };
 
         const report = await productsModel.paginate(find, options);
-        console.log(report);
 
         res.status(201).json({
             status: "success",

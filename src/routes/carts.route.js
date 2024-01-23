@@ -14,28 +14,28 @@ router.post("/:cid/product/:pid", async (req, res) => {
         const productId = await productManager.getProductById(pid);
         const cart = await cartManager.getCartById(cid);
 
-        if(cart === null){
+        if (cart === null) {
             res.status(400).json({
                 error: `El carrito de ID: ${cid} no encontrado`,
             });
             return;
         }
 
-        if(productId === null){
+        if (productId === null) {
             res.status(400).json({
                 error: `El producto de ID: ${pid} no encontrado`,
             });
             return;
         }
 
-        const cartUpdated = await cartManager.addProductToCart(cart, pid);
-        
-        const quantityProduct = cartUpdated.products.find((producto) => producto.product === pid)
+        await cartManager.addProductToCart(cart, pid);
+        const cartUpdated = await cartManager.getCartById(cid);
+
+        const quantityProduct = cartUpdated.products.find(prod => prod.product._id == pid);
 
         res.status(201).json({
             msg: `Se sumó un producto ${pid} en el carrito ${cid}.`,
             data: cartUpdated,
-            producto: productId,
             cantidad: quantityProduct.quantity
         });
 
@@ -67,7 +67,7 @@ router.get("/:cid", async (req, res) => {
     try {
         const cartById = await cartManager.getCartById(cid);
 
-        if(cartById === null){
+        if (cartById === null) {
             res.status(400).json({
                 error: `El carrito de ID: ${cid} no encontrado`,
             });
@@ -94,23 +94,23 @@ router.delete("/:cid/product/:pid", async (req, res) => {
         const productId = await productManager.getProductById(pid);
         const cart = await cartManager.getCartById(cid);
 
-        if(cart === null){
+        if (cart === null) {
             res.status(400).json({
                 error: `El carrito de ID: ${cid} no encontrado`,
             });
             return;
         };
 
-        if(productId === null){
+        if (productId === null) {
             res.status(400).json({
                 error: `El producto de ID: ${pid} no encontrado`,
             });
             return;
         };
 
-        const productExistsInCart = cart.products.find(prod => prod.product === pid);
+        const productExistsInCart = cart.products.find(prod => prod.product._id == pid);
 
-        if(productExistsInCart === undefined){
+        if (productExistsInCart === undefined) {
             res.status(400).json({
                 error: `El producto de ID: ${pid} no fué encontrado en el carrito ID: ${cid}`,
             });
@@ -130,16 +130,15 @@ router.delete("/:cid/product/:pid", async (req, res) => {
             error: error.message,
         });
     }
-}); 
+});
 
 router.delete("/:cid", async (req, res) => {
     const { cid } = req.params;
 
     try {
+        const cart = await cartManager.getCartById(cid);
 
-        const cart = await cartManager.getCartById(cid);        
-
-        if(cart === null){
+        if (cart === null) {
             res.status(400).json({
                 error: `El carrito de ID: ${cid} no encontrado`,
             });
@@ -156,11 +155,11 @@ router.delete("/:cid", async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             error: error.message,
         });
     }
-}); 
+});
 
 router.put("/:cid/product/:pid", async (req, res) => {
     const { cid, pid } = req.params;
@@ -171,41 +170,78 @@ router.put("/:cid/product/:pid", async (req, res) => {
         const productId = await productManager.getProductById(pid);
         const cart = await cartManager.getCartById(cid);
 
-        if(cart === null){
+        if (cart === null) {
             res.status(400).json({
                 error: `El carrito de ID: ${cid} no encontrado`,
             });
             return;
         };
 
-        if(productId === null){
+        if (productId === null) {
             res.status(400).json({
                 error: `El producto de ID: ${pid} no encontrado`,
             });
             return;
         };
 
-        const productExistsInCart = cart.products.find(prod => prod.product === pid);
+        const productExistsInCart = cart.products.find(prod => prod.product._id == pid);
 
-        if(productExistsInCart === undefined){
+        if (productExistsInCart === undefined) {
             res.status(400).json({
                 error: `El producto de ID: ${pid} no fué encontrado en el carrito ID: ${cid}`,
             });
             return;
         }
-            
+
         const modifiedCart = await cartManager.updateCart(cid, pid, quantity);
 
         res.status(201).json({
-            msg: `Se actualizó la cantdad del producto ${pid} del carrito ${cid}`,
+            msg: `Se actualizó la cantidad del producto ${pid} del carrito ${cid}`,
             data: modifiedCart
         });
 
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             error: error.message,
         });
     }
-}); 
+});
+
+router.post("/:cid/addproduct/:pid", async (req, res) => {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+
+    try {
+
+        const productId = await productManager.getProductById(pid);
+        const cart = await cartManager.getCartById(cid);
+
+        if (cart === null) {
+            res.status(400).json({
+                error: `El carrito de ID: ${cid} no encontrado`,
+            });
+            return;
+        };
+
+        if (productId === null) {
+            res.status(400).json({
+                error: `El producto de ID: ${pid} no encontrado`,
+            });
+            return;
+        };
+
+        const modifiedCart = await cartManager.addProductAndQuantityToCart(cart, pid, quantity);
+
+        res.status(201).json({
+            msg: `Se actualizó el producto ${pid} y cantidad ${quantity} al carrito ${cid}`,
+            data: modifiedCart
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+        });
+    }
+});
 
 export default router;

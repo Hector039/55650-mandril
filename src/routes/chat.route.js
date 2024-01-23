@@ -9,9 +9,7 @@ router.post("/", async (req, res) => {
     const { email, message } = req.body;
 
     try {
-
         if (message !== undefined) {
-
             const user = email;
             await messagesManager.saveMessage({
                 user,
@@ -33,7 +31,7 @@ router.post("/", async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             error: error.message,
         })
     }

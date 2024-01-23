@@ -1,0 +1,23 @@
+<div>
+    <h1>Listado de productos del carrito de ejemplo</h1>
+    <section id="product-container">
+        {{#if isCartEmpty}}
+        {{#each cartProducts}}
+        <div id="product-card">
+            <p id="product-title">Nombre: {{product.title}}</p>
+            <p id="product-price">Precio: {{product.price}}</p>
+            <p id="product-description">Stock: {{product.description}}</p>
+            <p id="product-quantity">Cantidad: {{this.quantity}}</p>
+            <button onclick="deleteItem(`{{product._id}}`)">Eliminar producto</button>
+            <br>
+        </div>
+        {{/each}}
+        {{else}}
+        <p>Ups! el carrito está vacío.</p>
+        {{/if}}
+    </section>
+    <a href="/"><button>Volver a los productos</button></a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>{{!-- script de Axios en el cliente --}}
+<script src="/js/deleteProd.js"></script>{{!-- mi js --}}

@@ -9,7 +9,7 @@ export default class Carts {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     async getCartById(id) {
         try {
@@ -18,7 +18,7 @@ export default class Carts {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     async saveCart() {
         try {
@@ -28,7 +28,7 @@ export default class Carts {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     async updateCart(cid, pid, quantity) {
         try {
@@ -37,7 +37,7 @@ export default class Carts {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     async deleteProductToCart(id, productToDelete) {
         try {
@@ -46,7 +46,7 @@ export default class Carts {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     async deleteAllProducts(id) {
         try {
@@ -59,28 +59,34 @@ export default class Carts {
 
     async addProductToCart(cart, pid) {
         try {
-            
-            const cartIndexProduct = cart.products.findIndex((prod) => prod.product === pid);
-
+            const cartIndexProduct = cart.products.findIndex(prod => prod.product._id == pid);
             if (cartIndexProduct < 0) {
-
                 await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: 1 } } });
-
             } else {
-
                 const quantity = cart.products[cartIndexProduct].quantity+1;
-
                 await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
-
             }
-
-            const cartUpdated = await this.getCartById(cart._id);
-
-
-            return cartUpdated;
-
+            await this.getCartById(cart._id);
+            return;
         } catch (error) {
             throw error;
         }
-    }
+    };
+
+    
+    async addProductAndQuantityToCart(cart, pid, quantity) {//endpoint solo creado para la vista detail Product
+        try {
+            const cartIndexProduct = cart.products.findIndex(prod => prod.product._id == pid);
+            if (cartIndexProduct < 0) {
+                await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: quantity } } });
+            } else {
+                await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+            }
+            await this.getCartById(cart._id);
+            return;
+        } catch (error) {
+            throw error;
+        }
+    };
+
 };

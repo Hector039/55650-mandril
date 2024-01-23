@@ -4,13 +4,17 @@
         <p id="product-id">{{productById._id}}</p>
         <p>Nombre: {{productById.title}}</p>
         <p>Descripción: {{productById.description}}</p>
-        <p>Código: {{productById.code}}</p>
         <p>Precio: {{productById.price}}</p>
-        <p>Stock: {{productById.stock}}</p>
         <p>Categoría: {{productById.category}}</p>
         <p>Links imágenes: {{productById.thumbnails}}</p>
-        <p>Estado: {{productById.status}}</p>
+        <div id="counter-container">
+            <button id="add">+</button>
+            <p id="quantity">1</p>
+            <button id="rest">-</button>
+        </div>
         <button id="addToCart">Agregar al carrito</button>
+        <a href="/carts/{{cartExample}}"><button>Ir al carrito</button></a>
+        <a href="/"><button>Volver</button></a>
     </div>
 </div>
 
