@@ -1,6 +1,5 @@
-import { Router, query } from "express";
+import { Router } from "express";
 import Products from "../dao/dbManagers/ProductManager.js";
-import productsModel from "../dao/models/productModel.js";
 
 const router = Router();
 
@@ -22,7 +21,7 @@ router.get("/", async (req, res) => {
 
         const find = category === undefined ? {} : { category: category };
 
-        const report = await productsModel.paginate(find, options);
+        const report = await productManager.paginateProduct(find, options);
 
         res.status(201).json({
             status: "success",

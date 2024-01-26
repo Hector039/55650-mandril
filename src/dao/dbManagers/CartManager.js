@@ -32,7 +32,7 @@ export default class Carts {
 
     async updateCart(cid, pid, quantity) {
         try {
-            const result = await cartModel.updateOne({ _id : cid, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+            const result = await cartModel.updateOne({ _id: cid, "products.product": pid }, { $set: { "products.$.quantity": quantity } });
             return result;
         } catch (error) {
             throw error;
@@ -57,30 +57,13 @@ export default class Carts {
         }
     };
 
-    async addProductToCart(cart, pid) {
-        try {
-            const cartIndexProduct = cart.products.findIndex(prod => prod.product._id == pid);
-            if (cartIndexProduct < 0) {
-                await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: 1 } } });
-            } else {
-                const quantity = cart.products[cartIndexProduct].quantity+1;
-                await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
-            }
-            await this.getCartById(cart._id);
-            return;
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    
-    async addProductAndQuantityToCart(cart, pid, quantity) {//endpoint solo creado para la vista detail Product
+    async addProductAndQuantityToCart(cart, pid, quantity) {
         try {
             const cartIndexProduct = cart.products.findIndex(prod => prod.product._id == pid);
             if (cartIndexProduct < 0) {
                 await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: quantity } } });
             } else {
-                await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+                await cartModel.updateOne({ _id: cart._id, "products.product": pid }, { $set: { "products.$.quantity": quantity } });
             }
             await this.getCartById(cart._id);
             return;
@@ -90,3 +73,24 @@ export default class Carts {
     };
 
 };
+
+
+
+
+/* 
+        async addProductToCart(cart, pid) {
+            try {
+                const cartIndexProduct = cart.products.findIndex(prod => prod.product._id == pid);
+                if (cartIndexProduct < 0) {
+                    await cartModel.findByIdAndUpdate(cart._id, { $push: { products: { product: pid, quantity: 1 } } });
+                } else {
+                    const quantity = cart.products[cartIndexProduct].quantity+1;
+                    await cartModel.updateOne({ _id : cart._id, "products.product": pid}, { $set: { "products.$.quantity": quantity } });
+                }
+                await this.getCartById(cart._id);
+                return;
+            } catch (error) {
+                throw error;
+            }
+        }; 
+    */

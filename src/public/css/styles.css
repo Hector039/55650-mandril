@@ -4,6 +4,7 @@ h1 {
 
 #product-container {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-around;
     margin: 20px;
@@ -79,6 +80,20 @@ textarea {
     justify-content: center;
 }
 
+.welcome-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+/*LogOut Page*/
+.logout-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
 /*Product Detail styles*/
 #counter-container {
     display: flex;

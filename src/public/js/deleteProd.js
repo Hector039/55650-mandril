@@ -1,8 +1,21 @@
-const url = "http://localhost:8080/api/carts/65a57434d6d3c222f881cb0b/product/";
+const url = "http://localhost:8080/api/carts/product/";
+const urlEmptyCart = "http://localhost:8080/api/carts/";
 
 async function deleteItem(prodId) {
     await axios.delete(url + prodId)
-        .then(async function (response) {
+        .then(function (response) {
+            console.log(response.data.msg);
+            location.reload();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+};
+
+async function emptyCart(userCartId) {
+    console.log(userCartId);
+    await axios.delete(urlEmptyCart + userCartId)
+        .then(function (response) {
             console.log(response.data.msg);
             location.reload();
         })

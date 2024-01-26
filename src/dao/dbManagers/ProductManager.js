@@ -27,4 +27,10 @@ export default class Products {
         const result = await productsModel.findByIdAndDelete(id);
         return result;
     }
+
+    async paginateProduct(find, options) {
+        const report = await productsModel.paginate(find, options);
+        return report;
+    }
+    
 };

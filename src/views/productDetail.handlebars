@@ -7,14 +7,18 @@
         <p>Precio: {{productById.price}}</p>
         <p>Categoría: {{productById.category}}</p>
         <p>Links imágenes: {{productById.thumbnails}}</p>
+        
         <div id="counter-container">
             <button id="add">+</button>
             <p id="quantity">1</p>
             <button id="rest">-</button>
         </div>
+        
+        {{#if isLogIn}}
         <button id="addToCart">Agregar al carrito</button>
-        <a href="/carts/{{cartExample}}"><button>Ir al carrito</button></a>
-        <a href="/"><button>Volver</button></a>
+        <a href="/carts"><button>Ir al carrito</button></a>
+        {{/if}}
+        <a href="/home"><button>Volver</button></a>
     </div>
 </div>
 
