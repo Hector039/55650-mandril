@@ -12,6 +12,8 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 dotenv.config()
 const PORT = process.env.PORT;
@@ -59,14 +61,17 @@ const environment = async () => {
     try {
         await mongoose.connect(DB_URL);
         console.log("Base de datos conectada");
-    }catch{
-        (error) => {
+    }catch (error){
         console.log("Error en conexión a base de datos", error);
-    }
     }
 };
 
 environment();
+
+//Estrategias de passport-local
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 const io = new Server(httpServer);//creo el socket server
 

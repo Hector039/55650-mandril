@@ -17,6 +17,13 @@ router.get("/login", (req, res) => {
     });
 });
 
+router.get("/forgot", (req, res) => {
+    res.render("forgot", {
+        title: "Restaura tu contraseña",
+        style: "styles.css"
+    });
+});
+
 router.get("/signin", (req, res) => {
     res.render("signin", {
         title: "Crea tu cuenta",
@@ -43,7 +50,7 @@ router.get("/logout", (req, res) => {
     })
 });
 
-router.get("/home", async (req, res) => {
+router.get("/", async (req, res) => {
     const { lim, pag } = req.query;
 
     try {
