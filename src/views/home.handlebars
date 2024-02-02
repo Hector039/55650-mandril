@@ -31,11 +31,11 @@
 <div class="pagination">
     <div class="pagination-container">
         {{#if hasPrevPage}}
-        <a href="/home/?lim={{limit}}&pag={{prevPage}}"><button>{{prevPage}} <<< </button></a>
+        <a href="/?lim={{limit}}&pag={{prevPage}}"><button>{{prevPage}} <<< </button></a>
         {{/if}}
         <p class="actual-page">{{page}}</p>
         {{#if hasNextPage}}
-        <a href="/home/?lim={{limit}}&pag={{nextPage}}"><button>>>> {{nextPage}}</button></a>
+        <a href="/?lim={{limit}}&pag={{nextPage}}"><button>>>> {{nextPage}}</button></a>
         {{/if}}
     </div>
 </div>

@@ -1,13 +1,13 @@
-const urlForgot = "http://localhost:8080/forgot";
+const urlForgot = "http://localhost:8080/api/sessions/forgot";
 
-async function postForgot(email, pass) {
-    await axios.post(urlLogin, {
+async function postForgot(email, password) {
+    await axios.post(urlForgot, {
         email: email,
-        password: pass
+        password: password
     })
         .then(function (response) {
             console.log(response);
-            if (response.statusText === "ok") {
+            if (response.statusText === "OK") {
                 window.location.href = "http://localhost:8080/login";
             } else {
                 alert("Datos incorrectos");
@@ -29,7 +29,7 @@ loginFormForgot.addEventListener("submit", async (e) => {
     if (password !== repassword) {
         alert("Las contraseñas no coinciden, intenta nuevamente.")
     } else {
-        await postLogin(email, password);
+        await postForgot(email, password);
     }
     
 });

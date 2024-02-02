@@ -1,4 +1,4 @@
-const urlSignin = "http://localhost:8080/signin";
+const urlSignin = "http://localhost:8080/api/sessions/signin";
 
 async function postSignup(firstname, lastname, email, password, repassword) {
     await axios.post(urlSignin, {
@@ -10,7 +10,7 @@ async function postSignup(firstname, lastname, email, password, repassword) {
     })
         .then(function (response) {
             if (response.statusText === "Created") {
-                window.location.href = "http://localhost:8080/home";
+                window.location.href = "http://localhost:8080";
             } else {
                 alert("Datos incorrectos");
             }
@@ -30,5 +30,9 @@ signupForm.addEventListener("submit", async (event) => {
     const password = document.getElementById("password").value;
     const repassword = document.getElementById("repassword").value;
 
-    await postSignup(firstName, lastName, email, password, repassword);
+    if (password !== repassword) {
+        alert("Las contraseñas no coinciden, intenta nuevamente.")
+    } else {
+        await postSignup(firstName, lastName, email, password, repassword);
+    }
 });

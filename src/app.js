@@ -42,16 +42,7 @@ app.set("view engine", "handlebars");//indico que el motor que instancié es el 
 
 app.use(express.static(__dirname + "/public"));//indico estáticamente mi carpeta public
 
-app.use(function (req, res, next) {
-    req.io = io;
-    next();
-});
 
-app.use("/api/carts", cartsRouter);
-app.use("/", viewsRouter);
-app.use("/api/products", productsRouter);
-app.use("/chat", chatRouter);
-app.use("/", sessionsRouter);
 
 const httpServer = app.listen(PORT, () => {//instancio solo el server http
     console.log(`Servidor escuchando en http://localhost: ${PORT}`)
@@ -72,6 +63,17 @@ environment();
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function (req, res, next) {
+    req.io = io;
+    next();
+});
+
+app.use("/api/carts", cartsRouter);
+app.use("/", viewsRouter);
+app.use("/api/products", productsRouter);
+app.use("/chat", chatRouter);
+app.use("/api/sessions", sessionsRouter);
 
 const io = new Server(httpServer);//creo el socket server
 

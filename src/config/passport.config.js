@@ -3,6 +3,13 @@ import local from "passport-local";
 import Users from "../dao/dbManagers/UserManager.js";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import { createHash, isValidPass } from "../utils.js";
+import GitHubStrategy from "passport-github2";
+import dotenv from "dotenv";
+
+dotenv.config();
+const GH_CLIENT_ID = process.env.GH_CLIENT_ID;
+const GH_CLIENT_SECRETS = process.env.GH_CLIENT_SECRETS;
+const GH_CALLBACK_URL = process.env.GH_CALLBACK_URL;
 
 const UserManager = new Users();
 const cartManager = new CartManager();
@@ -12,19 +19,13 @@ const localStrategy = local.Strategy;
 const initializePassport = () => {
     passport.use("signin", new localStrategy(
         { passReqToCallback: true, usernameField: "email" },
-        async (req, username, done) => {
-            const { firstName, lastName, email, password, repassword } = req.body;
+        async (req, username, password, done) => {
+            const { firstName, lastName, email } = req.body;
             try {
                 const user = await UserManager.getUser(email);
                 if (user) {
-                    return done(null, false, { message: "El Usuario ya existe" });
-                };
-
-                if (password !== repassword) {
-                    res.status(400).json({
-                        error: "El password no coincide, vuelve a intentarlo.",
-                    });
-                    return;
+                    console.log("El Usuario ya existe.");
+                    return done(null, false);
                 };
 
                 const newCart = await cartManager.saveCart();
@@ -46,37 +47,82 @@ const initializePassport = () => {
 
                 return done(null, userUpdated);
             } catch (error) {
-                return done("Error al crear el usuario" + error);
+                return done(error, null);
             }
         }
     ));
 
     passport.use("login", new localStrategy(
-        { passReqToCallback: true, usernameField: "email" },
+        { usernameField: "email" },
         async (username, password, done) => {
             try {
                 const user = await UserManager.getUser(username);
                 if (user === null) {
-                    return done(null, false, { message: "El Usuario no existe" });
+                    console.log("El Usuario no existe.");
+                    return done(null, false);
                 };
-                if (!isValidPass(user.password, password)){
-                    return done(null, false, { message: "El Usuario o contraseña incorrecto." })
+                if (!isValidPass(user.password, password)) {
+                    console.log("Usuario o contraseña incorrecto.");
+                    return done(null, false);
                 };
                 return done(null, user)
-            } catch (error){
-                return done("Error de login de usuario" + error);
+            } catch (error) {
+                return done(error, null);
             }
         }
     ));
+
+    passport.use("github", new GitHubStrategy(
+        {
+            clientID: GH_CLIENT_ID,
+            clientSecret: GH_CLIENT_SECRETS,
+            callbackURL: GH_CALLBACK_URL
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+
+                const user = await UserManager.getUser(profile?._json.email);
+
+                if (user === null) {
+
+                    const newCart = await cartManager.saveCart();
+                    const cart = newCart._id;
+
+                    await UserManager.saveUser({
+                        firstName: profile.displayName.split(" ")[0],
+                        lastName: profile.displayName.split(" ")[1],
+                        email: profile?._json.email,
+                        password: Math.random().toString(36).substring(7),
+                        cart
+                    });
+
+                    const userUpdated = await UserManager.getUser(profile?._json.email);
+                    return done(null, userUpdated);
+                } else {
+                    return done(null, user);
+                }
+
+            } catch (error) {
+                return done(error, null)
+            }
+
+        }
+    ))
+
+    passport.serializeUser((user, done) => {
+        done(null, user._id);
+    });
+
+    passport.deserializeUser(async (user, done) => {
+        try {
+            const userDeserialized = await UserManager.getUser(user.email);
+            done(null, userDeserialized);
+        } catch (error) {
+            done(error, null);
+        }
+    });
 };
 
-passport.serializeUser((user, done) => {
-    done(null, user._id);
-});
 
-passport.deserializeUser(async (user, done) => {
-    const userDeserialized = await UserManager.getUser(user.email);
-    done(null, userDeserialized);
-});
 
 export default initializePassport;

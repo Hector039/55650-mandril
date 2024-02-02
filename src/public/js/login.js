@@ -1,4 +1,4 @@
-const urlLogin = "http://localhost:8080/login";
+const urlLogin = "http://localhost:8080/api/sessions/login";
 
 async function postLogin(email, pass) {
     await axios.post(urlLogin, {
@@ -8,7 +8,7 @@ async function postLogin(email, pass) {
         .then(function (response) {
             console.log(response);
             if (response.statusText === "OK") {
-                window.location.href = "http://localhost:8080/home";
+                window.location.href = "http://localhost:8080";
             } else {
                 alert("Datos incorrectos");
             }

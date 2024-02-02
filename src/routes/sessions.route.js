@@ -6,14 +6,8 @@ import passport from "passport";
 const router = Router();
 const UserManager = new Users();
 
-router.post("/login", passport.authenticate("login", { failureRedirect: "/failLogin" }), (req, res) => {
-
-    if (!req.user) {
-        res.status(400).json({
-            error: "Usuario o contraseña incorrectos",
-        });
-        return;
-    }
+router.post("/login", passport.authenticate("login", { failureRedirect: "/api/sessions/faillogin" }), (req, res) => {
+    console.log(req.user);
 
     req.session.user = req.user.firstName;
     req.session.role = req.user.email === "adminCoder@coder.com" ? "admin" : req.user.role;
@@ -25,14 +19,14 @@ router.post("/login", passport.authenticate("login", { failureRedirect: "/failLo
 
 });
 
-router.get("/failLogin", (req, res) => {
+router.get("/faillogin", (req, res) => {
     res.status(400).json({
         error: "Error de login de usuario"
     });
 });
 
 router.post("/forgot", async (req, res) => {
-    const { email, repassword } = req.body;
+    const { email, password } = req.body;
     try {
         const user = await UserManager.getUser(email);
 
@@ -43,7 +37,7 @@ router.post("/forgot", async (req, res) => {
             return;
         }
 
-        const userUpdated = await UserManager.updateUser(email, createHash(repassword));
+        const userUpdated = await UserManager.updateUser(email, createHash(password));
 
         req.session.user = userUpdated.firstName;
         req.session.role = userUpdated.email === "adminCoder@coder.com" ? "admin" : userUpdated.role;
@@ -60,17 +54,31 @@ router.post("/forgot", async (req, res) => {
     }
 });
 
-router.post("/signin", passport.authenticate("signin", { failureRedirect: "/failregister" }), async (req, res) => {
+router.post("/signin", passport.authenticate("signin", { failureRedirect: "/api/sessions/failregister" }), async (req, res) => {
+    req.session.user = req.user.firstName;
+    req.session.role = req.user.email === "adminCoder@coder.com" ? "admin" : req.user.role;
+    req.session.cart = req.user.cart;
+
     res.status(201).json({
         respuesta: `${req.session.user} ha ingresado correctamente`
     });
 });
 
-router.get("/failRegister", (req, res) => {
+router.get("/failregister", (req, res) => {
     res.status(400).json({
-        error: "Error al crear el usuario"
+        error: "Error al crear el usuario, intenta nuevamente"
     });
 });
+
+router.get("/github", passport.authenticate("github", { scope: ["user: email"] }), async (req, res) => {});
+
+router.get("/ghstrategy", passport.authenticate("github", { failureRedirect: "/login" }), (req, res) => {
+    req.session.user = req.user.firstName;
+    req.session.role = req.user.email === "adminCoder@coder.com" ? "admin" : req.user.role;
+    req.session.cart = req.user.cart;
+
+    res.redirect("/");
+})
 
 /* router.post("/login", async (req, res) => {
     const { email, password } = req.body;
