@@ -10,9 +10,35 @@ async function postSignup(firstname, lastname, email, password, repassword) {
     })
         .then(function (response) {
             if (response.statusText === "Created") {
-                window.location.href = "http://localhost:8080";
+                Toastify({
+                    text: "Registro correcto, bienvenido!.",
+                    duration: 2000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                    callback: function redirection() {
+                            window.location.href = "http://localhost:8080";
+                    }
+                }).showToast();
             } else {
-                alert("Datos incorrectos");
+                Toastify({
+                    text: "Datos incorrectos",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "red",
+                        color: "black"
+                    }
+                }).showToast();
             }
         })
         .catch(function (error) {
@@ -31,7 +57,19 @@ signupForm.addEventListener("submit", async (event) => {
     const repassword = document.getElementById("repassword").value;
 
     if (password !== repassword) {
-        alert("Las contraseñas no coinciden, intenta nuevamente.")
+        Toastify({
+            text: "Las contraseñas no coinciden, intenta nuevamente.",
+            duration: 3000,
+            newWindow: true,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: "red",
+                color: "black"
+            }
+        }).showToast();
     } else {
         await postSignup(firstName, lastName, email, password, repassword);
     }

@@ -8,9 +8,35 @@ async function postLogin(email, pass) {
         .then(function (response) {
             console.log(response);
             if (response.statusText === "OK") {
-                window.location.href = "http://localhost:8080";
+                Toastify({
+                    text: "Login correcto, bienvenido!.",
+                    duration: 2000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                    callback: function redirection() {
+                            window.location.href = "http://localhost:8080";
+                    }
+                }).showToast();
             } else {
-                alert("Datos incorrectos");
+                Toastify({
+                    text: "Datos incorrectos",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "red",
+                        color: "black"
+                    }
+                }).showToast();
             }
         })
         .catch(function (error) {

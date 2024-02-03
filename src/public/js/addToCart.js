@@ -26,6 +26,18 @@ addToCart.addEventListener("click", async () => {
     })
         .then(function (response) {
             console.log(response.data.msg);
+            Toastify({
+                text: "Se añadió el producto.",
+                duration: 3000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
         })
         .catch(function (error) {
             console.log(error);

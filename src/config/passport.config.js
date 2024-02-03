@@ -5,11 +5,16 @@ import CartManager from "../dao/dbManagers/CartManager.js";
 import { createHash, isValidPass } from "../utils.js";
 import GitHubStrategy from "passport-github2";
 import dotenv from "dotenv";
+import GoogleStrategy from "passport-google-oauth20";
 
 dotenv.config();
 const GH_CLIENT_ID = process.env.GH_CLIENT_ID;
 const GH_CLIENT_SECRETS = process.env.GH_CLIENT_SECRETS;
 const GH_CALLBACK_URL = process.env.GH_CALLBACK_URL;
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
 
 const UserManager = new Users();
 const cartManager = new CartManager();
@@ -17,6 +22,43 @@ const cartManager = new CartManager();
 const localStrategy = local.Strategy;
 
 const initializePassport = () => {
+
+    passport.use("google", new GoogleStrategy(
+        {
+            clientID: GOOGLE_CLIENT_ID,
+            clientSecret: GOOGLE_CLIENT_SECRET,
+            callbackURL: GOOGLE_CALLBACK_URL
+        },
+        async (accessToken, refreshToken, profile, cb) => {
+            try {
+                
+                const user = await UserManager.getUser(profile?.email);
+
+                if (user === null) {
+
+                    const newCart = await cartManager.saveCart();
+                    const cart = newCart._id;
+
+                    await UserManager.saveUser({
+                        firstName: profile.name.givenName,
+                        lastName: profile.name.familyName,
+                        email: profile?.email,
+                        password: Math.random().toString(36).substring(7),
+                        cart
+                    });
+
+                    const userUpdated = await UserManager.getUser(profile?.email);
+                    return cb(null, userUpdated);
+                } else {
+                    return cb(null, user);
+                }
+
+            } catch (error) {
+                return cb(error, null)
+            }
+        }
+    ));
+
     passport.use("signin", new localStrategy(
         { passReqToCallback: true, usernameField: "email" },
         async (req, username, password, done) => {
@@ -89,8 +131,8 @@ const initializePassport = () => {
                     const cart = newCart._id;
 
                     await UserManager.saveUser({
-                        firstName: profile.displayName.split(" ")[0],
-                        lastName: profile.displayName.split(" ")[1],
+                        firstName: profile?.displayName.split(" ")[0],
+                        lastName: profile?.displayName.split(" ")[1],
                         email: profile?._json.email,
                         password: Math.random().toString(36).substring(7),
                         cart

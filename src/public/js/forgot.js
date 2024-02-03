@@ -8,9 +8,36 @@ async function postForgot(email, password) {
         .then(function (response) {
             console.log(response);
             if (response.statusText === "OK") {
-                window.location.href = "http://localhost:8080/login";
+                Toastify({
+                    text: "Se restauró la contraseña correctamente.",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                    callback: function redirection() {
+                            window.location.href = "http://localhost:8080/login";
+                    }
+                }).showToast();
+                
             } else {
-                alert("Datos incorrectos");
+                Toastify({
+                    text: "Datos incorrectos.",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "red",
+                        color: "black"
+                    }
+                }).showToast();
             }
         })
         .catch(function (error) {
@@ -27,7 +54,19 @@ loginFormForgot.addEventListener("submit", async (e) => {
     const repassword = document.getElementById("repassword").value;
 
     if (password !== repassword) {
-        alert("Las contraseñas no coinciden, intenta nuevamente.")
+        Toastify({
+            text: "Las contraseñas no coinciden, intenta nuevamente.",
+            duration: 3000,
+            newWindow: true,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: "red",
+                color: "black"
+            }
+        }).showToast();
     } else {
         await postForgot(email, password);
     }
