@@ -4,10 +4,8 @@ import Users from "../dao/dbManagers/UserManager.js";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import { createHash, isValidPass } from "../utils.js";
 import GitHubStrategy from "passport-github2";
-import dotenv from "dotenv";
 import GoogleStrategy from "passport-google-oauth20";
 
-dotenv.config();
 const GH_CLIENT_ID = process.env.GH_CLIENT_ID;
 const GH_CLIENT_SECRETS = process.env.GH_CLIENT_SECRETS;
 const GH_CALLBACK_URL = process.env.GH_CALLBACK_URL;
@@ -31,8 +29,8 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
-                
-                const user = await UserManager.getUser(profile?.email);
+
+                const user = await UserManager.getUser(profile?.id);
 
                 if (user === null) {
 
@@ -44,10 +42,11 @@ const initializePassport = () => {
                         lastName: profile.name.familyName,
                         email: profile?.email,
                         password: Math.random().toString(36).substring(7),
+                        idgoogle: profile?.id,
                         cart
                     });
 
-                    const userUpdated = await UserManager.getUser(profile?.email);
+                    const userUpdated = await UserManager.getUser(profile?.id);
                     return cb(null, userUpdated);
                 } else {
                     return cb(null, user);
@@ -122,8 +121,8 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-
-                const user = await UserManager.getUser(profile?._json.email);
+                
+                const user = await UserManager.getUser(profile?.id);
 
                 if (user === null) {
 
@@ -135,10 +134,11 @@ const initializePassport = () => {
                         lastName: profile?.displayName.split(" ")[1],
                         email: profile?._json.email,
                         password: Math.random().toString(36).substring(7),
+                        idgithub: profile?.id,
                         cart
                     });
 
-                    const userUpdated = await UserManager.getUser(profile?._json.email);
+                    const userUpdated = await UserManager.getUser(profile?.id);
                     return done(null, userUpdated);
                 } else {
                     return done(null, user);

@@ -1,13 +1,8 @@
 import express from "express";
-import productsRouter from "./routes/products.route.js";
-import cartsRouter from "./routes/carts.route.js";
-import viewsRouter from "./routes/views.route.js";
-import chatRouter from "./routes/chat.route.js";
-import sessionsRouter from "./routes/sessions.route.js";
+import indexRoute from "./routes/index.route.js"
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";//server para crear con HTTP
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -15,7 +10,6 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
-dotenv.config()
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
 const COOKIESECRET = process.env.USERCOOKIESECRET;
@@ -42,8 +36,6 @@ app.set("view engine", "handlebars");//indico que el motor que instancié es el 
 
 app.use(express.static(__dirname + "/public"));//indico estáticamente mi carpeta public
 
-
-
 const httpServer = app.listen(PORT, () => {//instancio solo el server http
     console.log(`Servidor escuchando en http://localhost: ${PORT}`)
 });
@@ -69,11 +61,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use("/api/carts", cartsRouter);
-app.use("/", viewsRouter);
-app.use("/api/products", productsRouter);
-app.use("/chat", chatRouter);
-app.use("/api/sessions", sessionsRouter);
+app.use("/", indexRoute);
 
 const io = new Server(httpServer);//creo el socket server
 

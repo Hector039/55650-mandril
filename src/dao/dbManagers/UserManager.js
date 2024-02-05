@@ -2,8 +2,8 @@ import userModel from "../models/usermodel.js";
 
 export default class Users {
 
-    async getUser(email) {
-        let user = await userModel.findOne({ email: email }).populate("cart").lean();
+    async getUser(id) {
+        let user = await userModel.findOne({$or: [{email: id}, {idgoogle: id}, {idgithub: id}]}).populate("cart").lean();
         return user;
     }
 
