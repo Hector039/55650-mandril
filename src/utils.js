@@ -1,12 +1,27 @@
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from "bcrypt";
-
-export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
-export const isValidPass = (userPassword, password) => bcrypt.compareSync(password, userPassword);
+import jwt from "jsonwebtoken";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default __dirname;
+
+export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+export const isValidPass = (password, userPassword) => bcrypt.compareSync(password, userPassword);
+
+
+export const generateToken = (user) => {
+    const token = jwt.sign( user, process.env.USERCOOKIESECRET, { expiresIn: "1h" });
+    return token;
+};
+
+
+export const authorization = (role) => {
+    return async (req, res, next) => {
+        if (!req.user) return res.status(401).send({ error: "No autorizado" });
+        if (req.user.role != role) return res.status(403).send({ error: "Sin permisos" });
+        next();
+    }
+}

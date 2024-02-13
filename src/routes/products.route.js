@@ -5,6 +5,22 @@ const router = Router();
 
 const productManager = new Products();
 
+router.param("pid", async (req, res, next, pid) => {
+    try {
+        const productById = await productManager.getProductById(pid);
+        if (productById === null) {
+            req.product = null;
+            res.status(404).json({ error: "Producto inexistente." })
+        }
+        req.product = productById;
+        next();
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+        })
+    }
+})
+
 router.get("/", async (req, res) => {
     const { limit, sort, page, category } = req.query;
 
@@ -45,9 +61,8 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-    const { pid } = req.params;
     try {
-        const productById = await productManager.getProductById(pid);
+        const productById = req.product;
 
         res.status(201).json({
             msg: "Producto encontrado.",
@@ -94,10 +109,10 @@ router.post("/", async (req, res) => {
 })
 
 router.put("/:pid", async (req, res) => {
-    const { pid } = req.params;
     const { title, description, code, price, stock, category, thumbnails, status } = req.body;
 
     try {
+        const productId = req.product._id;
 
         const newProduct = {
             title,
@@ -110,7 +125,7 @@ router.put("/:pid", async (req, res) => {
             status
         };
 
-        const response = await productManager.updateProduct(pid, newProduct);
+        const response = await productManager.updateProduct(productId, newProduct);
 
         res.status(201).json({
             msg: "Producto modificado correctamente.",
@@ -125,17 +140,16 @@ router.put("/:pid", async (req, res) => {
 });
 
 router.delete("/:pid", async (req, res) => {
-    const { pid } = req.params;
-
     try {
-        await productManager.deleteProduct(pid);
+        const productId = req.product._id;
+        await productManager.deleteProduct(productId);
 
         const prodUpdated = await productManager.getAllProducts();
 
         req.io.emit("updateList", prodUpdated);
 
         res.status(201).json({
-            msg: `Producto ID: ${pid} eliminado correctamente.`,
+            msg: `Producto ID: ${productId} eliminado correctamente.`,
         });
 
     } catch (error) {

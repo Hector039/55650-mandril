@@ -5,6 +5,7 @@ import CartManager from "../dao/dbManagers/CartManager.js";
 import { createHash, isValidPass } from "../utils.js";
 import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";
+import jwt from "passport-jwt";
 
 const GH_CLIENT_ID = process.env.GH_CLIENT_ID;
 const GH_CLIENT_SECRETS = process.env.GH_CLIENT_SECRETS;
@@ -18,19 +19,43 @@ const UserManager = new Users();
 const cartManager = new CartManager();
 
 const localStrategy = local.Strategy;
+const JwtStrategy = jwt.Strategy;
+const extractJwt = jwt.ExtractJwt;
+
+const cookieExtractor = req => {
+    let token = null;
+    if (req && req.cookies) {
+        token = req.cookies["cookieToken"];
+    }
+    return token;
+}
 
 const initializePassport = () => {
+
+    passport.use("jwt", new JwtStrategy({
+        jwtFromRequest: extractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.USERCOOKIESECRET
+    }, async (user, done) => {
+        try {
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
+    }
+    ))
 
     passport.use("google", new GoogleStrategy(
         {
             clientID: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
-            callbackURL: GOOGLE_CALLBACK_URL
+            callbackURL: GOOGLE_CALLBACK_URL,
+            scope: ["profile"]
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
 
                 const user = await UserManager.getUser(profile?.id);
+                user["photo"] = profile._json.picture;
 
                 if (user === null) {
 
@@ -47,6 +72,8 @@ const initializePassport = () => {
                     });
 
                     const userUpdated = await UserManager.getUser(profile?.id);
+                    userUpdated["photo"] = profile._json.picture;
+
                     return cb(null, userUpdated);
                 } else {
                     return cb(null, user);
@@ -65,8 +92,7 @@ const initializePassport = () => {
             try {
                 const user = await UserManager.getUser(email);
                 if (user) {
-                    console.log("El Usuario ya existe.");
-                    return done(null, false);
+                    return done(null, false, { messages: "El Usuario ya existe." });
                 };
 
                 const newCart = await cartManager.saveCart();
@@ -82,10 +108,6 @@ const initializePassport = () => {
 
                 const userUpdated = await UserManager.getUser(email);
 
-                req.session.user = userUpdated.firstName;
-                req.session.role = userUpdated.email === "adminCoder@coder.com" ? "admin" : userUpdated.role;
-                req.session.cart = userUpdated.cart;
-
                 return done(null, userUpdated);
             } catch (error) {
                 return done(error, null);
@@ -99,12 +121,10 @@ const initializePassport = () => {
             try {
                 const user = await UserManager.getUser(username);
                 if (user === null) {
-                    console.log("El Usuario no existe.");
-                    return done(null, false);
+                    return done(null, false, { messages: "El Usuario no existe." });
                 };
                 if (!isValidPass(user.password, password)) {
-                    console.log("Usuario o contraseña incorrecto.");
-                    return done(null, false);
+                    return done(null, false, { messages: "Usuario o contraseña incorrecto." });
                 };
                 return done(null, user)
             } catch (error) {
@@ -117,13 +137,15 @@ const initializePassport = () => {
         {
             clientID: GH_CLIENT_ID,
             clientSecret: GH_CLIENT_SECRETS,
-            callbackURL: GH_CALLBACK_URL
+            callbackURL: GH_CALLBACK_URL,
+            scope: ["user: email"]
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                
-                const user = await UserManager.getUser(profile?.id);
 
+                const user = await UserManager.getUser(profile?.id);
+                user["photo"] = profile._json.avatar_url;
+                
                 if (user === null) {
 
                     const newCart = await cartManager.saveCart();
@@ -139,6 +161,8 @@ const initializePassport = () => {
                     });
 
                     const userUpdated = await UserManager.getUser(profile?.id);
+                    userUpdated["photo"] = profile._json.avatar_url;
+
                     return done(null, userUpdated);
                 } else {
                     return done(null, user);
@@ -152,12 +176,12 @@ const initializePassport = () => {
     ))
 
     passport.serializeUser((user, done) => {
-        done(null, user._id);
+        done(null, user.id);
     });
 
     passport.deserializeUser(async (user, done) => {
         try {
-            const userDeserialized = await UserManager.getUser(user.email);
+            const userDeserialized = await UserManager.getUser(user.id);
             done(null, userDeserialized);
         } catch (error) {
             done(error, null);

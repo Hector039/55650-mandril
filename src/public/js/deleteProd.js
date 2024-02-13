@@ -13,7 +13,6 @@ async function deleteItem(prodId) {
 };
 
 async function emptyCart(userCartId) {
-    console.log(userCartId);
     await axios.delete(urlEmptyCart + userCartId)
         .then(function (response) {
             console.log(response.data.msg);

@@ -1,7 +1,7 @@
 import express from "express";
-import indexRoute from "./routes/index.route.js"
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
+import indexRoute from "./routes/index.route.js"
 import { Server } from "socket.io";//server para crear con HTTP
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
@@ -9,6 +9,7 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
+
 
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
@@ -36,6 +37,8 @@ app.set("view engine", "handlebars");//indico que el motor que instancié es el 
 
 app.use(express.static(__dirname + "/public"));//indico estáticamente mi carpeta public
 
+app.use("/", indexRoute);//Índice de rutas
+
 const httpServer = app.listen(PORT, () => {//instancio solo el server http
     console.log(`Servidor escuchando en http://localhost: ${PORT}`)
 });
@@ -44,7 +47,7 @@ const environment = async () => {
     try {
         await mongoose.connect(DB_URL);
         console.log("Base de datos conectada");
-    }catch (error){
+    } catch (error) {
         console.log("Error en conexión a base de datos", error);
     }
 };
@@ -61,7 +64,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use("/", indexRoute);
+
 
 const io = new Server(httpServer);//creo el socket server
 

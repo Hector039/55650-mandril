@@ -6,8 +6,7 @@ async function postLogin(email, pass) {
         password: pass
     })
         .then(function (response) {
-            console.log(response);
-            if (response.statusText === "OK") {
+            if (response.data.status === "Success") {
                 Toastify({
                     text: "Login correcto, bienvenido!.",
                     duration: 2000,
@@ -23,9 +22,12 @@ async function postLogin(email, pass) {
                             window.location.href = "http://localhost:8080";
                     }
                 }).showToast();
-            } else {
+            }
+        })
+        .catch(function (error) {
+            if (error.response.data.status === "ServerError") {
                 Toastify({
-                    text: "Datos incorrectos",
+                    text: "Problema de servidor",
                     duration: 3000,
                     newWindow: true,
                     close: true,
@@ -38,9 +40,21 @@ async function postLogin(email, pass) {
                     }
                 }).showToast();
             }
-        })
-        .catch(function (error) {
-            console.log(error);
+            if (error.response.data.status === "UserError") {
+                Toastify({
+                    text: "Usuario o contraseña incorrectos",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "red",
+                        color: "black"
+                    }
+                }).showToast();
+            }
         });
 }
 
@@ -52,3 +66,33 @@ loginForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("password").value;
     await postLogin(email, password);
 });
+
+window.fbAsyncInit = function () {
+    FB.init({
+        appId: '405107685391557',
+        cookie: true,
+        xfbml: true,
+        version: 'v8.0'
+    });
+
+    FB.AppEvents.logPageView();
+
+};
+
+(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function onLogin() {
+    FB.login((response) => {
+        if (response.authResponse) {
+            FB.api("/me?fields=email,name,picture"), (response) => {
+                console.log(response);
+            }
+        }
+    }) 
+}

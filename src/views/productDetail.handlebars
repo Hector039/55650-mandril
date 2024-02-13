@@ -5,18 +5,25 @@
         <p>Nombre: {{productById.title}}</p>
         <p>Descripción: {{productById.description}}</p>
         <p>Precio: {{productById.price}}</p>
+        <div class="stock-container">
+            <p>Stock:</p>
+            <p id="stock">{{productById.stock}}</p>
+        </div>
         <p>Categoría: {{productById.category}}</p>
         <p>Links imágenes: {{productById.thumbnails}}</p>
-        
+
         <div id="counter-container">
             <button id="add">+</button>
             <p id="quantity">1</p>
             <button id="rest">-</button>
         </div>
-        
+
         {{#if isLogIn}}
+        {{#if isAdmin}}
         <button id="addToCart">Agregar al carrito</button>
+        {{/if}}
         <a href="/carts"><button>Ir al carrito</button></a>
+
         {{/if}}
         <a href="/"><button>Volver</button></a>
     </div>

@@ -19,13 +19,17 @@
     <p>Olvidaste tu contraseña?</p>
     <a href="/forgot"><button>Restaurar</button></a>
 </div>
-<div>
+<div class="social-login-container">
     <p>También puedes entrar con tu cuenta de Google:</p>
-    <a href="/api/sessions/google"><button>Ingresar con Google</button></a>
+    <a href="/api/sessions/google"><button>Ingresar con Google <img src="../googleLogo.png" alt="Google Logo"></button></a>
 </div>
-<div>
+<div class="social-login-container">
     <p>O entrar con tu cuenta de GitHub:</p>
-    <a href="/api/sessions/github"><button>Ingresar con GitHub</button></a>
+    <a href="/api/sessions/github"><button>Ingresar con GitHub <img src="../githubLogo.png" alt="GitHub Logo"></button></a>
+</div>
+<div class="social-login-container">
+    <p>O entrar con tu cuenta de Facebook:</p>
+    <a onclick="onLogin();"><button>Ingresar con Facebook <img src="../facebookLogo.png" alt="Facebook Logo"></button></a>
 </div>
 <div>
     <p>Aún no estás registrado?</p>

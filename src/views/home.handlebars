@@ -1,8 +1,13 @@
 <div class="welcome-container">
     {{#if isLogIn}}
-    <h1>Bienvenido {{user}}!</h1>
-    <a href="/logout"><button>Cerrar sesión</button></a>
+    <h1>Bienvenido {{userName}}!</h1>
+    <div class="logout-container">
+        <a href="/logout"><button>Cerrar sesión<img src={{userPhoto}} alt="User profile photo"></button></a>
+        
+    </div>
+    {{#if isAdminButton}}
     <a href="/carts"><button>Ir al carrito</button></a>
+    {{/if}}
     {{else}}
     <h1>Bienvenido Invitado!</h1>
     <p>Loguéate para poder comprar</p>

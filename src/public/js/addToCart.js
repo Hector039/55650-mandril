@@ -1,6 +1,7 @@
 const urlToAdd = "http://localhost:8080/api/carts/addproduct/";
 
 const productId = document.getElementById("product-id").innerText;
+const productStock = document.getElementById("stock").innerText;
 const addToCart = document.getElementById("addToCart");
 
 let add = document.getElementById("add");
@@ -9,8 +10,10 @@ let element = document.getElementById("quantity");
 let counter = 1;
 
 add.onclick = function () {
-    counter++;
-    element.textContent = counter;
+    if(counter < parseInt(productStock)){
+        counter++;
+        element.textContent = counter;
+    }
 };
 
 rest.onclick = function () {

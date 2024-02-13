@@ -1,15 +1,14 @@
 const urlSignin = "http://localhost:8080/api/sessions/signin";
 
-async function postSignup(firstname, lastname, email, password, repassword) {
+async function postSignup(firstname, lastname, email, password) {
     await axios.post(urlSignin, {
         firstName: firstname,
         lastName: lastname,
         email: email,
-        password: password,
-        repassword: repassword
+        password: password
     })
         .then(function (response) {
-            if (response.statusText === "Created") {
+            if (response.data.status === "Success") {
                 Toastify({
                     text: "Registro correcto, bienvenido!.",
                     duration: 2000,
@@ -25,7 +24,25 @@ async function postSignup(firstname, lastname, email, password, repassword) {
                             window.location.href = "http://localhost:8080";
                     }
                 }).showToast();
-            } else {
+            }
+        })
+        .catch(function (error) {
+            if (error.response.data.status === "ServerError") {
+                Toastify({
+                    text: "Problema de servidor",
+                    duration: 3000,
+                    newWindow: true,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "red",
+                        color: "black"
+                    }
+                }).showToast();
+            }
+            if (error.response.data.status === "UserError") {
                 Toastify({
                     text: "Datos incorrectos",
                     duration: 3000,
@@ -40,9 +57,6 @@ async function postSignup(firstname, lastname, email, password, repassword) {
                     }
                 }).showToast();
             }
-        })
-        .catch(function (error) {
-            console.log(error);
         });
 };
 
@@ -71,6 +85,6 @@ signupForm.addEventListener("submit", async (event) => {
             }
         }).showToast();
     } else {
-        await postSignup(firstName, lastName, email, password, repassword);
+        await postSignup(firstName, lastName, email, password);
     }
 });

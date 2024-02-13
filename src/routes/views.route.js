@@ -2,7 +2,8 @@ import { Router } from "express";
 import Products from "../dao/dbManagers/ProductManager.js";
 import Messages from "../dao/dbManagers/MessagesManager.js";
 import CartManager from "../dao/dbManagers/CartManager.js";
-import auth from "../middlewares/auth.js";
+import { authorization } from "../utils.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -32,29 +33,19 @@ router.get("/signin", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-    res.clearCookie('connect.sid');
+    res.clearCookie("cookieToken");
 
-    req.session.destroy(error => {
-        if (error) {
-            return res.json({
-                status: "Error de LogOut",
-                body: error
-            });
-        };
+    res.render("logout", {
+        title: "LogOut",
+        style: "styles.css"
+    });
 
-        res.render("logout", {
-            title: "LogOut",
-            style: "styles.css"
-        });
-
-    })
 });
 
-router.get("/", async (req, res) => {
+router.get("/", passport.authenticate("jwt"), async (req, res) => {
     const { lim, pag } = req.query;
-
     try {
-        
+
         let options = {
             limit: lim === undefined ? 2 : parseInt(lim),
             page: pag === undefined ? 1 : parseInt(pag),
@@ -66,15 +57,20 @@ router.get("/", async (req, res) => {
         const { docs, totalDocs, totalPages, hasPrevPage, hasNextPage, nextPage, prevPage, limit, page } = report;
 
         const showPaginate = totalPages <= 1 ? false : true;
-        const isAdmin = req.session.role === "admin" ? true : false;
-        const isLogIn = req.session.user === undefined ? false : true;
+        const isAdmin = req.user.role === "admin" ? true : false;
+        const isAdminButton = req.user.role === "admin" ? false : true;
+        const isLogIn = req.user.id === undefined ? false : true;
+        const userPhoto = req.user.photo === undefined ? "../profilePhoto.png" : req.user.photo;
+        const userName = req.user.name
 
         res.render("home", {
             title: "Productos",
             style: "styles.css",
-            user: req.session.user,
+            userName,
+            userPhoto,
             isLogIn,
             isAdmin,
+            isAdminButton,
             docs,
             totalDocs,
             limit,
@@ -94,21 +90,23 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/productdetail/:pid", async (req, res) => {
+router.get("/productdetail/:pid", passport.authenticate("jwt"), async (req, res) => {
     const { pid } = req.params;
 
     try {
         const productById = await productManager.getProductById(pid);
-        const userCart = req.session.cart;
+        const userCart = req.user.role === "admin" ? null : req.user.cart._id;
         const cart = await cartManager.getCartById(userCart);
-        const isLogIn = req.session.user === undefined ? false : true;
+        const isLogIn = req.user === undefined ? false : true;
+        const isAdmin = req.user.role === "admin" ? false : true
 
         res.render("productDetail", {
             title: "Detalle de Producto",
             style: "styles.css",
             productById,
             isLogIn,
-            cart
+            cart,
+            isAdmin
         });
 
     } catch (error) {
@@ -118,14 +116,14 @@ router.get("/productdetail/:pid", async (req, res) => {
     }
 });
 
-router.get("/realtimeproducts", auth, async (req, res) => {
+router.get("/realtimeproducts", passport.authenticate("jwt"), authorization("admin"), async (req, res) => {
     try {
         const productos = await productManager.getAllProducts();
 
         res.render("realTimeProducts", {
             title: "Productos",
             style: "styles.css",
-            user: req.session.user,
+            user: req.user.name,
             productos
         });
 
@@ -153,13 +151,13 @@ router.get("/chat", async (req, res) => {
     }
 });
 
-router.get("/carts", async (req, res) => {
+router.get("/carts", passport.authenticate("jwt"), async (req, res) => {
     try {
 
-        const user = req.session.user;
-        const userCartId = req.session.cart._id;
+        const user = req.user.name;
+        const userCartId = req.user.role === "admin" ? null : req.user.cart._id;
         const cart = await cartManager.getCartById(userCartId);
-        const cartProducts = cart.products;
+        const cartProducts = req.user.role === "admin" ? [] : cart.products;
 
         const isCartOccupied = cartProducts.length > 0 ? true : false;
 

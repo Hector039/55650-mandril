@@ -86,6 +86,31 @@ textarea {
     justify-content: center;
     gap: 15px;
 }
+
+.stock-container p{
+    display: inline;
+    gap: 5px;
+}
+
+.social-login-container a button{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-login-container img{
+    height: 35px;
+}
+
+.logout-container a button{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-container img{
+    height: 40px;
+}
 /*LogOut Page*/
 .logout-page{
     display: flex;

@@ -1,20 +1,28 @@
 import { Router } from "express";
 import Users from "../dao/dbManagers/UserManager.js";
-import { createHash } from "../utils.js";
+import { createHash, /* passportCall, */ authorization } from "../utils.js";
 import passport from "passport";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 const UserManager = new Users();
 
+router.get("/current", /* passportCall("jwt"), */ authorization("admin"), (req, res) => {
+    res.send(req.user);
+});
+
 router.post("/login", passport.authenticate("login", { failureRedirect: "/api/sessions/faillogin" }), (req, res) => {
 
     req.session.user = req.user.firstName;
-    req.session.role = req.user.email === "adminCoder@coder.com" ? "admin" : req.user.role;
+    req.session.role = req.user.role;
     req.session.cart = req.user.cart;
 
-    res.status(200).json({
-        respuesta: `${req.session.user} ha ingresado correctamente`,
-    });
+    const userEmail = req.user.email;
+    const userRole = req.user.role;
+
+    let token = jwt.sign({ userEmail, userRole }, process.env.USERCOOKIESECRET, { expiresIn: "12h" });
+
+    res.cookie("cookieToken", token, { maxAge: 60 * 60 * 1000, httpOnly: true }).send({ message: "Logueo Correcto!" });
 
 });
 

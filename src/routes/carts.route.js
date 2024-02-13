@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import Products from "../dao/dbManagers/ProductManager.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -47,11 +48,11 @@ router.get("/:cid", async (req, res) => {
     }
 });
 
-router.delete("/product/:pid", async (req, res) => {
+router.delete("/product/:pid", passport.authenticate("jwt"), async (req, res) => {
     const { pid } = req.params;
 
     try {
-        const userCart = req.session.cart;
+        const userCart = req.user.cart._id;
         const productId = await productManager.getProductById(pid);
         const cart = await cartManager.getCartById(userCart);
 
@@ -168,13 +169,13 @@ router.put("/:cid/product/:pid", async (req, res) => {
     }
 });
 
-router.post("/addproduct/:pid", async (req, res) => {
+router.post("/addproduct/:pid", passport.authenticate("jwt"), async (req, res) => {
     const { pid } = req.params;
     const { quantity } = req.body;
 
 
     try {
-        const userCart = req.session.cart;
+        const userCart = req.user.cart._id;
         const productId = await productManager.getProductById(pid);
         const cart = await cartManager.getCartById(userCart);
 
@@ -206,44 +207,3 @@ router.post("/addproduct/:pid", async (req, res) => {
 });
 
 export default router;
-
-/* 
-router.post("/:cid/product/:pid", async (req, res) => {
-    const { cid, pid } = req.params;
-
-    try {
-        const productId = await productManager.getProductById(pid);
-        const cart = await cartManager.getCartById(cid);
-
-        if (cart === null) {
-            res.status(400).json({
-                error: `El carrito de ID: ${cid} no encontrado`,
-            });
-            return;
-        }
-
-        if (productId === null) {
-            res.status(400).json({
-                error: `El producto de ID: ${pid} no encontrado`,
-            });
-            return;
-        }
-
-        await cartManager.addProductToCart(cart, pid);
-        const cartUpdated = await cartManager.getCartById(cid);
-
-        const quantityProduct = cartUpdated.products.find(prod => prod.product._id == pid);
-
-        res.status(201).json({
-            msg: `Se sumó un producto ${pid} en el carrito ${cid}.`,
-            data: cartUpdated,
-            cantidad: quantityProduct.quantity
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            error: error.message,
-        });
-    }
-});
- */
