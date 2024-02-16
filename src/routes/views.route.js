@@ -2,7 +2,7 @@ import { Router } from "express";
 import Products from "../dao/dbManagers/ProductManager.js";
 import Messages from "../dao/dbManagers/MessagesManager.js";
 import CartManager from "../dao/dbManagers/CartManager.js";
-import { authorization } from "../utils.js";
+import { authorization, userPassJwt, isSessionOn } from "../utils.js";
 import passport from "passport";
 
 const router = Router();
@@ -11,21 +11,21 @@ const messagesManager = new Messages();
 const productManager = new Products();
 const cartManager = new CartManager();
 
-router.get("/login", (req, res) => {
+router.get("/login", isSessionOn(), (req, res) => {
     res.render("login", {
         title: "Inicia sesión",
         style: "styles.css"
     });
 });
 
-router.get("/forgot", (req, res) => {
+router.get("/forgot", isSessionOn(), (req, res) => {
     res.render("forgot", {
         title: "Restaura tu contraseña",
         style: "styles.css"
     });
 });
 
-router.get("/signin", (req, res) => {
+router.get("/signin", isSessionOn(), (req, res) => {
     res.render("signin", {
         title: "Crea tu cuenta",
         style: "styles.css"
@@ -42,8 +42,8 @@ router.get("/logout", (req, res) => {
 
 });
 
-router.get("/", passport.authenticate("jwt"), async (req, res) => {
-    const { lim, pag } = req.query;
+router.get("/", userPassJwt(), async (req, res) => {
+    let { pag, sortcategory, sortprice, lim } = req.query;
     try {
 
         let options = {
@@ -52,7 +52,76 @@ router.get("/", passport.authenticate("jwt"), async (req, res) => {
             lean: true
         };
 
-        const report = await productManager.paginateProduct({}, options);
+        let sortCategory = null;
+        let sortPrice = null;
+
+        if(sortprice === undefined || sortprice === "todos"){
+            sortPrice = `&sortprice=todos`;
+        } else {
+            options["sort"] = { price: sortprice };
+            sortPrice = `&sortprice=${sortprice}`;
+        }
+
+        if (sortcategory === undefined || sortcategory === "todos") {
+            sortcategory = {};
+            sortCategory = `&sortcategory=todos`;
+        } else {
+            sortcategory = { category: sortcategory };
+            sortCategory = `&sortcategory=${sortcategory.category}`;
+        }
+
+        const report = await productManager.paginateProduct(sortcategory, options);
+
+        let limA = "";
+        let limB = "";
+        let limC = "";
+        if (lim === "2") {
+            limA = "selected";
+        } else if (lim === "5") {
+            limB = "selected";
+        } else if (lim === "10") {
+            limC = "selected";
+        }
+
+        let priceA = "";
+        let priceB = "";
+        let priceC = "";
+        if (sortprice === "todos" || sortprice === undefined) {
+            priceA = "selected";
+        } else if (sortprice === "asc") {
+            priceB = "selected";
+        } else if (sortprice === "desc") {
+            priceC = "selected";
+        }
+
+        let catA = "";
+        let catB = "";
+        let catC = "";
+        let catD = "";
+        let catE = "";
+        let catF = "";
+        let catG = "";
+        let catH = "";
+        let catI = "";
+        if (sortcategory.category === "todos") {
+            catA = "selected";
+        } else if (sortcategory.category === "muebles") {
+            catB = "selected";
+        } else if (sortcategory.category === "iluminación") {
+            catC = "selected";
+        } else if (sortcategory.category === "ropa de cama") {
+            catD = "selected";
+        } else if (sortcategory.category === "electrodomésticos") {
+            catE = "selected";
+        } else if (sortcategory.category === "cocina") {
+            catF = "selected";
+        } else if (sortcategory.category === "tecnología") {
+            catG = "selected";
+        } else if (sortcategory.category === "accesorios") {
+            catH = "selected";
+        } else if (sortcategory.category === "decoración") {
+            catI = "selected";
+        }
 
         const { docs, totalDocs, totalPages, hasPrevPage, hasNextPage, nextPage, prevPage, limit, page } = report;
 
@@ -61,11 +130,14 @@ router.get("/", passport.authenticate("jwt"), async (req, res) => {
         const isAdminButton = req.user.role === "admin" ? false : true;
         const isLogIn = req.user.id === undefined ? false : true;
         const userPhoto = req.user.photo === undefined ? "../profilePhoto.png" : req.user.photo;
-        const userName = req.user.name
+        const userName = req.user.name;
 
         res.render("home", {
             title: "Productos",
             style: "styles.css",
+            limA, limB, limC, priceA, priceB, priceC,
+            catA, catB, catC, catD, catE, catF, catG, catH, catI,
+            sortCategory, sortPrice,
             userName,
             userPhoto,
             isLogIn,
@@ -90,15 +162,18 @@ router.get("/", passport.authenticate("jwt"), async (req, res) => {
     }
 });
 
-router.get("/productdetail/:pid", passport.authenticate("jwt"), async (req, res) => {
+router.get("/productdetail/:pid", userPassJwt(), async (req, res) => {
     const { pid } = req.params;
 
     try {
+        const isLogIn = req.user.id === undefined ? false : true;
+        const isAdmin = req.user.role === "admin" ? false : true;
+        let userCart = null;
+        if (isLogIn && isAdmin) {
+            userCart = req.user.cart._id;
+        }
         const productById = await productManager.getProductById(pid);
-        const userCart = req.user.role === "admin" ? null : req.user.cart._id;
         const cart = await cartManager.getCartById(userCart);
-        const isLogIn = req.user === undefined ? false : true;
-        const isAdmin = req.user.role === "admin" ? false : true
 
         res.render("productDetail", {
             title: "Detalle de Producto",

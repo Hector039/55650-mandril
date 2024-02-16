@@ -20,9 +20,9 @@ const cartManager = new CartManager();
 
 const localStrategy = local.Strategy;
 const JwtStrategy = jwt.Strategy;
-const extractJwt = jwt.ExtractJwt;
+//const extractJwt = jwt.ExtractJwt;
 
-const cookieExtractor = req => {
+const cookieExtractor = function (req) {
     let token = null;
     if (req && req.cookies) {
         token = req.cookies["cookieToken"];
@@ -30,14 +30,16 @@ const cookieExtractor = req => {
     return token;
 }
 
+const options = {
+    jwtFromRequest: cookieExtractor,
+    secretOrKey: process.env.USERCOOKIESECRET
+}
+
 const initializePassport = () => {
 
-    passport.use("jwt", new JwtStrategy({
-        jwtFromRequest: extractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: process.env.USERCOOKIESECRET
-    }, async (user, done) => {
+    passport.use("jwt", new JwtStrategy(options, async function (jwt_payload, done) {
         try {
-            return done(null, user);
+            return done(null, jwt_payload);
         } catch (error) {
             return done(error);
         }
@@ -145,7 +147,7 @@ const initializePassport = () => {
 
                 const user = await UserManager.getUser(profile?.id);
                 user["photo"] = profile._json.avatar_url;
-                
+
                 if (user === null) {
 
                     const newCart = await cartManager.saveCart();

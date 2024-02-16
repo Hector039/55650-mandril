@@ -11,10 +11,76 @@ h1 {
 }
 
 #product-card {
-    border: 1px solid;
-    border-radius: 10px;
-    margin: 10px;
+    width: 330px;
+    border-radius: 5px;
+    border: 1px solid #418241;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-block: 25px;
+    padding-bottom: 15px;
+}
+
+#product-card img {
+    width: 100%;
+}
+
+.products-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.product-card-detalle {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-block: 150px;
+    border-radius: 5px;
+    border: 1px solid #418241;
+}
+
+.img-product-detalle {
+    width: 400px;
+}
+
+.product-main-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.buttons-card-detalle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-container{
+    display: flex;
+    padding: 30px;
+    gap: 20px;
+}
+
+.products-cart{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+    border: 1px solid #418241;
+    width: 300px;
+    gap: 10px;
     padding: 15px;
+}
+
+.filter-container{
+    display: flex;
+    justify-content: space-around;
+    margin-block: 30px;
 }
 
 button {
@@ -80,45 +146,47 @@ textarea {
     justify-content: center;
 }
 
-.welcome-container{
+.welcome-container {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 15px;
 }
 
-.stock-container p{
+.stock-container p {
     display: inline;
     gap: 5px;
 }
 
-.social-login-container a button{
+.social-login-container a button {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-.social-login-container img{
+.social-login-container img {
     height: 35px;
 }
 
-.logout-container a button{
+.logout-container a button {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-.logout-container img{
+.logout-container img {
     height: 40px;
 }
+
 /*LogOut Page*/
-.logout-page{
+.logout-page {
     display: flex;
     flex-direction: column;
     align-items: center;
     align-content: center;
     justify-content: center;
 }
+
 /*Product Detail styles*/
 #counter-container {
     display: flex;
