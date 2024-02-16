@@ -8,8 +8,8 @@ const cartManager = new CartManager();
 
 export default class SessionsRouter extends CustomRouter {
     init() {
-        
-        this.get("/currentuser", "jwt", ["USER", "USER_PREMIUM"], (req, res) => {
+
+        this.get("/current", "jwt", ["USER", "USER_PREMIUM"], (req, res) => {
             res.sendSuccess(req.user);
         })
 

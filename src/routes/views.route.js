@@ -55,7 +55,7 @@ router.get("/", userPassJwt(), async (req, res) => {
         let sortCategory = null;
         let sortPrice = null;
 
-        if(sortprice === undefined || sortprice === "todos"){
+        if (sortprice === undefined || sortprice === "todos") {
             sortPrice = `&sortprice=todos`;
         } else {
             options["sort"] = { price: sortprice };

@@ -13,17 +13,17 @@ export const isValidPass = (password, userPassword) => bcrypt.compareSync(passwo
 
 
 export const generateToken = (user) => {
-    const token = jwt.sign( user, process.env.USERCOOKIESECRET, { expiresIn: "1h" });
+    const token = jwt.sign(user, process.env.USERCOOKIESECRET, { expiresIn: "1h" });
     return token;
 };
 
 export const userPassJwt = () => {//middleware para enviar al home tanto el usuario logueado, como un usuario invitado, sin enviar errores
     return async (req, res, next) => {
         const token = req.cookies.cookieToken;
-        if (token !== undefined){
+        if (token !== undefined) {
             const user = jwt.verify(token, process.env.USERCOOKIESECRET);
             req.user = user;
-        }else {
+        } else {
             const user = {
                 name: "Guest User",
                 role: "user"
@@ -45,9 +45,9 @@ export const authorization = (role) => {
 export const isSessionOn = () => {//middleware para evitar vovler al login o sigin cuando está el usuario logueado con jwt
     return async (req, res, next) => {
         const token = req.cookies.cookieToken;
-        if(token === undefined){
+        if (token === undefined) {
             next();
-        }else{
+        } else {
             res.redirect("/");
         }
     }
