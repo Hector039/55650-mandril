@@ -51,15 +51,18 @@ const initializePassport = () => {
             clientID: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
             callbackURL: GOOGLE_CALLBACK_URL,
-            scope: ["profile"]
+            scope: ["profile email"]
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
-
-                const user = await UserManager.getUser(profile?.id);
-                user["photo"] = profile._json.picture;
+                const user = await UserManager.getUser(profile.id);
 
                 if (user === null) {
+
+                    const userEmail = await UserManager.getUser(profile._json.email);
+                    if (userEmail) {
+                        return cb(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
+                    }
 
                     const newCart = await cartManager.saveCart();
                     const cart = newCart._id;
@@ -67,22 +70,70 @@ const initializePassport = () => {
                     await UserManager.saveUser({
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
-                        email: profile?.email,
+                        email: profile._json?.email,
                         password: Math.random().toString(36).substring(7),
-                        idgoogle: profile?.id,
+                        idgoogle: profile.id,
+                        cart
+                    });
+
+                    const userUpdated = await UserManager.getUser(profile.id);
+                    userUpdated["photo"] = profile._json.picture;
+
+                    return cb(null, userUpdated);
+                }
+
+                user["photo"] = profile._json.picture;
+                return cb(null, user);
+
+            } catch (error) {
+                return cb(error, null)
+            }
+        }
+    ));
+
+    passport.use("github", new GitHubStrategy(
+        {
+            clientID: GH_CLIENT_ID,
+            clientSecret: GH_CLIENT_SECRETS,
+            callbackURL: GH_CALLBACK_URL,
+            scope: ["user: email"]
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const user = await UserManager.getUser(profile.id);
+
+                if (user === null) {
+
+                    const userEmail = await UserManager.getUser(profile._json?.email);
+                    if (userEmail) {
+                        return done(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
+                    }
+
+                    const newCart = await cartManager.saveCart();
+                    const cart = newCart._id;
+
+                    await UserManager.saveUser({
+                        firstName: profile.displayName.split(" ")[0],
+                        lastName: profile.displayName.split(" ")[1],
+                        email: profile._json?.email,
+                        password: Math.random().toString(36).substring(7),
+                        idgithub: profile.id,
                         cart
                     });
 
                     const userUpdated = await UserManager.getUser(profile?.id);
-                    userUpdated["photo"] = profile._json.picture;
+                    userUpdated["photo"] = profile._json.avatar_url;
 
-                    return cb(null, userUpdated);
-                } else {
-                    return cb(null, user);
+                    return done(null, userUpdated);
                 }
 
+
+
+                user["photo"] = profile._json.avatar_url;
+                return done(null, user);
+
             } catch (error) {
-                return cb(error, null)
+                return done(error, null)
             }
         }
     ));
@@ -135,47 +186,6 @@ const initializePassport = () => {
         }
     ));
 
-    passport.use("github", new GitHubStrategy(
-        {
-            clientID: GH_CLIENT_ID,
-            clientSecret: GH_CLIENT_SECRETS,
-            callbackURL: GH_CALLBACK_URL,
-            scope: ["user: email"]
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-
-                const user = await UserManager.getUser(profile?.id);
-                user["photo"] = profile._json.avatar_url;
-
-                if (user === null) {
-
-                    const newCart = await cartManager.saveCart();
-                    const cart = newCart._id;
-
-                    await UserManager.saveUser({
-                        firstName: profile?.displayName.split(" ")[0],
-                        lastName: profile?.displayName.split(" ")[1],
-                        email: profile?._json.email,
-                        password: Math.random().toString(36).substring(7),
-                        idgithub: profile?.id,
-                        cart
-                    });
-
-                    const userUpdated = await UserManager.getUser(profile?.id);
-                    userUpdated["photo"] = profile._json.avatar_url;
-
-                    return done(null, userUpdated);
-                } else {
-                    return done(null, user);
-                }
-
-            } catch (error) {
-                return done(error, null)
-            }
-
-        }
-    ))
 
     passport.serializeUser((user, done) => {
         done(null, user.id);

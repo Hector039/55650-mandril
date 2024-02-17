@@ -17,13 +17,12 @@
 
         </div>
         {{/each}}
-        
+        <button onclick="emptyCart(`{{userCartId}}`)">Vaciar carrito</button>
         {{else}}
         <p>Ups! el carrito está vacío.</p>
         {{/if}}
     </section>
 
-    <button onclick="emptyCart(`{{userCartId}}`)">Vaciar carrito</button>
     <a href="/"><button>Volver a los productos</button></a>
 </div>
 
