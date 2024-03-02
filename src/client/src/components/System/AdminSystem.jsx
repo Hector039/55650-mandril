@@ -1,0 +1,133 @@
+import { useContext, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { DataContext } from "../context/dataContext";
+
+
+export default function System() {
+
+    const { addProduct, updateProduct, deleteProduct, productsFound, searchProduct, register, handleSubmit, reset, user } = useContext(DataContext);
+
+    const {
+        register: register2,
+        handleSubmit: handleSubmit2,
+    } = useForm({
+        mode: "onBlur",
+    });
+
+
+    const {
+        register: register3,
+        handleSubmit: handleSubmit3,
+        setValue,
+    } = useForm({
+        mode: "onBlur",
+    });
+
+    useEffect(() => {
+        productosEncontrados.map((obj) => {
+            setValue("id", obj.id);
+            setValue("nombre", obj.nombre_producto);
+            setValue("descripcion", obj.descripcion);
+            setValue("imagen", obj.img_producto);
+            setValue("categorias", obj.categoria);
+            setValue("precio", obj.precio);
+            setValue("stock", obj.stock);
+        })
+
+    }, [setValue, productosEncontrados])
+
+
+    return (
+        <>
+            <div class="welcome-container">
+                <h1>Bienvenido administrador {user.name}!</h1>
+                <a href="/logout"><button>Cerrar sesión</button></a>
+                <a href="/"><button>Volver al listado</button></a>
+            </div>
+
+            <div className="sitema-container">
+                <h1>Sistema de Altas/Bajas/Modificaciones de Productos</h1>
+
+                <div className="altas">
+                    <p className="sistema-titulo">Alta de Nuevos Productos:</p>
+                    <form onSubmit={handleSubmit(addProduct)} className="checkout-form">
+                        <input type="text" name="title" placeholder="Nombre" {...register("title", { required: true })} />
+                        <input type="text" name="description" placeholder="Descripción" {...register("description", { required: true })} />
+                        <input type="text" name="code" placeholder="Código" {...register("code", { required: true })} />
+                        <input type="number" name="price" placeholder="Precio" {...register("price", { required: true })} />
+                        <input type="number" name="stock" placeholder="Stock" {...register("stock", { required: true })} />
+                        <input type="text" name="thumbnails" placeholder="Link Imagen del producto" {...register("thumbnails")} />
+                        <select name="category" id="category-select" {...register("category", { required: true })}>
+                            <option value="muebles">Muebles</option>
+                            <option value="iluminación">Iluminación</option>
+                            <option value="ropa de cama">Ropa de cama</option>
+                            <option value="electrodomésticos">Electrodomésticos</option>
+                            <option value="cocina">Cocina</option>
+                            <option value="tecnología">Tecnología</option>
+                            <option value="accesorios">Accesorios</option>
+                            <option value="decoración">Decoración</option>
+                        </select>
+
+                        <div className="sistema-bajas-modif-botones">
+                            <button type="submit" className="sistema-boton">Cargar Producto</button>
+                            <button type="reset" className="sistema-boton-eliminar" onClick={() => reset()}>Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div className="sistema-bajas-modif">
+                    <p className="sistema-titulo">Busca el producto requerido por el nombre para Bajas y Modificaciones:</p>
+                    {/* <p>Ingresá la búsqueda en minúsculas.</p> */}
+
+                    <form onSubmit={handleSubmit2(searchProduct)} className="checkout-form">
+                        <input type="text" name="nombreProducto" placeholder="Ingresa el nombre del producto..." {...register2("nombreProducto", { required: true })} />
+                        <button type="submit" className="sistema-boton">Buscar Producto</button>
+                    </form>
+
+                    <div className="bajas-modif-main">
+
+                        {
+                            productsFound.length === 0 ?
+
+                                <p>No se realizó un búsqueda / No se encontró el producto</p> :
+
+                                productsFound.map((obj) => {
+                                    return (
+
+                                        <div key={obj._id}>
+                                            <form onSubmit={handleSubmit3(updateProduct)} className="checkout-form">
+                                                <p>ID del producto:</p>
+                                                <input type="text" name="_id" disabled {...register3("_id")} />
+                                                <input type="text" name="title"  {...register3("title", { required: true })} />
+                                                <input type="text" name="description" {...register3("description", { required: true })} />
+                                                <input type="text" name="code" {...register3("code", { required: true })} />
+                                                <input type="number" name="price" {...register3("price", { required: true })} />
+                                                <input type="number" name="stock" {...register3("stock", { required: true })} />
+                                                <input type="text" name="thumbnails" placeholder="Link Imagen del producto" {...register3("thumbnails")} />
+                                                <select name="category" id="category-select" {...register3("category", { required: true })}>
+                                                    <option value="muebles">Muebles</option>
+                                                    <option value="iluminación">Iluminación</option>
+                                                    <option value="ropa de cama">Ropa de cama</option>
+                                                    <option value="electrodomésticos">Electrodomésticos</option>
+                                                    <option value="cocina">Cocina</option>
+                                                    <option value="tecnología">Tecnología</option>
+                                                    <option value="accesorios">Accesorios</option>
+                                                    <option value="decoración">Decoración</option>
+                                                </select>
+
+                                                <div className="sistema-bajas-modif-botones">
+                                                    <button type="submit" className="sistema-boton">Modificar Producto</button>
+                                                    <button className="sistema-boton-eliminar" onClick={() => deleteProduct(obj._id)}>Eliminar producto</button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    )
+                                })
+                        }
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}

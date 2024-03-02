@@ -1,0 +1,29 @@
+[
+    {
+        "_id": 1,
+        "firstName": "hector",
+        "lastName": "mandril",
+        "email": "elector@gmail.com",
+        "password": "$2b$10$9aGg7Zigju5EFU9hEsPPJuJYMs6Ct3G6B2rb0bz0TrtuYefWMunNG",
+        "role": "user",
+        "cart": 7
+    },
+    {
+        "_id": 2,
+        "firstName": "juan",
+        "lastName": "magnin",
+        "email": "juan@gmail.com",
+        "password": "$2b$10$N2qQxUKJlMNpg4HxEiCMz.47/bC7x3EUZ8lBg87poLbNxpBPffUnC",
+        "role": "user",
+        "cart": 8
+    },
+    {
+        "_id": 3,
+        "firstName": "daniel",
+        "lastName": "Scioli",
+        "email": "dani@gmail.com",
+        "password": "$2b$10$GDHoJE5QQDAsFt/eFi7tv.2udduVKsqq4CYpYWusW9QJxr9KRnVjO",
+        "role": "user",
+        "cart": 9
+    }
+]
