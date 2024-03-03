@@ -15,9 +15,9 @@ const urlUserGoogleLogin = "/api/sessions/google"
 const urlUserGithubLogin = "/api/sessions/github"
 
 export const DataProvider = ({ children }) => {
-    
+
     const [products, setProducts] = useState([])
-    const [ productDetail, setProductDetail ] = useState(null)
+    const [productDetail, setProductDetail] = useState(null)
     const [cart, setCart] = useState([])
     const [user, setUser] = useState(null);
 
@@ -109,16 +109,10 @@ export const DataProvider = ({ children }) => {
     }
 
     const loginGoogle = () => {
-        axios.get(urlUserGoogleLogin, {withCredentials: true})
-            .then(response => { 
-                setUser(response.data.data)
-            })
-            .catch(error => console.log(error))
+        window.open("http://localhost:8080/api/sessions/google", "_self")
     }
     const loginGithub = () => {
-        axios.get(urlUserGithubLogin, { withCredentials: true })
-            .then(response => { setUser(response.data.data) })
-            .catch(error => console.log(error))
+        window.open("http://localhost:8080/api/sessions/github", "_self")
     }
 
     const getUserCart = (user) => {
@@ -151,7 +145,7 @@ export const DataProvider = ({ children }) => {
     }
 
     function handleAdd(pid, quantity) {
-        axios.post(urlCart + "/addproduct/" + pid, {quantity: quantity}, { withCredentials: true })
+        axios.post(urlCart + "/addproduct/" + pid, { quantity: quantity }, { withCredentials: true })
             .then(response => setCart(response.data.data))
             .catch(error => console.log(error))
     }
@@ -181,7 +175,7 @@ export const DataProvider = ({ children }) => {
         }).catch(error => {
             console.log(error);
         });
-        
+
     }
 
     const deleteProduct = (id) => {

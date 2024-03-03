@@ -102,7 +102,7 @@ async function gitHubStrategy(req, res) {//get
         httpOnly: true,
         maxAge: 60 * 60 * 1000,
         secure: env.USERCOOKIESECRET
-    }).sendSuccess(token);
+    }).redirect("http://localhost:5173/");
 }
 
 async function google(req, res) { };//get
@@ -119,7 +119,7 @@ async function googleStrategy(req, res) {//get
         httpOnly: true,
         maxAge: 60 * 60 * 1000,
         secure: env.USERCOOKIESECRET
-    }).sendSuccess(token);
+    }).redirect("http://localhost:5173/");
 }
 
 export { userLogin, userSignIn, userForgotPass, gitHub, gitHubStrategy, google, googleStrategy, userLogout };

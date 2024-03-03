@@ -52,7 +52,8 @@ const initializePassport = () => {
 
                     const userEmail = await usersService.getUser(profile._json.email);
                     if (userEmail) {
-                        return cb(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
+                        userEmail["photo"] = profile._json.picture;
+                        return cb(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
                     }
 
                     const newCart = await cartsService.saveCart();
@@ -97,7 +98,8 @@ const initializePassport = () => {
 
                     const userEmail = await usersService.getUser(profile._json?.email);
                     if (userEmail) {
-                        return done(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
+                        userEmail["photo"] = profile._json.avatar_url;
+                        return done(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
                     }
 
                     const newCart = await cartsService.saveCart();

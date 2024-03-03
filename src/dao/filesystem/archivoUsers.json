@@ -25,5 +25,16 @@
         "password": "$2b$10$GDHoJE5QQDAsFt/eFi7tv.2udduVKsqq4CYpYWusW9QJxr9KRnVjO",
         "role": "user",
         "cart": 9
+    },
+    {
+        "_id": 4,
+        "firstName": "Hector",
+        "lastName": "Hector",
+        "email": "elector22@gmail.com",
+        "password": "6pb01o",
+        "role": "user",
+        "idgoogle": "109314102480647809075",
+        "idgithub": null,
+        "cart": 10
     }
 ]

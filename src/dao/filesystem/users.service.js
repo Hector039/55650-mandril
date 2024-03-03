@@ -26,11 +26,31 @@ export default class UserService {
         this.#setUltimoId();
     }
 
-    async getUser(email) {
+    async getUser(emailOrId) {
         try {
             const users = await this.getAllUsers();
-            const userByEmail = users.find(user => user.email === email);
-            return userByEmail;
+            const userByEmail = users.find(user => user.email === emailOrId);
+            const userById = users.find(user => user._id === emailOrId);
+            const userByGoogleId = users.find(user => user.idgoogle === emailOrId);
+            const userByGithubId = users.find(user => user.idgithub === emailOrId);
+            let user = null;
+            if(userByEmail !== undefined){
+                user = userByEmail
+                return user;
+            }
+            if(userById !== undefined){
+                user = userById
+                return user;
+            }
+            if(userByGoogleId !== undefined){
+                user = userByGoogleId
+                return user;
+            }
+            if(userByGithubId !== undefined){
+                user = userByGithubId
+                return user;
+            }
+            return user;
         } catch (error) {
             throw error;
         }

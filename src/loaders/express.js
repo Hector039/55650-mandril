@@ -11,7 +11,7 @@ import session from "express-session";
 const env = getEnvironment();
 
 const corsOptions = {
-    origin: true,
+    origin: "http://localhost:5173",
     credentials: true,
 };
 
