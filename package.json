@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch src/app.js --mode development --persistence database -u admindev -p admin ",
-    "devwatch": "node --env-file=/.env --watch src/app.js"
+    "start": "node --watch src/app.js --mode production --persistence database -u adminprod -p admin ",
+    "dev": "node --watch src/app.js --mode development --persistence database -u admindev -p admin "
   },
   "keywords": [],
   "author": "",

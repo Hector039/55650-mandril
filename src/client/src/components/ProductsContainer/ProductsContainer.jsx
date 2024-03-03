@@ -20,8 +20,8 @@ export default function ProductsContainer() {
                             <button onClick={logout}>Cerrar sesión<img src={user.photo} alt="User profile photo"></img></button>}
                         </div></>
                 }
-                {user !== null &&  <Link to={"/cart"} rel="noreferrer">Ir al carrito</Link>} 
-                {user !== null && user.role === "admin" && <a href="/realtimeproducts"><button>Manager de Productos</button></a>}
+                {user !== null && user.role === "user" && <Link to={"/cart"} rel="noreferrer">Ir al carrito</Link>} 
+                {user !== null && user.role === "admin" && <Link to={"/realtimeproducts"} rel="noreferrer"><button>Manager de Productos</button></Link>}
             </div>
 
             <div className="filter-container">

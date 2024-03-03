@@ -1,8 +1,8 @@
-import { productsDao } from "../dao/index.js";
+import { productsService } from "../repository/index.js";
 
 async function param(req, res, next, pid) {//param
     try {
-        const productById = await productsDao.getProductById(pid);
+        const productById = await productsService.getProductById(pid);
         if (productById === null) {
             req.product = null;
             res.status(404).json({ error: "Producto inexistente." })
@@ -16,30 +16,10 @@ async function param(req, res, next, pid) {//param
     }
 }
 
-async function searchProductsFs(req, res) {
+async function searchProducts(req, res) {
     const { text } = req.params;
     try {
-        
-        let products = await productsDao.searchProductsFs(text);
-
-        res.status(201).json({
-            msg: "Lista de todos los productos encontrados por título",
-            data: products
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            status: "Error",
-            error: error.message
-        })
-    }
-}
-
-async function searchProducts(req, res) {
-    const { text } = req.body;
-    try {
-        
-        let products = await productsDao.searchProducts(text);
+        let products = await productsService.searchProducts(text);
 
         res.status(201).json({
             msg: "Lista de todos los productos encontrados por título",
@@ -64,7 +44,7 @@ async function getProductsFs(req, res) {
             category: category === undefined ? "todos" : category
         }
 
-        let allProducts = await productsDao.getAllProducts();
+        let allProducts = await productsService.getAllProducts();
 
         if (options.category !== "todos") {
             let prodFilterCategory = allProducts.filter(product => product.category === options.category);
@@ -112,7 +92,7 @@ async function getProductsPaginated(req, res) {//get
 
         const find = category === "todos" ? {} : { category: category };
 
-        const report = await productsDao.paginateProduct(find, options);
+        const report = await productsService.paginateProduct(find, options);
 
         res.status(201).json({
             status: "success",
@@ -125,8 +105,6 @@ async function getProductsPaginated(req, res) {//get
             hasNextPage: report.hasNextPage,
             pagingCounter: report.pagingCounter,
             user: req.user
-            //prevLink: report.hasPrevPage === false ? null : `/api/products?page=${report.prevPage}`,
-            //nextLink: report.hasNextPage === false ? null : `/api/products?page=${report.nextPage}`
         });
 
     } catch (error) {
@@ -158,7 +136,7 @@ async function saveProduct(req, res) {//post
 
     try {
 
-        const newProduct = await productsDao.saveProduct({
+        const newProduct = await productsService.saveProduct({
             title,
             description,
             code,
@@ -167,10 +145,6 @@ async function saveProduct(req, res) {//post
             category,
             thumbnails
         });
-
-        const prodUpdated = await productsDao.getAllProducts();
-
-        //req.io.emit("updateList", prodUpdated);
 
         res.status(201).json({
             msg: "Producto creado correctamente.",
@@ -201,7 +175,7 @@ async function updateProduct(req, res) {//put
             status
         };
 
-        const response = await productsDao.updateProduct(productId, newProduct);
+        const response = await productsService.updateProduct(productId, newProduct);
 
         res.status(201).json({
             msg: "Producto modificado correctamente.",
@@ -218,11 +192,7 @@ async function updateProduct(req, res) {//put
 async function deleteProduct(req, res) {
     try {
         const productId = req.product._id;
-        await productsDao.deleteProduct(productId);
-
-        const prodUpdated = await productsDao.getAllProducts();
-
-        //req.io.emit("updateList", prodUpdated);
+        await productsService.deleteProduct(productId);
 
         res.status(201).json({
             msg: `Producto ID: ${productId} eliminado correctamente.`,
@@ -235,4 +205,4 @@ async function deleteProduct(req, res) {
     }
 }
 
-export { param, getProductsPaginated, getProductById, saveProduct, updateProduct, deleteProduct, getProductsFs, searchProducts, searchProductsFs };
+export { param, getProductsPaginated, getProductById, saveProduct, updateProduct, deleteProduct, getProductsFs, searchProducts };

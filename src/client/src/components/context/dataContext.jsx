@@ -5,7 +5,7 @@ import axios from "../../config/axiosConfig";
 export const DataContext = createContext([]);
 
 const urlProd = "/api/products"
-const urlProdSearch = "/api/products/search"
+const urlProdSearch = "/api/products/searchproducts"
 const urlCart = "/api/carts"
 const urlUserLogin = "/api/sessions/login"
 const urlUserLogout = "/api/sessions/logout"
@@ -110,7 +110,9 @@ export const DataProvider = ({ children }) => {
 
     const loginGoogle = () => {
         axios.get(urlUserGoogleLogin, {withCredentials: true})
-            .then(response => { setUser(response.data.data) })
+            .then(response => { 
+                setUser(response.data.data)
+            })
             .catch(error => console.log(error))
     }
     const loginGithub = () => {
@@ -175,10 +177,11 @@ export const DataProvider = ({ children }) => {
             thumbnails
         }, { withCredentials: true }).then(response => {
             console.log(response);
-        }).catch(e => {
-            console.log(e);
+            reset();
+        }).catch(error => {
+            console.log(error);
         });
-        reset();
+        
     }
 
     const deleteProduct = (id) => {
@@ -188,7 +191,16 @@ export const DataProvider = ({ children }) => {
         setproductsFound([]);
     }
 
-    const updateProduct = (id) => {
+    const updateProduct = (product) => {
+        const title = product.title
+        const description = product.description
+        const code = product.code
+        const price = product.price
+        const stock = product.stock
+        const category = product.category
+        const thumbnails = product.thumbnails
+        const status = product.status
+        const id = product._id
         axios.put(urlProd + "/" + id, {
             title,
             description,
@@ -196,7 +208,8 @@ export const DataProvider = ({ children }) => {
             price,
             stock,
             category,
-            thumbnails
+            thumbnails,
+            status
         }, { withCredentials: true }).then(response => {
             console.log(response);
         }).catch(error => {
@@ -206,9 +219,10 @@ export const DataProvider = ({ children }) => {
     }
 
     const searchProduct = (text) => {
-        axios.get(urlProdSearch + "/" + text, { withCredentials: true })
-            .then(response => setproductsFound(response.data))
-            .catch(console.log(error))
+        const productName = text.nombreProducto;
+        axios.get(urlProdSearch + "/" + productName, { withCredentials: true })
+            .then(response => setproductsFound(response.data.data))
+            .catch(error => console.log(error))
     }
 
     return (

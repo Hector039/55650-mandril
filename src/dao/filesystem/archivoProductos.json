@@ -1,11 +1,11 @@
 [
     {
-        "_id": 2,
-        "title": "Silla",
-        "description": "Silla de oficina de metal con ruedas y soporte lumbar",
-        "code": "sil001",
-        "price": 10500,
-        "stock": 5,
+        "_id": 1,
+        "title": "Silla de madera",
+        "description": "Silla de oficina de madera con respaldo",
+        "code": "sil002",
+        "price": "10000",
+        "stock": 1,
         "category": "muebles",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -13,9 +13,21 @@
         "status": true
     },
     {
-        "_id": 3,
+        "title": "Silla",
+        "description": "Silla de oficina de metal con ruedas de aluminio y soporte lumbar",
+        "code": "sil001",
+        "price": 10000,
+        "stock": 9,
+        "category": "muebles",
+        "thumbnails": [
+            "https://dummyimage.com/300/09f/fff.png"
+        ],
+        "status": true,
+        "_id": 2
+    },
+    {
         "title": "Mouse",
-        "description": "Mouse de oficina standard",
+        "description": "Mouse de oficina standard con luces led de colores",
         "code": "acc002",
         "price": 8000,
         "stock": 15,
@@ -23,7 +35,8 @@
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
         ],
-        "status": true
+        "status": true,
+        "_id": 3
     },
     {
         "_id": 4,
@@ -79,19 +92,6 @@
         "status": true
     },
     {
-        "_id": 9,
-        "title": "Auriculares",
-        "description": "Auriculares Vincha standard",
-        "code": "acc004",
-        "price": 11500,
-        "stock": 18,
-        "category": "accesorios",
-        "thumbnails": [
-            "https://dummyimage.com/300/09f/fff.png"
-        ],
-        "status": true
-    },
-    {
         "_id": 10,
         "title": "Monitor 22 pulgadas LG",
         "description": "Monitor LED LG 22 pulgadas",
@@ -112,6 +112,32 @@
         "price": 368000,
         "stock": 4,
         "category": "muebles",
+        "thumbnails": [
+            "https://dummyimage.com/300/09f/fff.png"
+        ],
+        "status": true
+    },
+    {
+        "_id": 12,
+        "title": "Auriculares",
+        "description": "Auriculares Vincha de colores",
+        "code": "aur001",
+        "price": "6500",
+        "stock": "15",
+        "category": "accesorios",
+        "thumbnails": [
+            "https://dummyimage.com/300/09f/fff.png"
+        ],
+        "status": true
+    },
+    {
+        "_id": 13,
+        "title": "Auriculares in ear",
+        "description": "Auriculares in ear con gomas de repuesto",
+        "code": "aur002",
+        "price": "8000",
+        "stock": "5",
+        "category": "accesorios",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
         ],

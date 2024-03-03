@@ -5,8 +5,8 @@ import { DataContext } from "../context/dataContext";
 
 export default function System() {
 
-    const { addProduct, updateProduct, deleteProduct, productsFound, searchProduct, register, handleSubmit, reset, user } = useContext(DataContext);
-
+    const { addProduct, updateProduct, deleteProduct, productsFound, searchProduct, register, handleSubmit, reset, user, logout } = useContext(DataContext);
+    console.log(productsFound);
     const {
         register: register2,
         handleSubmit: handleSubmit2,
@@ -24,24 +24,26 @@ export default function System() {
     });
 
     useEffect(() => {
-        productosEncontrados.map((obj) => {
-            setValue("id", obj.id);
-            setValue("nombre", obj.nombre_producto);
-            setValue("descripcion", obj.descripcion);
-            setValue("imagen", obj.img_producto);
-            setValue("categorias", obj.categoria);
-            setValue("precio", obj.precio);
+        productsFound.map((obj) => {
+            setValue("_id", obj._id);
+            setValue("title", obj.title);
+            setValue("description", obj.description);
+            setValue("thumbnails", obj.thumbnails[0]);
+            setValue("category", obj.category);
+            setValue("price", obj.price);
             setValue("stock", obj.stock);
+            setValue("code", obj.code);
+            setValue("status", obj.status);
         })
 
-    }, [setValue, productosEncontrados])
+    }, [setValue, productsFound])
 
 
     return (
         <>
-            <div class="welcome-container">
+            <div className="welcome-container">
                 <h1>Bienvenido administrador {user.name}!</h1>
-                <a href="/logout"><button>Cerrar sesión</button></a>
+                <button onClick={logout}>Cerrar sesión</button>
                 <a href="/"><button>Volver al listado</button></a>
             </div>
 
@@ -77,7 +79,7 @@ export default function System() {
 
                 <div className="sistema-bajas-modif">
                     <p className="sistema-titulo">Busca el producto requerido por el nombre para Bajas y Modificaciones:</p>
-                    {/* <p>Ingresá la búsqueda en minúsculas.</p> */}
+                    <p>Ingresá el nombre Producto.</p>
 
                     <form onSubmit={handleSubmit2(searchProduct)} className="checkout-form">
                         <input type="text" name="nombreProducto" placeholder="Ingresa el nombre del producto..." {...register2("nombreProducto", { required: true })} />
@@ -92,6 +94,7 @@ export default function System() {
                                 <p>No se realizó un búsqueda / No se encontró el producto</p> :
 
                                 productsFound.map((obj) => {
+                                    
                                     return (
 
                                         <div key={obj._id}>
@@ -113,6 +116,10 @@ export default function System() {
                                                     <option value="tecnología">Tecnología</option>
                                                     <option value="accesorios">Accesorios</option>
                                                     <option value="decoración">Decoración</option>
+                                                </select>
+                                                <select name="status" id="category-select" {...register3("status", { required: true })}>
+                                                    <option value="true">Disponible</option>
+                                                    <option value="false">No disponible</option>
                                                 </select>
 
                                                 <div className="sistema-bajas-modif-botones">

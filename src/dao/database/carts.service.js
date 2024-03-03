@@ -33,7 +33,8 @@ export default class CartService {
     async deleteProductToCart(id, productToDelete) {
         try {
             await cartModel.findByIdAndUpdate(id, { $pull: { products: { product: productToDelete.product, quantity: productToDelete.quantity } } });
-            return;
+            const cartById = await this.getCartById(id)
+            return cartById;
         } catch (error) {
             throw error;
         }
@@ -42,7 +43,8 @@ export default class CartService {
     async deleteAllProducts(id) {
         try {
             await cartModel.findByIdAndUpdate(id, { $push: { products: { $each: [], $slice: 0 } } });
-            return;
+            const cartById = await this.getCartById(id)
+            return cartById;
         } catch (error) {
             throw error;
         }

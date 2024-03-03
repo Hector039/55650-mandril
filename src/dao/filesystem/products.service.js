@@ -2,7 +2,7 @@ import fs from "fs";
 
 class Product {
     constructor(id, title, description, code, price, stock, category, thumbnails, status) {
-        this.id = id;
+        this._id = id;
         this.title = title;
         this.description = description;
         this.code = code;
@@ -50,14 +50,14 @@ export default class ProductService {
         }
     }
 
-    async searchProductsFs(text) {
+    async searchProducts(text) {
         try {
-            const productos = await this.getAllProducts();
-            const productosEncontrados = productos.filter(producto => producto.title === text);
-            if (productosEncontrados.length === 0) {
+            const products = await this.getAllProducts();
+            const productsFinded = products.filter(product => product.title === text);
+            if (productsFinded.length === 0) {
                 throw new Error(`No existe producto con nombre ${text}, intente nuevamente.`);
             }
-            return productosEncontrados;
+            return productsFinded;
         } catch (error) {
             throw error;
         }
@@ -90,12 +90,14 @@ export default class ProductService {
 
     async updateProduct(pid, product){
         try{
+            const productId = parseInt(pid)
             const productos = await this.getAllProducts();
-            const productIndex = productos.findIndex(producto => producto.id === parseInt(pid));
+            const productIndex = productos.findIndex(producto => producto._id === productId);
             if (productIndex < 0) {
                 throw new Error(`Producto ${pid} no encontrado`);
             }
-            productos.splice(productIndex, 0, product);
+            product["_id"] = productId
+            productos.splice(productIndex, 1, product);
             await this.guardarProductos(productos);
             return product;
         }catch(error){
@@ -106,7 +108,7 @@ export default class ProductService {
     async deleteProduct(pid) {
         try{
             const productos = await this.getAllProducts();
-            const productIndex = productos.findIndex(producto => producto.id === parseInt(pid));
+            const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
             if (productIndex < 0) {
                 throw new Error(`Producto ${pid} no encontrado`);
             }

@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
-import getEnvironment from "../config/process.config.js";
 
-export default async function mongoLoader(){
-    const env = getEnvironment();
-    await mongoose.connect(env.DB_URL);
+export default async function mongoLoader(dburl){
+    try{
+        await mongoose.connect(dburl);
+        return "Mongo DB connected"
+    }catch(error){
+        throw new Error("Error connecting to Mongo DB", error)
+    }
 }

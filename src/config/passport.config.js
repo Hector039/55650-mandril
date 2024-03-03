@@ -1,8 +1,7 @@
 import passport from "passport";
 import getEnvironment from "./process.config.js";
 import local from "passport-local";
-import { usersDao } from "../dao/index.js";
-import { cartsDao } from "../dao/index.js";
+import { usersService, cartsService } from "../repository/index.js";
 import { createHash, isValidPass } from "../tools/utils.js";
 import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";
@@ -47,19 +46,19 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
-                const user = await usersDao.getUser(profile.id);
+                const user = await usersService.getUser(profile.id);
 
                 if (user === null) {
 
-                    const userEmail = await usersDao.getUser(profile._json.email);
+                    const userEmail = await usersService.getUser(profile._json.email);
                     if (userEmail) {
                         return cb(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
                     }
 
-                    const newCart = await cartsDao.saveCart();
+                    const newCart = await cartsService.saveCart();
                     const cart = newCart._id;
 
-                    await usersDao.saveUser({
+                    await usersService.saveUser({
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
                         email: profile._json?.email,
@@ -68,7 +67,7 @@ const initializePassport = () => {
                         cart
                     });
 
-                    const userUpdated = await usersDao.getUser(profile.id);
+                    const userUpdated = await usersService.getUser(profile.id);
                     userUpdated["photo"] = profile._json.picture;
 
                     return cb(null, userUpdated);
@@ -92,19 +91,19 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const user = await usersDao.getUser(profile.id);
+                const user = await usersService.getUser(profile.id);
 
                 if (user === null) {
 
-                    const userEmail = await usersDao.getUser(profile._json?.email);
+                    const userEmail = await usersService.getUser(profile._json?.email);
                     if (userEmail) {
                         return done(null, false, { messages: "El Email asociado a ese Usuario ya existe." });
                     }
 
-                    const newCart = await cartsDao.saveCart();
+                    const newCart = await cartsService.saveCart();
                     const cart = newCart._id;
 
-                    await usersDao.saveUser({
+                    await usersService.saveUser({
                         firstName: profile.displayName.split(" ")[0],
                         lastName: profile.displayName.split(" ")[1],
                         email: profile._json?.email,
@@ -113,7 +112,7 @@ const initializePassport = () => {
                         cart
                     });
 
-                    const userUpdated = await usersDao.getUser(profile?.id);
+                    const userUpdated = await usersService.getUser(profile?.id);
                     userUpdated["photo"] = profile._json.avatar_url;
 
                     return done(null, userUpdated);
@@ -131,15 +130,15 @@ const initializePassport = () => {
         async (req, username, password, done) => {
             const { firstName, lastName, email } = req.body;
             try {
-                const user = await usersDao.getUser(email);
+                const user = await usersService.getUser(email);
                 if (user) {
                     return done(null, false, { messages: "El Usuario ya existe." });
                 };
 
-                const newCart = await cartsDao.saveCart();
+                const newCart = await cartsService.saveCart();
                 const cart = newCart._id;
 
-                await usersDao.saveUser({
+                await usersService.saveUser({
                     firstName,
                     lastName,
                     email,
@@ -147,7 +146,7 @@ const initializePassport = () => {
                     cart
                 });
 
-                const userUpdated = await usersDao.getUser(email);
+                const userUpdated = await usersService.getUser(email);
 
                 return done(null, userUpdated);
             } catch (error) {
@@ -160,7 +159,7 @@ const initializePassport = () => {
         { usernameField: "email" },
         async (username, password, done) => {
             try {
-                const user = await usersDao.getUser(username);
+                const user = await usersService.getUser(username);
                 if (user === null) {
                     return done(null, false, { messages: "El Usuario no existe." });
                 };
@@ -181,7 +180,7 @@ const initializePassport = () => {
 
     passport.deserializeUser(async (user, done) => {
         try {
-            const userDeserialized = await usersDao.getUser(user.id);
+            const userDeserialized = await usersService.getUser(user.id);
             done(null, userDeserialized);
         } catch (error) {
             done(error, null);

@@ -1,11 +1,9 @@
-import { cartsDao } from "../dao/index.js";
-import { productsDao } from "../dao/index.js";
-
+import { cartsService, productsService } from "../repository/index.js";
 
 async function getCart(req, res) {//get
     const { cid } = req.params;
     try {
-        const cartById = await cartsDao.getCartById(cid);
+        const cartById = await cartsService.getCartById(cid);
 
         if (cartById === null) {
             res.status(400).json({
@@ -26,28 +24,13 @@ async function getCart(req, res) {//get
     }
 }
 
-async function saveCart(req, res) {//post
-    try {
-        const newCart = await cartsDao.saveCart();
-
-        res.status(201).json({
-            msg: "Carrito creado correctamente.",
-            data: newCart
-        });
-    } catch (error) {
-        res.status(500).json({
-            error: error.message,
-        });
-    }
-};
-
 async function deleteProductToCart(req, res) {//delete
     const { pid } = req.params;
     
     try {
         const userCart = req.user.cart._id === undefined ? req.user.cart : req.user.cart._id;
-        const productId = await productsDao.getProductById(pid);
-        const cart = await cartsDao.getCartById(userCart);
+        const productId = await productsService.getProductById(pid);
+        const cart = await cartsService.getCartById(userCart);
 
         if (cart === null) {
             res.status(400).json({
@@ -72,8 +55,8 @@ async function deleteProductToCart(req, res) {//delete
             return;
         }
 
-        await cartsDao.deleteProductToCart(userCart, productExistsInCart);
-        const cartUpdated = await cartsDao.getCartById(userCart);
+        await cartsService.deleteProductToCart(userCart, productExistsInCart);
+        const cartUpdated = await cartsService.getCartById(userCart);
 
         res.status(201).json({
             msg: `Se eliminó el producto ${pid} del carrito ${userCart}`,
@@ -91,7 +74,7 @@ async function deleteAllProducts(req, res) {//delete
     const { cid } = req.params;
 
     try {
-        const cart = await cartsDao.getCartById(cid);
+        const cart = await cartsService.getCartById(cid);
 
         if (cart === null) {
             res.status(400).json({
@@ -100,9 +83,7 @@ async function deleteAllProducts(req, res) {//delete
             return;
         };
 
-        await cartsDao.deleteAllProducts(cid);
-
-        const cartUpdated = await cartsDao.getCartById(cid);
+        const cartUpdated = await cartsService.deleteAllProducts(cid);
 
         res.status(201).json({
             msg: `Se eliminaron todos los productos del carrito ${cid}`,
@@ -122,8 +103,8 @@ async function updateCart(req, res) {
 
     try {
 
-        const productId = await productsDao.getProductById(pid);
-        const cart = await cartsDao.getCartById(cid);
+        const productId = await productsService.getProductById(pid);
+        const cart = await cartsService.getCartById(cid);
 
         if (cart === null) {
             res.status(400).json({
@@ -148,7 +129,7 @@ async function updateCart(req, res) {
             return;
         }
 
-        const modifiedCart = await cartsDao.addProductAndQuantityToCart(cid, pid, quantity);
+        const modifiedCart = await cartsService.addProductAndQuantityToCart(cid, pid, quantity);
 
         res.status(201).json({
             msg: `Se actualizó la cantidad del producto ${pid} del carrito ${cid}`,
@@ -167,8 +148,8 @@ async function addProductAndQuantity(req, res) {
     const { quantity } = req.body;
     try {
         const userCart = req.user.cart._id === undefined ? req.user.cart : req.user.cart._id;
-        const productId = await productsDao.getProductById(pid);
-        const cart = await cartsDao.getCartById(userCart);
+        const productId = await productsService.getProductById(pid);
+        const cart = await cartsService.getCartById(userCart);
 
         if (cart === null) {
             res.status(400).json({
@@ -184,7 +165,7 @@ async function addProductAndQuantity(req, res) {
             return;
         };
 
-        const updatedCart = await cartsDao.addProductAndQuantityToCart(userCart, pid, quantity);
+        const updatedCart = await cartsService.addProductAndQuantityToCart(userCart, pid, quantity);
 
         res.status(201).json({
             msg: `Se actualizó el producto ${pid} y cantidad ${quantity} al carrito ${userCart}`,
@@ -198,4 +179,4 @@ async function addProductAndQuantity(req, res) {
     }
 }
 
-export { getCart, saveCart, deleteProductToCart, deleteAllProducts, updateCart, addProductAndQuantity };
+export { getCart, deleteProductToCart, deleteAllProducts, updateCart, addProductAndQuantity };

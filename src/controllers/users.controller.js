@@ -1,5 +1,4 @@
-import { usersDao } from "../dao/index.js";
-import { cartsDao } from "../dao/index.js";
+import { cartsService, usersService } from "../repository/index.js";
 import { generateToken, isValidPass, createHash } from "../tools/utils.js";
 import getEnvironment from "../config/process.config.js";
 
@@ -8,7 +7,7 @@ const env = getEnvironment();
 async function userLogin(req, res) {//post
     const { email, password } = req.body;
     try {
-        const user = await usersDao.getUser(email);
+        const user = await usersService.getUser(email);
         if (user === null || user === undefined) {
             res.sendUserError("Usuario no encontrado");
             return;
@@ -37,20 +36,20 @@ async function userLogin(req, res) {//post
 async function userSignIn(req, res) {//post
     const { firstName, lastName, email, password } = req.body;
     try {
-        const user = await usersDao.getUser(email);
+        const user = await usersService.getUser(email);
         if (user !== undefined) {
             res.sendUserError("El usuario ya existe");
             return;
         };
-        const newCart = await cartsDao.saveCart();
-        await usersDao.saveUser({
+        const newCart = await cartsService.saveCart();
+        await usersService.saveUser({
             firstName,
             lastName,
             email,
             password: createHash(password),
             cart: newCart._id
         });
-        const userUpdated = await usersDao.getUser(email);
+        const userUpdated = await usersService.getUser(email);
         const mail = userUpdated.email;
         const role = userUpdated.role;
         const cart = userUpdated.cart;
@@ -70,12 +69,12 @@ async function userSignIn(req, res) {//post
 async function userForgotPass(req, res) {//post
     const { email, password } = req.body;
     try {
-        const user = await usersDao.getUser(email);
+        const user = await usersService.getUser(email);
         if (user === null) {
             res.sendUserError("Usuario no encontrado");
             return;
         }
-        const userUpdated = await usersDao.updateUser(email, createHash(password));
+        const userUpdated = await usersService.updateUser(email, createHash(password));
         res.sendSuccess({ userUpdated });
     } catch (error) {
         res.status(500).json({
@@ -104,7 +103,6 @@ async function gitHubStrategy(req, res) {//get
         maxAge: 60 * 60 * 1000,
         secure: env.USERCOOKIESECRET
     }).sendSuccess(token);
-    /* .redirect('/') */
 }
 
 async function google(req, res) { };//get
@@ -122,7 +120,6 @@ async function googleStrategy(req, res) {//get
         maxAge: 60 * 60 * 1000,
         secure: env.USERCOOKIESECRET
     }).sendSuccess(token);
-    /* .redirect('/') */
 }
 
 export { userLogin, userSignIn, userForgotPass, gitHub, gitHubStrategy, google, googleStrategy, userLogout };
