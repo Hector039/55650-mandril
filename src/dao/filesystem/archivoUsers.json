@@ -36,5 +36,16 @@
         "idgoogle": "109314102480647809075",
         "idgithub": null,
         "cart": 10
+    },
+    {
+        "_id": 5,
+        "firstName": "Coder",
+        "lastName": "Coder",
+        "email": "adminCoder@coder.com",
+        "password": "$2b$10$IcOzTPdDYQO5BNDDA33//e/XxTapF/LpLhkmHgqxmKnAVPOn/6F86",
+        "role": "admin",
+        "idgoogle": null,
+        "idgithub": null,
+        "cart": 11
     }
 ]

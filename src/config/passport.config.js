@@ -133,7 +133,7 @@ const initializePassport = () => {
             const { firstName, lastName, email } = req.body;
             try {
                 const user = await usersService.getUser(email);
-                if (user) {
+                if (user !== undefined) {
                     return done(null, false, { messages: "El Usuario ya existe." });
                 };
 

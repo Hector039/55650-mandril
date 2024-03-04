@@ -33,7 +33,7 @@ export default class UserService {
             const userById = users.find(user => user._id === emailOrId);
             const userByGoogleId = users.find(user => user.idgoogle === emailOrId);
             const userByGithubId = users.find(user => user.idgithub === emailOrId);
-            let user = null;
+            let user = undefined;
             if(userByEmail !== undefined){
                 user = userByEmail
                 return user;

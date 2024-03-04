@@ -27,7 +27,8 @@ export default class ProductsRepository {
     };
 
     updateProduct = async (pid, product) => {
-        const result = await this.dao.updateProduct(pid, product);
+        const productToUpdate = new ProductsDTO(product);
+        const result = await this.dao.updateProduct(pid, productToUpdate);
         return result;
     };
 

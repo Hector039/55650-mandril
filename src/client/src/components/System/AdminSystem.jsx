@@ -1,43 +1,28 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { DataContext } from "../context/dataContext";
+import ProductsFounded from "./ProductsFounded";
 
 
 export default function System() {
 
-    const { addProduct, updateProduct, deleteProduct, productsFound, searchProduct, register, handleSubmit, reset, user, logout } = useContext(DataContext);
-    console.log(productsFound);
+    const { addProduct, productsFound, searchProduct, user, logout } = useContext(DataContext);
+
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+    } = useForm({
+        mode: "onBlur",
+    });
+
     const {
         register: register2,
         handleSubmit: handleSubmit2,
     } = useForm({
         mode: "onBlur",
     });
-
-
-    const {
-        register: register3,
-        handleSubmit: handleSubmit3,
-        setValue,
-    } = useForm({
-        mode: "onBlur",
-    });
-
-    useEffect(() => {
-        productsFound.map((obj) => {
-            setValue("_id", obj._id);
-            setValue("title", obj.title);
-            setValue("description", obj.description);
-            setValue("thumbnails", obj.thumbnails[0]);
-            setValue("category", obj.category);
-            setValue("price", obj.price);
-            setValue("stock", obj.stock);
-            setValue("code", obj.code);
-            setValue("status", obj.status);
-        })
-
-    }, [setValue, productsFound])
-
 
     return (
         <>
@@ -94,41 +79,8 @@ export default function System() {
                                 <p>No se realizó un búsqueda / No se encontró el producto</p> :
 
                                 productsFound.map((obj) => {
-                                    
                                     return (
-
-                                        <div key={obj._id}>
-                                            <form onSubmit={handleSubmit3(updateProduct)} className="checkout-form">
-                                                <p>ID del producto:</p>
-                                                <input type="text" name="_id" disabled {...register3("_id")} />
-                                                <input type="text" name="title"  {...register3("title", { required: true })} />
-                                                <input type="text" name="description" {...register3("description", { required: true })} />
-                                                <input type="text" name="code" {...register3("code", { required: true })} />
-                                                <input type="number" name="price" {...register3("price", { required: true })} />
-                                                <input type="number" name="stock" {...register3("stock", { required: true })} />
-                                                <input type="text" name="thumbnails" placeholder="Link Imagen del producto" {...register3("thumbnails")} />
-                                                <select name="category" id="category-select" {...register3("category", { required: true })}>
-                                                    <option value="muebles">Muebles</option>
-                                                    <option value="iluminación">Iluminación</option>
-                                                    <option value="ropa de cama">Ropa de cama</option>
-                                                    <option value="electrodomésticos">Electrodomésticos</option>
-                                                    <option value="cocina">Cocina</option>
-                                                    <option value="tecnología">Tecnología</option>
-                                                    <option value="accesorios">Accesorios</option>
-                                                    <option value="decoración">Decoración</option>
-                                                </select>
-                                                <select name="status" id="category-select" {...register3("status", { required: true })}>
-                                                    <option value="true">Disponible</option>
-                                                    <option value="false">No disponible</option>
-                                                </select>
-
-                                                <div className="sistema-bajas-modif-botones">
-                                                    <button type="submit" className="sistema-boton">Modificar Producto</button>
-                                                    <button className="sistema-boton-eliminar" onClick={() => deleteProduct(obj._id)}>Eliminar producto</button>
-                                                </div>
-
-                                            </form>
-                                        </div>
+                                        <ProductsFounded key={obj._id} product={obj} />
                                     )
                                 })
                         }

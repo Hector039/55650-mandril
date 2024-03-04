@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import axios from "../../config/axiosConfig";
 
 export const DataContext = createContext([]);
@@ -11,8 +10,6 @@ const urlUserLogin = "/api/sessions/login"
 const urlUserLogout = "/api/sessions/logout"
 const urlUserRegister = "/api/sessions/signin"
 const urlUserForgot = "/api/sessions/forgot"
-const urlUserGoogleLogin = "/api/sessions/google"
-const urlUserGithubLogin = "/api/sessions/github"
 
 export const DataProvider = ({ children }) => {
 
@@ -124,14 +121,6 @@ export const DataProvider = ({ children }) => {
             .catch(error => console.log(error))
     }
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-    } = useForm({
-        mode: "onBlur",
-    });
-
     function handleemptycart(cid) {
         axios.delete(urlCart + "/" + cid, { withCredentials: true })
             .then(response => setCart(response.data.data))
@@ -222,8 +211,7 @@ export const DataProvider = ({ children }) => {
     return (
         <DataContext.Provider value={{
             products, cart, handleemptycart,
-            deleteprod, login, newRegister, forgot, user, register,
-            handleSubmit, reset, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
+            deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub, getUserCart,
             handleAdd, getProduct, productDetail, setPage
         }}>
