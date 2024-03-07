@@ -1,13 +1,19 @@
 import { useForm } from "react-hook-form";
 import { DataContext } from "../context/dataContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import googleLogo from "./assets/googleLogo.png";
 import githubLogo from "./assets/githubLogo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Account() {
-
+    const navigate = useNavigate();
     const { login, newRegister, user, loginGoogle, loginGithub } = useContext(DataContext);
+
+    useEffect(() => {
+        if (user !== null) {
+            navigate("/")
+        }
+    }, [user])
 
     const {
         register,
@@ -33,10 +39,11 @@ export default function Account() {
                     <div className="cuenta-acceder">
                         <p className="cuenta-title">Acceder usuario existente:</p>
                         <form onSubmit={handleSubmit(login)}>
-                            <input type="email"  name="email" placeholder="Correo Electrónico *" {...register("email", { required: true })} />
+                            <input type="email" name="email" placeholder="Correo Electrónico *" {...register("email", { required: true })} />
                             <input type="password" id="pass" name="password" placeholder="Contraseña *" {...register("password", { required: true })} />
                             <button type="submit" className="cuenta-button">Acceder</button>
                         </form>
+                        <Link to={"/forgot"} className="boton-ver-mas">Olvidaste tu contraseña?</Link>
                         <p className="cuenta-title">O también:</p>
                         <div className="social-login-container">
                             <button onClick={loginGoogle}>Ingresar con Google <img src={googleLogo} alt="Google Logo"></img></button>
@@ -50,8 +57,8 @@ export default function Account() {
                 <div className="cuenta-registrarse">
                     <p className="cuenta-title">Registrar cuenta nueva:</p>
                     <form onSubmit={handleSubmit2(newRegister)}>
-                        <input type="text" id="firstname" name="firstname" placeholder="Nombre" {...register2("firstname", { required: true })}/>
-                        <input type="text" id="lastname" name="lastname" placeholder="Apellido" {...register2("lastname", { required: true })}/>
+                        <input type="text" id="firstname" name="firstname" placeholder="Nombre" {...register2("firstname", { required: true })} />
+                        <input type="text" id="lastname" name="lastname" placeholder="Apellido" {...register2("lastname", { required: true })} />
                         <input type="email" id="email" name="email" placeholder="Correo Electrónico *" {...register2("email", { required: true })} />
                         <input type="password" id="password" name="password" placeholder="Contraseña nueva *" {...register2("password", { required: true })} />
                         <input type="password" id="repassword" name="repassword" placeholder="Repite contraseña *" {...register2("repassword", { required: true })} />

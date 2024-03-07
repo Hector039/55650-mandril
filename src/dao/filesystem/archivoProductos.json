@@ -5,7 +5,7 @@
         "description": "Silla de oficina de madera con respaldo",
         "code": "sil002",
         "price": "10000",
-        "stock": 1,
+        "stock": 0,
         "category": "muebles",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -18,7 +18,7 @@
         "description": "Silla de oficina de metal con ruedas de aluminio y soporte lumbar",
         "code": "sil001",
         "price": 20000,
-        "stock": 5,
+        "stock": 0,
         "category": "muebles",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -31,7 +31,7 @@
         "description": "Mouse de oficina standard con luces led de colores",
         "code": "acc002",
         "price": 9000,
-        "stock": 12,
+        "stock": 45,
         "category": "accesorios",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -44,7 +44,7 @@
         "description": "Pad para mouse standard",
         "code": "acc003",
         "price": 1000,
-        "stock": 25,
+        "stock": 11,
         "category": "accesorios",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -57,7 +57,7 @@
         "description": "Monitor 22 pulgadas para oficina",
         "code": "per001",
         "price": 11000,
-        "stock": 3,
+        "stock": 27,
         "category": "tecnologia",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -70,7 +70,7 @@
         "description": "Monitor 29 pulgadas para oficina",
         "code": "per003",
         "price": 15000,
-        "stock": 2,
+        "stock": 20,
         "category": "tecnologia",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png",
@@ -84,7 +84,7 @@
         "description": "Monitor 42 pulgadas para oficina",
         "code": "per004",
         "price": 18000,
-        "stock": 1,
+        "stock": 39,
         "category": "tecnologia",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -97,7 +97,7 @@
         "description": "Monitor LED LG 22 pulgadas",
         "code": "tec005",
         "price": 68000,
-        "stock": 4,
+        "stock": 23,
         "category": "tecnologia",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
@@ -110,21 +110,8 @@
         "description": "Armario de oficina de metal con cerradura",
         "code": "arm001",
         "price": 368000,
-        "stock": 4,
+        "stock": 15,
         "category": "muebles",
-        "thumbnails": [
-            "https://dummyimage.com/300/09f/fff.png"
-        ],
-        "status": true
-    },
-    {
-        "_id": 12,
-        "title": "Auriculares",
-        "description": "Auriculares Vincha de colores",
-        "code": "aur001",
-        "price": "6500",
-        "stock": "15",
-        "category": "accesorios",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
         ],
@@ -136,10 +123,25 @@
         "description": "Auriculares in ear con gomas de repuesto",
         "code": "aur002",
         "price": "8000",
-        "stock": "5",
+        "stock": 9,
         "category": "accesorios",
         "thumbnails": [
             "https://dummyimage.com/300/09f/fff.png"
+        ],
+        "status": true
+    },
+    {
+        "_id": 14,
+        "title": "Auriculares",
+        "description": "Auriculares Vincha de colores reforzados",
+        "code": "aur001",
+        "price": 10500,
+        "stock": 30,
+        "category": "accesorios",
+        "thumbnails": [
+            [
+                "https://dummyimage.com/300/09f/fff.png"
+            ]
         ],
         "status": true
     }

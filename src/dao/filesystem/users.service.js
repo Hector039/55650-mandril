@@ -1,7 +1,4 @@
 import fs from "fs";
-import CartService from "./carts.service.js";
-
-const cartService = new CartService();
 
 class User {
     constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart) {
@@ -33,7 +30,7 @@ export default class UserService {
             const userById = users.find(user => user._id === emailOrId);
             const userByGoogleId = users.find(user => user.idgoogle === emailOrId);
             const userByGithubId = users.find(user => user.idgithub === emailOrId);
-            let user = undefined;
+            let user = null;
             if(userByEmail !== undefined){
                 user = userByEmail
                 return user;
@@ -80,10 +77,7 @@ export default class UserService {
         try {
             const role = "user";
             const users = await this.getAllUsers();
-            const userById = users.find(user => user.email === email);
-            if (userById !== undefined) {
-                throw new Error(`Usuario ${email} ya existente`);
-            }
+            
             const newUser = new User(
                 ++this.#ultimoId,
                 firstName,
@@ -95,7 +89,6 @@ export default class UserService {
                 idgithub,
                 cart
             );
-
             users.push(newUser);
             await this.guardarUsers(users);
             return;

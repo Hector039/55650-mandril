@@ -54,9 +54,6 @@ export default class ProductService {
         try {
             const products = await this.getAllProducts();
             const productsFinded = products.filter(product => product.title === text);
-            if (productsFinded.length === 0) {
-                throw new Error(`No existe producto con nombre ${text}, intente nuevamente.`);
-            }
             return productsFinded;
         } catch (error) {
             throw error;
@@ -90,13 +87,12 @@ export default class ProductService {
 
     async updateProduct(pid, product){
         try{
-            const productId = parseInt(pid)
-            const productos = await this.getAllProducts();
-            const productIndex = productos.findIndex(producto => producto._id === productId);
+            let productos = await this.getAllProducts();
+            const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
             if (productIndex < 0) {
                 throw new Error(`Producto ${pid} no encontrado`);
             }
-            product["_id"] = productId
+            product["_id"] = parseInt(pid)
             productos.splice(productIndex, 1, product);
             await this.guardarProductos(productos);
             return product;

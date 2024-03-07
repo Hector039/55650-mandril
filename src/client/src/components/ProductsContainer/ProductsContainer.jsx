@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { DataContext } from "../context/dataContext";
 import { Link } from "react-router-dom";
 import ProductCard from "../ProductCard/ProductCard";
@@ -6,7 +6,6 @@ import userGuestLogo from "./assets/profilePhoto.png";
 
 export default function ProductsContainer() {
     const { products, user, setCategoryFilter, setPriceFilter, setLimitFilter, logout, setPage } = useContext(DataContext)
-
     return (
         <>
             <div className="welcome-container">
@@ -45,8 +44,8 @@ export default function ProductsContainer() {
                     <label htmlFor="filter-select">Precio:</label>
                     <select name="filter" id="filter-select" onChange={e => setPriceFilter(e.target.value)}>
                         <option value="todos">--Elige el Filtro/Ninguno--</option>
-                        <option value="desc">Menor Precio</option>
-                        <option value="asc">Mayor precio</option>
+                        <option value="asc">Menor Precio</option>
+                        <option value="desc">Mayor precio</option>
                     </select>
                 </div>
 
@@ -62,7 +61,7 @@ export default function ProductsContainer() {
             </div>
 
             <div className="products-container">
-                {products.payload === undefined ? <p>Error recibiendo los productos</p> : <ProductCard products={products.payload} />}
+                {products.length === 0 ? <p>Error recibiendo los productos</p> : <ProductCard products={products.payload} />}
             </div>
 
             {products.pagingCounter &&

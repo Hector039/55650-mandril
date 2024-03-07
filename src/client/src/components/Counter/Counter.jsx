@@ -5,7 +5,7 @@ export default function Contador ({stock, quantity, setQuantity}) {
     }
 
     function handleSum() {
-        quantity < stock && setQuantity(quantity + 1);
+        /* quantity < stock &&  */setQuantity(quantity + 1);
     }
     
     return (

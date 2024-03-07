@@ -1,68 +1,45 @@
-import { cartsService, usersService } from "../repository/index.js";
-import { generateToken, isValidPass, createHash } from "../tools/utils.js";
+import { usersService } from "../repository/index.js";
+import { generateToken, createHash } from "../tools/utils.js";
 import getEnvironment from "../config/process.config.js";
+import mailer from "../tools/mailer.js";
 
 const env = getEnvironment();
 
 async function userLogin(req, res) {//post
-    const { email, password } = req.body;
     try {
-        const user = await usersService.getUser(email);
-        if (user === null || user === undefined) {
-            res.sendUserError("Usuario no encontrado");
-            return;
-        }
-        if (isValidPass(password, user.password) === false) {
-            res.sendUserError("Usuario o contraseña incorrectos");
-            return;
-        }
-        const mail = user.email;
-        const role = user.role;
-        const cart = user.cart;
-        const name = user.firstName;
-        const id = user._id;
-        let token = generateToken({ mail, role, cart, name, id });
-
+        const email = req.user.email;
+        const role = req.user.role;
+        const cart = req.user.userCart;
+        const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
+        const name = req.user.firstName;
+        const id = req.user._id;
+        let token = generateToken({ email, role, cart, name, id, cartId });
         res.cookie("cookieToken", token, {
             httpOnly: true,
             maxAge: 60 * 60 * 1000,
             secure: env.USERCOOKIESECRET
-        }).sendSuccess(token);
+        }).sendSuccess({ email, role, cart, name, id, cartId });
     } catch (error) {
-        res.sendServerError("Error Interno del Servidor");
+        res.sendServerError(error);
     }
 }
 
 async function userSignIn(req, res) {//post
-    const { firstName, lastName, email, password } = req.body;
     try {
-        const user = await usersService.getUser(email);
-        if (user !== undefined) {
-            res.sendUserError("El usuario ya existe");
-            return;
-        };
-        const newCart = await cartsService.saveCart();
-        await usersService.saveUser({
-            firstName,
-            lastName,
-            email,
-            password: createHash(password),
-            cart: newCart._id
-        });
-        const userUpdated = await usersService.getUser(email);
-        const mail = userUpdated.email;
-        const role = userUpdated.role;
-        const cart = userUpdated.cart;
-        const name = userUpdated.firstName;
-        const id = userUpdated._id;
-        let token = generateToken({ mail, role, cart, name, id });
+        const email = req.user.email;
+        const role = req.user.role;
+        const cart = req.user.userCart;
+        const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
+        const name = req.user.firstName;
+        const id = req.user._id;
+        let token = generateToken({ email, role, cart, name, id, cartId });
         res.cookie("cookieToken", token, {
             httpOnly: true,
             maxAge: 60 * 60 * 1000,
             secure: env.USERCOOKIESECRET
-        }).sendSuccess(token);
+        }).sendSuccess({email, role, cart, name, id, cartId});
     } catch (error) {
-        res.sendServerError("Error Interno del Servidor");
+        res.sendServerError(error);
     }
 }
 
@@ -74,12 +51,11 @@ async function userForgotPass(req, res) {//post
             res.sendUserError("Usuario no encontrado");
             return;
         }
-        const userUpdated = await usersService.updateUser(email, createHash(password));
-        res.sendSuccess({ userUpdated });
+        await usersService.updateUser(email, createHash(password));
+        //const mailResult = await mailer({ mail: email, name: user.firstName }, "Se cambió tu contraseña.")
+        res.sendSuccess(/* mailResult */);
     } catch (error) {
-        res.status(500).json({
-            error: error.message,
-        })
+        res.sendServerError(error);
     }
 }
 
@@ -91,13 +67,14 @@ async function userLogout(req, res) {
 async function gitHub(req, res) { };//get
 
 async function gitHubStrategy(req, res) {//get
-    const id = req.user._id;
-    const mail = req.user.email;
+    const email = req.user.email;
     const role = req.user.role;
-    const cart = req.user.cart;
+    const cart = req.user.userCart;
+    const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
     const name = req.user.firstName;
+    const id = req.user._id;
     const photo = req.user.photo;
-    let token = generateToken({ mail, role, cart, name, photo, id });
+    let token = generateToken({ email, role, cart, name, photo, id, cartId });
     res.cookie("cookieToken", token, {
         httpOnly: true,
         maxAge: 60 * 60 * 1000,
@@ -108,13 +85,14 @@ async function gitHubStrategy(req, res) {//get
 async function google(req, res) { };//get
 
 async function googleStrategy(req, res) {//get
-    const id = req.user._id;
-    const mail = req.user.email;
+    const email = req.user.email;
     const role = req.user.role;
-    const cart = req.user.cart;
+    const cart = req.user.userCart;
+    const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
     const name = req.user.firstName;
+    const id = req.user._id;
     const photo = req.user.photo;
-    let token = generateToken({ mail, role, cart, name, photo, id });
+    let token = generateToken({ email, role, cart, name, photo, id, cartId });
     res.cookie("cookieToken", token, {
         httpOnly: true,
         maxAge: 60 * 60 * 1000,

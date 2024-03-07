@@ -9,34 +9,21 @@ async function param(req, res, next, pid) {//param
         }
         req.product = productById;
         next();
-    } catch (error) {
-        res.status(500).json({
-            error: error.message,
-        })
-    }
+    } catch (error) { res.status(500).json({ error: error.message }) }
 }
 
 async function searchProducts(req, res) {
     const { text } = req.params;
     try {
         let products = await productsService.searchProducts(text);
-
-        res.status(201).json({
-            msg: "Lista de todos los productos encontrados por título",
-            data: products
-        })
-
+        res.sendSuccess( products );
     } catch (error) {
-        res.status(500).json({
-            status: "Error",
-            error: error.message
-        })
+        res.sendServerError(error);
     }
 }
 
 async function getProductsFs(req, res) {
     const { limit, sort, category, page } = req.query;
-    const user = req.user;
     try {
         const options = {
             limit: limit === undefined ? 2 : parseInt(limit),
@@ -52,50 +39,34 @@ async function getProductsFs(req, res) {
         }
         if (options.sort !== "todos") {
             allProducts.sort(function (a, b) {
-                if (options.sort === "desc") {
+                if (options.sort === "asc") {
                     return (a.price - b.price);
-                } else if (options.sort === "asc") {
+                } else if (options.sort === "desc") {
                     return (b.price - a.price);
                 }
             });
         }
-        
         let payload = allProducts.filter((data, index) => index < options.limit);
-
-        res.status(201).json({
-            msg: "Lista de todos los productos",
-            payload,
-            user: user
-        })
-
+        const user = req.user
+        res.sendSuccess(  {user, payload}  );
     } catch (error) {
-        res.status(500).json({
-            status: "Error",
-            error: error.message
-        })
+        res.sendServerError(error);
     }
 }
 
 async function getProductsPaginated(req, res) {//get
     const { limit, sort, page, category } = req.query;
-
     try {
-
         let options = {
             limit: parseInt(limit),
             page: page === undefined ? 1 : parseInt(page),
         };
-
         if (sort !== "todos") {
             options["sort"] = { price: sort };
         };
-
         const find = category === "todos" ? {} : { category: category };
-
         const report = await productsService.paginateProduct(find, options);
-
-        res.status(201).json({
-            status: "success",
+        res.sendSuccess({
             payload: report.docs,
             totalPages: report.totalPages,
             prevPage: report.prevPage,
@@ -106,36 +77,23 @@ async function getProductsPaginated(req, res) {//get
             pagingCounter: report.pagingCounter,
             user: req.user
         });
-
     } catch (error) {
-        res.status(500).json({
-            status: "Error",
-            error: error.message
-        })
+        res.sendServerError(error);
     }
 }
 
 async function getProductById(req, res) {//get
     try {
         const productById = req.product;
-
-        res.status(201).json({
-            msg: "Producto encontrado.",
-            data: productById
-        })
-
+        res.sendSuccess(productById);
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-        })
+        res.sendServerError(error);
     }
 }
 
 async function saveProduct(req, res) {//post
     const { title, description, code, price, stock, category, thumbnails } = req.body;
-
     try {
-
         const newProduct = await productsService.saveProduct({
             title,
             description,
@@ -145,25 +103,16 @@ async function saveProduct(req, res) {//post
             category,
             thumbnails
         });
-
-        res.status(201).json({
-            msg: "Producto creado correctamente.",
-            data: newProduct
-        })
-
+        res.sendSuccess( newProduct );
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-        })
+        res.sendServerError(error);
     }
 }
 
 async function updateProduct(req, res) {//put
     const { title, description, code, price, stock, category, thumbnails, status } = req.body;
-
     try {
         const productId = req.product._id;
-
         const newProduct = {
             title,
             description,
@@ -174,18 +123,10 @@ async function updateProduct(req, res) {//put
             thumbnails,
             status
         };
-
         const response = await productsService.updateProduct(productId, newProduct);
-
-        res.status(201).json({
-            msg: "Producto modificado correctamente.",
-            data: response
-        });
-
+        res.sendSuccess( response );
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-        })
+        res.sendServerError(error);
     }
 }
 
@@ -193,15 +134,9 @@ async function deleteProduct(req, res) {
     try {
         const productId = req.product._id;
         await productsService.deleteProduct(productId);
-
-        res.status(201).json({
-            msg: `Producto ID: ${productId} eliminado correctamente.`,
-        });
-
+        res.sendSuccess();
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-        })
+        res.sendServerError(error);
     }
 }
 

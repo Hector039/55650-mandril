@@ -28,4 +28,9 @@ export default class CartsRepository {
         const result = await this.dao.addProductAndQuantityToCart(cid, pid, quantity);
         return result;
     };
+
+    purchaseTicket = async (purchaserEmail, purchaseDatetime, cart) => {
+        const result = await this.dao.purchaseTicket(purchaserEmail, purchaseDatetime, cart);
+        return result;
+    };
 }

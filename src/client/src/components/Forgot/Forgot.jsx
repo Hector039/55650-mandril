@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { DataContext } from "../context/dataContext";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 export default function Forgot() {
 
@@ -16,7 +17,7 @@ export default function Forgot() {
     return (
         <>
             <div className="cuenta-registrarse">
-                    <p className="cuenta-title">Registrar cuenta nueva:</p>
+                    <p className="cuenta-title">Restaurar contraseña:</p>
                     <form onSubmit={handleSubmit(forgot)}>
                         <input type="email" id="email" name="email" placeholder="Dirección Correo Electrónico *" {...register("email", { required: true })} />
                         <input type="password" id="password" name="password" placeholder="Contraseña nueva *" {...register("password", { required: true })} />
@@ -26,7 +27,7 @@ export default function Forgot() {
                     </form>
                 </div>
 
-            <a href="/login"><button>Volver al LogIn</button></a>
+                <Link to={"/account"} className="boton-ver-mas">Volver al Login</Link>
         </>
 
     )

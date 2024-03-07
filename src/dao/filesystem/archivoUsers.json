@@ -27,17 +27,6 @@
         "cart": 9
     },
     {
-        "_id": 4,
-        "firstName": "Hector",
-        "lastName": "Hector",
-        "email": "elector22@gmail.com",
-        "password": "6pb01o",
-        "role": "user",
-        "idgoogle": "109314102480647809075",
-        "idgithub": null,
-        "cart": 10
-    },
-    {
         "_id": 5,
         "firstName": "Coder",
         "lastName": "Coder",
@@ -47,5 +36,27 @@
         "idgoogle": null,
         "idgithub": null,
         "cart": 11
+    },
+    {
+        "_id": 6,
+        "firstName": "vladimir",
+        "lastName": "vladimir",
+        "email": "putin@gmail.com",
+        "password": "$2b$10$7i0RHMUzLFHxEEg8ZBREp.d/.w1FVaBhjqjpnGdr37ZEIqbT4J6Hq",
+        "role": "user",
+        "idgoogle": null,
+        "idgithub": null,
+        "cart": 22
+    },
+    {
+        "_id": 7,
+        "firstName": "Hector",
+        "lastName": "Hector",
+        "email": "elector22@gmail.com",
+        "password": "yfwnk7",
+        "role": "user",
+        "idgoogle": "109314102480647809075",
+        "idgithub": null,
+        "cart": 23
     }
 ]

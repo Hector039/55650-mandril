@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { DataContext } from "../context/dataContext";
 import ProductsFounded from "./ProductsFounded";
@@ -13,9 +13,17 @@ export default function System() {
         register,
         handleSubmit,
         reset,
+        formState,
+        formState: { isSubmitSuccessful }
     } = useForm({
         mode: "onBlur",
     });
+
+    useEffect(() => {
+        if (formState.isSubmitSuccessful) {
+            reset();
+        }
+    }, [formState, reset]);
 
     const {
         register: register2,
@@ -57,7 +65,7 @@ export default function System() {
 
                         <div className="sistema-bajas-modif-botones">
                             <button type="submit" className="sistema-boton">Cargar Producto</button>
-                            <button type="reset" className="sistema-boton-eliminar" onClick={() => reset()}>Reset</button>
+                            <button type="reset" className="sistema-boton-eliminar" onClick={reset}>Reset</button>
                         </div>
                     </form>
                 </div>

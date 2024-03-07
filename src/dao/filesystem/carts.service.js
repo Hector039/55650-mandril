@@ -1,7 +1,11 @@
 import fs from "fs";
+import UserService from "./users.service.js";
 import ProductService from "./products.service.js";
+import TicketsService from "./tickets.service.js";
 
 const productService = new ProductService();
+const ticketService = new TicketsService();
+const userService = new UserService();
 
 class Cart {
     constructor(id, products) {
@@ -53,17 +57,18 @@ export default class CartService {
         try {
             const carts = await this.getCarts();
             const cart = carts.find((cart) => cart._id === parseInt(id));
-            if(cart === undefined){
-                throw new Error(`El carrito ${id} no existe.`); 
+            if (cart === undefined) {
+                return null;
             }
             const products = await productService.getAllProducts();
-            const cartInfo = cart.products.map((prod) => {
+            const cartProducts = cart.products.map((prod) => {
                 return {
                     product: products.find((producto) => producto._id === prod.product),
                     quantity: prod.quantity
                 };
             });
-            return cartInfo;
+            cart["products"] = cartProducts
+            return cart;
         } catch (error) {
             throw error;
         }
@@ -73,7 +78,7 @@ export default class CartService {
         try {
             const carts = await this.getCarts();
             const cartIndex = carts.findIndex((cart) => cart._id === parseInt(cid));
-            if( cartIndex < 0){
+            if (cartIndex < 0) {
                 throw new Error(`El carrito ${cid} no existe.`);
             }
 
@@ -93,13 +98,14 @@ export default class CartService {
             const cartsUpdated = await this.getCarts();
             const temporalProducts = await productService.getAllProducts();
 
-            const cartInfo = cartsUpdated[cartIndex].products.map((prod) => {
+            const cartProducts = cartsUpdated[cartIndex].products.map((prod) => {
                 return {
                     product: temporalProducts.find((producto) => producto._id === prod.product),
                     quantity: prod.quantity,
                 };
             });
-            return cartInfo;
+            cartsUpdated[cartIndex]["products"] = cartProducts
+            return cartsUpdated[cartIndex];
         } catch (error) {
             throw error;
         }
@@ -109,7 +115,7 @@ export default class CartService {
         try {
             const carts = await this.getCarts();
             const cartIndex = carts.findIndex((cart) => cart._id === parseInt(cid));
-            if( cartIndex < 0){
+            if (cartIndex < 0) {
                 throw new Error(`El carrito ${cid} no existe.`);
             }
             const cartIndexProduct = carts[cartIndex].products.findIndex((prod) => prod.product === parseInt(product.product._id));
@@ -125,13 +131,14 @@ export default class CartService {
             const cartsUpdated = await this.getCarts();
             const temporalProducts = await productService.getAllProducts();
 
-            const cartInfo = cartsUpdated[cartIndex].products.map((prod) => {
+            const cartProducts = cartsUpdated[cartIndex].products.map((prod) => {
                 return {
                     product: temporalProducts.find((producto) => producto._id === prod.product),
                     quantity: prod.quantity,
                 };
             });
-
+            cartsUpdated[cartIndex]["products"] = cartProducts
+            return cartsUpdated[cartIndex];
             return cartInfo;
         } catch (error) {
             throw error;
@@ -142,7 +149,7 @@ export default class CartService {
         try {
             let carts = await this.getCarts();
             const cartIndex = carts.findIndex((cart) => cart._id === parseInt(cid));
-            if(cartIndex < 0){
+            if (cartIndex < 0) {
                 throw new Error(`El carrito ${cid} no existe.`);
             }
             carts[cartIndex].products = [];
@@ -153,6 +160,60 @@ export default class CartService {
             throw error;
         }
     };
+
+    async purchaseTicket(purchaserEmail, purchaseDatetime, cart) {
+        try {
+            let unavaliableProducts = []
+            let avaliableProducts = []
+
+            let products = await productService.getAllProducts();
+
+            cart.products.forEach(cartProd => {
+                products.forEach(prod => {
+                    if (cartProd.product._id === prod._id) {
+                        if (prod.stock >= cartProd.quantity) {
+                            prod.stock = prod.stock - cartProd.quantity
+                            avaliableProducts.push(cartProd)
+                        } else if (prod.stock <= cartProd.quantity) {
+                            unavaliableProducts.push(cartProd.product)
+                        }
+                    }
+                })
+            })
+            
+            await productService.guardarProductos(products);
+
+            const newTicket = {
+                code: purchaseDatetime + (Math.floor(Math.random() * 100 + 1)).toString(),
+                purchase_datetime: purchaseDatetime,
+                amount: avaliableProducts.length === 0 ? 0 : avaliableProducts.reduce((acc, prodPrice) => { acc += (prodPrice.product.price * prodPrice.quantity); return acc }, 0),
+                purchaser: purchaserEmail
+            }
+
+            const ticket = avaliableProducts.length === 0 ? "Sin Stock" : await ticketService.saveTicket(newTicket)
+            
+            const userByEmail = await userService.getUser(purchaserEmail)
+            const carts = await this.getCarts();
+            const cartIndex = carts.findIndex(cart => cart._id === parseInt(userByEmail.cart));
+
+            let newValues = []
+            function filterprod(prod) {
+                unavaliableProducts.forEach(item => {
+                    if (item._id === prod.product._id) {
+                        prod["product"] = item._id
+                        newValues.push(prod)
+                    }
+                })
+            }
+            cart.products.filter(filterprod)
+            carts[cartIndex]["products"] = newValues
+            await this.saveCarts(carts)
+            const updatedCart = await this.getCartById(userByEmail.cart);
+            return ({ ticket: ticket, cart: updatedCart })
+        } catch (error) {
+            throw error;
+        }
+    }
 
     async #setUltimoId() {
         try {
