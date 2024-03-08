@@ -1,11 +1,15 @@
 import nodemailer from "nodemailer";
+import getEnvironment from "../config/process.config.js";
+import __dirname from "./utils.js";
+
+const env = getEnvironment()
 
 const transport = nodemailer.createTransport({
     service: "gmail",
     port: 587,
     auth: {
-        user: "elector22@gmail.com",
-        pass: "fuwd ombp qzdt blzr"
+        user: env.MAILER_USER,
+        pass: env.MAILER_PASSWORD
     }
 })
 
@@ -15,22 +19,24 @@ export default async function mailer(user, message) {
             return "Error o falta de datos de usuario. No se envió el email."
         }
         await transport.sendMail({
-            from: "Coder Test elector22@gmail.com",
+            from: `Coder Test ${env.MAILER_USER}`,
             to: user.mail,
-            subject: `Bienvenido ${user.name}!`,
+            subject: `Buenas noticias ${user.name}!`,
             html: `
             <div>
             <h1>${message}</h1>
-            <img src="cid:logo"/>
+            <div>
+            <img src="cid:logo" style="width: 300px"/>
+            </div>
             </div>
             `,
             attachments: [{
                 filename: "logo.jpg",
-                path: "/logo.jpg",
+                path: `${__dirname}/logo.jpg`,
                 cid: "logo"
-            }]
+            }] 
         });
-        return "emailSent";
+        return;
     } catch (error) {
         throw error;
     }

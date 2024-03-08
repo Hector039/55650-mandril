@@ -58,6 +58,16 @@ export default class TicketsService {
         }
     }
 
+    async getUserTickets(userEmail) {
+        try {
+            const tickets = await this.getTickets();
+            const userTickets = tickets.filter(ticket => ticket.purchaser === userEmail);
+            return userTickets;
+        } catch (error) {
+            throw error;
+        }
+    };
+
     async #setUltimoId() {
         try {
             const tickets = await this.getTickets();

@@ -34,8 +34,10 @@ const getEnvironment = () => {
         GH_CALLBACK_URL: process.env.GH_CALLBACK_URL,
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-        GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL
-    };
+        GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
+        MAILER_USER: process.env.MAILER_USER,
+        MAILER_PASSWORD: process.env.MAILER_PASSWORD
+};
 };
 
 export default getEnvironment;

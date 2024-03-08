@@ -6,7 +6,6 @@ import withReactContent from 'sweetalert2-react-content'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const MySwal = withReactContent(Swal)
 export const DataContext = createContext([]);
 
@@ -17,19 +16,9 @@ const urlUserLogin = "http://localhost:8080/api/sessions/login"
 const urlUserLogout = "http://localhost:8080/api/sessions/logout"
 const urlUserRegister = "http://localhost:8080/api/sessions/signin"
 const urlUserForgot = "http://localhost:8080/api/sessions/forgot"
+const urlUserTicket = "http://localhost:8080/api/carts/usertickets"
 
 export const DataProvider = ({ children }) => {
-
-    const toastConfig = {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored"
-    }
 
     const dt = DateTime.now().setLocale('es').toLocaleString(DateTime.DATE_FULL);
 
@@ -37,6 +26,7 @@ export const DataProvider = ({ children }) => {
     const [productDetail, setProductDetail] = useState(null)
     const [cart, setCart] = useState([])
     const [user, setUser] = useState(null);
+    const [ ticket, setTicket ] = useState([])
 
     const [categoryFilter, setCategoryFilter] = useState("todos")
     const [priceFilter, setPriceFilter] = useState("todos")
@@ -70,7 +60,7 @@ export const DataProvider = ({ children }) => {
                 setProductDetail(response.data.payload);
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -81,7 +71,7 @@ export const DataProvider = ({ children }) => {
                 setCart(response.data.payload.products);
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -105,17 +95,17 @@ export const DataProvider = ({ children }) => {
             })
             .catch(error => {
                 if (error.response.statusText === "Unauthorized") {
-                    toast.error(error.response.data.error, { toastConfig });
+                    toast.error(error.response.data.error);
                     return
                 }
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
 
     const newRegister = (e) => {
         if (e.password !== e.repassword) {
-            toast.error('Los passwords no coinciden. Intenta de nuevo', { toastConfig });
+            toast.error('Los passwords no coinciden. Intenta de nuevo');
             return;
         }
         axios.post(urlUserRegister, {
@@ -136,18 +126,19 @@ export const DataProvider = ({ children }) => {
                 });
             })
             .catch(error => {
+                console.log(error.response);
                 if (error.response.statusText === "Unauthorized") {
-                    toast.error(error.response.data.error, { toastConfig });
+                    toast.error(error.response.data.error);
                     return
                 }
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
 
     const forgot = (e) => {
         if (e.password !== e.repassword) {
-            toast.error('Los passwords no coinciden. Intenta de nuevo', { toastConfig });
+            toast.error('Los passwords no coinciden. Intenta de nuevo');
             return;
         }
         axios.post(urlUserForgot, {
@@ -158,7 +149,7 @@ export const DataProvider = ({ children }) => {
             Swal.fire({
                 position: "top-end",
                 icon: "success",
-                title: "Contraseña restaurada!",
+                title: "Contraseña restaurada!.",
                 showConfirmButton: false,
                 timer: 1500
             }).then(result => {
@@ -168,10 +159,10 @@ export const DataProvider = ({ children }) => {
         })
             .catch(error => {
                 if (error.response.data.status === "UserError") {
-                    toast.error(error.response.data.userError, { toastConfig });
+                    toast.error(error.response.data.userError);
                     return
                 }
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -183,7 +174,7 @@ export const DataProvider = ({ children }) => {
                 window.location.replace("/logout");
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -198,11 +189,11 @@ export const DataProvider = ({ children }) => {
     function handleemptycart(cid) {
         axios.delete(urlCart + "/" + cid, { withCredentials: true })
             .then(response => {
-                toast.success('Se vació el carrito correctamente.', { toastConfig });
+                toast.success('Se vació el carrito correctamente.');
                 setCart(response.data.payload.products)
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -210,12 +201,12 @@ export const DataProvider = ({ children }) => {
     function deleteprod(pid) {
         axios.delete(urlCart + "/product/" + pid, { withCredentials: true })
             .then(response => {
-                toast.success('Se eliminó el producto correctamente.', { toastConfig });
+                toast.success('Se eliminó el producto correctamente.');
                 console.log(response.data.payload);
                 setCart(response.data.payload.products)
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -223,10 +214,10 @@ export const DataProvider = ({ children }) => {
     function handleAdd(pid, quantity) {
         axios.post(urlCart + "/addproduct/" + pid, { quantity: quantity }, { withCredentials: true })
             .then(response => {
-                toast.success('Se agregó el producto al carrito.', { toastConfig });
+                toast.success('Se agregó el producto al carrito.');
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
@@ -262,18 +253,31 @@ export const DataProvider = ({ children }) => {
                                 <p>ID ticket: ${response.data.payload.ticket.code}</p>
                                 <p>Fecha: ${response.data.payload.ticket.purchase_datetime}</p>
                                 <p>Total: ${response.data.payload.ticket.amount}</p>
+                                <p>Los productos no disponibles no se procesaron.</p>
                                 `,
-                            text: "Te enviaremos un mail con ticket de tu pedido. Los productos no disponibles no se procesaron.",
+                            text: "Te enviaremos un mail con el ticket de tu pedido.",
                             icon: "success"
                         })
                         setCart(response.data.payload.cart.products)
                     })
                     .catch(error => {
-                        toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                        toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                         console.log(error)
                     })
             }
         });
+    }
+
+    const getUserTickets = (userEmail) => {
+        axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
+            .then(response => setTicket(response.data.payload))
+            .catch(error => {
+                if(error.response.data.status === "UserError"){
+                    return toast.error(error.response.data.userError);
+                }
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error.response)
+            })
     }
 
     //Sistema de alta y bajas del Administrador
@@ -296,23 +300,22 @@ export const DataProvider = ({ children }) => {
             category,
             thumbnails
         }, { withCredentials: true }).then(response => {
-            toast.success('Se agregó el producto correctamente.', { toastConfig });
+            toast.success('Se agregó el producto correctamente.');
             console.log(response);
         }).catch(error => {
-            toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             console.log(error)
         })
-
     }
 
     const deleteProduct = (id) => {
         axios.delete(urlProd + "/" + id, { withCredentials: true })
             .then(response => {
-                toast.success('Se eliminó el producto correctamente.', { toastConfig });
+                toast.success('Se eliminó el producto correctamente.');
                 console.log(response.data)
             })
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
         setproductsFound([]);
@@ -338,10 +341,10 @@ export const DataProvider = ({ children }) => {
             thumbnails,
             status
         }, { withCredentials: true }).then(response => {
-            toast.success('Se actualizó el producto correctamente.', { toastConfig });
+            toast.success('Se actualizó el producto correctamente.');
             console.log(response);
         }).catch(error => {
-            toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             console.log(error)
         })
         setproductsFound([]);
@@ -352,7 +355,7 @@ export const DataProvider = ({ children }) => {
         axios.get(urlProdSearch + "/" + productName, { withCredentials: true })
             .then(response => setproductsFound(response.data.payload))
             .catch(error => {
-                toast.error('Ocurrió un error inesperado. Intenta de nuevo', { toastConfig });
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error.response)
             })
     }
@@ -362,7 +365,7 @@ export const DataProvider = ({ children }) => {
             products, cart, handleemptycart,
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
-            handleAdd, getProduct, productDetail, setPage, buyCart, dt, getUserCart
+            handleAdd, getProduct, productDetail, setPage, buyCart, dt, getUserCart, getUserTickets, ticket
         }}>
             {children}
         </DataContext.Provider>

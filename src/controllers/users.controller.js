@@ -52,8 +52,8 @@ async function userForgotPass(req, res) {//post
             return;
         }
         await usersService.updateUser(email, createHash(password));
-        //const mailResult = await mailer({ mail: email, name: user.firstName }, "Se cambió tu contraseña.")
-        res.sendSuccess(/* mailResult */);
+        const mailResult = await mailer({ mail: email, name: user.firstName }, "Se cambió tu contraseña.")
+        res.sendSuccess(mailResult);
     } catch (error) {
         res.sendServerError(error);
     }

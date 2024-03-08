@@ -5,7 +5,7 @@ import { usersService, cartsService } from "../repository/index.js";
 import { createHash, isValidPass } from "../tools/utils.js";
 import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";
-//import mailer from "../tools/mailer.js";
+import mailer from "../tools/mailer.js";
 
 const env = getEnvironment();
 
@@ -45,9 +45,9 @@ const initializePassport = () => {
                     const userUpdated = await usersService.getUser(profile.id);
                     userUpdated["photo"] = profile._json.picture;
                     userUpdated["userCart"] = newCart
-                    //const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
+                    const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
                     
-                    return cb(null, userUpdated/* , { messages: mailResult } */);
+                    return cb(null, userUpdated, { messages: mailResult });
                 }
 
                 user["photo"] = profile._json.picture;
@@ -94,7 +94,7 @@ const initializePassport = () => {
                     const userUpdated = await usersService.getUser(profile?.id);
                     userUpdated["photo"] = profile._json.avatar_url;
                     userUpdated["userCart"] = newCart
-                    //const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
+                    const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
 
                     return done(null, userUpdated, { messages: mailResult });
                 }
@@ -131,8 +131,8 @@ const initializePassport = () => {
 
                 const userUpdated = await usersService.getUser(email);
                 userUpdated["userCart"] = newCart
-                //const mailResult = await mailer({mail: email, name: firstName}, "Bienvenido a nuestro e-commerce!")
-                return done(null, userUpdated/* , { messages: mailResult } */);
+                const mailResult = await mailer({mail: email, name: firstName}, "Bienvenido a nuestro e-commerce!")
+                return done(null, userUpdated, { messages: mailResult });
             } catch (error) {
                 return done(error, null);
             }

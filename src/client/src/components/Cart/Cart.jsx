@@ -1,11 +1,10 @@
 import { useContext, useEffect } from "react"
 import { DataContext } from "../context/dataContext"
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 
 export default function Cart() {
     const { user, cart, handleemptycart, deleteprod, getUserCart, buyCart } = useContext(DataContext);
-    console.log(cart);
     const cartId = user.cartId
     useEffect(() => {
     getUserCart(cartId)
@@ -64,6 +63,7 @@ export default function Cart() {
                     </div> :
                     <h2 className="carrito-mensaje">Aún no hay productos en el carrito</h2>
             }
+            {user !== null && user.role === "user" && <NavLink to={`/usertickets/${user.email}`} className="info-button">Consulta histórico de Tickets.</NavLink>}
             <Link to={"/"} className="carrito-comprar-button" >Volver a los productos</Link>
         </div>
     )

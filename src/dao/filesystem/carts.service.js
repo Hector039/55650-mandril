@@ -215,6 +215,15 @@ export default class CartService {
         }
     }
 
+    async getUserTickets(userEmail) {
+        try {
+            const userTickets = await ticketService.getUserTickets(userEmail)
+            return userTickets;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async #setUltimoId() {
         try {
             const carts = await this.getCarts();

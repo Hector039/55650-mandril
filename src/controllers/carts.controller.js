@@ -1,4 +1,5 @@
 import { cartsService, productsService } from "../repository/index.js";
+import mailer from "../tools/mailer.js";
 
 async function getCart(req, res) {//get
     const { cid } = req.params;
@@ -91,13 +92,26 @@ async function purchaseCart(req, res) {
     const { purchaseDatetime } = req.body;
     try {
         const purchaserEmail = req.user.email
+        const userName = req.user.name
         const cart = await cartsService.getCartById(cid);
         if (cart === null) return res.sendUserError("Carrito inexistente");
         const purchaseTicket = await cartsService.purchaseTicket(purchaserEmail, purchaseDatetime, cart);
+        await mailer({ mail: purchaserEmail, name: userName }, "Compra confirmada!. podés ver el ticket en el apartado dentro de tu carrito.")
         res.sendSuccess(purchaseTicket);
     } catch (error) {
         res.sendServerError(error);
     }
 }
 
-export { getCart, deleteProductToCart, deleteAllProducts, updateCart, addProductAndQuantity, purchaseCart };
+async function getUserTickets(req, res) {
+    const { userEmail } = req.params;
+    try {
+        const userTickets = await cartsService.getUserTickets(userEmail);
+        if (userTickets === null || userTickets.length === 0) return res.sendUserError("Aún No existen tickets.");
+        res.sendSuccess(userTickets);
+    } catch (error) {
+        res.sendServerError(error);
+    }
+}
+
+export { getCart, deleteProductToCart, deleteAllProducts, updateCart, addProductAndQuantity, purchaseCart, getUserTickets };

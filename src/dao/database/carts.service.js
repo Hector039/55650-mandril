@@ -90,7 +90,7 @@ export default class CartService {
             });
 
             const prodDataBase = await productsModel.find({ '_id': { $in: ids } });
-            
+
             cart.products.forEach(productInCart => {
                 prodDataBase.forEach(prodDB => {
                     if ((productInCart.product._id).toString() === (prodDB._id).toString()) {
@@ -118,7 +118,7 @@ export default class CartService {
 
             const ticket = avaliableProducts.length === 0 ? "Sin Stock" : await this.saveTicket(newTicket)
 
-            const userByEmail = await userModel.findOne({email: purchaserEmail})
+            const userByEmail = await userModel.findOne({ email: purchaserEmail })
 
             const unavaliableProdsMap = unavaliableProducts.map(prod => {
                 return {
@@ -129,9 +129,23 @@ export default class CartService {
 
             await cartModel.replaceOne({ _id: userByEmail.cart }, { products: unavaliableProdsMap });
             const updatedCart = await this.getCartById(userByEmail.cart);
-            return ({ticket: ticket, cart: updatedCart})
+            return ({ ticket: ticket, cart: updatedCart })
         } catch (error) {
             throw error;
         }
     }
+
+    async getUserTickets(userEmail) {
+        try {
+            const user = await userModel.findOne({email: userEmail})
+            if (user === null) {
+                throw new Error("El usuario no existe")
+            } 
+            const userTickets = await ticketModel.find({purchaser: userEmail});
+            return userTickets;
+        } catch (error) {
+            throw error;
+        }
+    };
+
 };

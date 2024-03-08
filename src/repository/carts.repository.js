@@ -33,4 +33,9 @@ export default class CartsRepository {
         const result = await this.dao.purchaseTicket(purchaserEmail, purchaseDatetime, cart);
         return result;
     };
+
+    getUserTickets = async (userEmail) => {
+        const result = await this.dao.getUserTickets(userEmail);
+        return result;
+    };
 }

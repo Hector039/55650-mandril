@@ -184,6 +184,20 @@ textarea {
   height: 40px;
 }
 
+.ticket-table{
+  width: 100%;
+  border: 1px solid;
+}
+
+.ticket-thead{
+  font-size: 15px;
+  
+}
+
+.ticket-tbody{
+  font-size: 12px;
+}
+
 /*LogOut Page*/
 .logout-page {
   display: flex;
