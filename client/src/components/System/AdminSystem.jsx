@@ -40,7 +40,7 @@ export default function System() {
                 <a href="/"><button>Volver al listado</button></a>
             </div>
 
-            <div className="sitema-container">
+            <div className="sistema-container">
                 <h1>Sistema de Altas/Bajas/Modificaciones de Productos</h1>
 
                 <div className="altas">

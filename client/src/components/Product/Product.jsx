@@ -7,25 +7,25 @@ export default function Product({ product }) {
 
     const { handleAdd, user } = useContext(DataContext);
     const [quantityProd, setQuantityProd] = useState(1);
-    
+
     return (
         <div className="product-card">
-
             <img src={product.thumbnails[0]} alt={product.title} className="img-product" />
-            <p>{product.title}</p>
-            <p>Categoría: {product.category}</p>
-            <div className="precio-cantidad">
-                <p>Precio: ${product.price}</p>
-                <Counter stock={product.stock} quantity={quantityProd} setQuantity={setQuantityProd} />
-            </div>
+            <div className="product-card-main">
 
-            <div className="buttons-card">
-                <NavLink to={`/productdetail/${product._id}`} className="info-button">Ver Detalle</NavLink>
-                {
-                    user !== null && user.role === "user" && <button className="cart-button" onClick={() => handleAdd(product._id, quantityProd)}>Añadir al Carrito</button>
-                    }
-            </div>
+                <h3>{product.title}</h3>
+                <p>Categoría: {product.category}</p>
+                <div className="precio-cantidad">
+                    <h4>Precio: ${product.price}</h4>
+                    <Counter stock={product.stock} quantity={quantityProd} setQuantity={setQuantityProd} />
+                </div>
 
+                <div className="buttons-card">
+                    <NavLink to={`/productdetail/${product._id}`} className="info-button">Ver Detalle</NavLink>
+                    {user !== null && user.role === "user" &&
+                        <button className="cart-button" onClick={() => handleAdd(product._id, quantityProd)}>Añadir al Carrito</button>}
+                </div>
+            </div>
         </div>
     )
 }

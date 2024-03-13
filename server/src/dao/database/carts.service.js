@@ -112,7 +112,7 @@ export default class CartService {
             const newTicket = {
                 code: purchaseDatetime + (Math.floor(Math.random() * 100 + 1)).toString(),
                 purchase_datetime: purchaseDatetime,
-                amount: avaliableProducts.length === 0 ? 0 : avaliableProducts.reduce((acc, prodPrice) => { acc += (prodPrice.product.price * prodPrice.quantity); return acc }, 0),
+                amount: avaliableProducts.length === 0 ? 0 : (avaliableProducts.reduce((acc, prodPrice) => acc += (prodPrice.product.price * prodPrice.quantity), 0)).toFixed(2),
                 purchaser: purchaserEmail
             }
 

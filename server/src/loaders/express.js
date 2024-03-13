@@ -20,6 +20,7 @@ export default async function appLoader(app) {
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(express.static(__dirname + "/public"));
     app.use(session({
         secret: env.USERCOOKIESECRET,
         resave: false,
@@ -31,13 +32,6 @@ export default async function appLoader(app) {
     app.use(passport.session());
 
     app.use("/", indexRoute);
-    /* 
-    app.use(function (req, res, next) {
-        req.io = io;
-        next();
-    });
- */
-    app.use(express.static(__dirname + "/public"));
 
     return app;
 }

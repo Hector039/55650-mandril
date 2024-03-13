@@ -19,15 +19,13 @@ export default function ProductDetail() {
         <div className="product-card-detalle">
             {productDetail === null ? <p>Error al buscar el producto, intente nuevamente</p> :
                 <>
-                    <div>
                         <img src={productDetail.thumbnails[0]} alt={productDetail.title} className="img-product-detalle" />
-                    </div>
                     <div className="product-main-detalle">
-                        <p>{productDetail.title}</p>
+                        <h2>{productDetail.title}</h2>
                         <p>Stock: {productDetail.stock}</p>
 
                         <div className="precio-cantidad">
-                            <p>Precio: ${productDetail.price}</p>
+                            <h3>Precio: ${productDetail.price}</h3>
                             {user !== null && <Counter stock={productDetail.stock} quantity={quantityProd} setQuantity={setQuantityProd} />}
                         </div>
 

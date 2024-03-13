@@ -11,7 +11,7 @@ export default function Contador ({stock, quantity, setQuantity}) {
     return (
         <div className="seleccion-cantidad">
                     <button onClick={handleRest} className="botton-cantidad">-</button>                
-                    <p className="info-cantidad">{stock === 0 ? "Sin Stock" : quantity}</p>
+                    <p className="info-cantidad">{stock === 0 ? "S/S" : quantity}</p>
                     <button onClick={handleSum} className="botton-cantidad">+</button>
                 </div>
     )

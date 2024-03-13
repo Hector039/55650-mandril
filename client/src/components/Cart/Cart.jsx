@@ -49,7 +49,7 @@ export default function Cart() {
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th>{(cart.reduce((acumulator, item) => acumulator + (item.quantity * item.product.price), 0)).toFixed(2)}</th>
+                                <th>{(cart.reduce((acc, item) => acc + (item.quantity * item.product.price), 0)).toFixed(2)}</th>
                             </tr>
                         </tfoot>
                     </table>

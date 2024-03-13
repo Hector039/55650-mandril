@@ -3,7 +3,6 @@ import Product from "../Product/Product";
 export default function ProductCard( {products} ) {
 
     return (
-        <div>
             <div className="product-main">
                 {
                     products.map((obj, indice) => {
@@ -11,6 +10,5 @@ export default function ProductCard( {products} ) {
                     })
                 }
             </div>
-        </div>
     )
 }

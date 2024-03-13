@@ -9,29 +9,29 @@ import 'react-toastify/dist/ReactToastify.css';
 const MySwal = withReactContent(Swal)
 export const DataContext = createContext([]);
 
-const urlProd = "http://localhost:8080/api/products"
-const urlProdSearch = "http://localhost:8080/api/products/searchproducts"
-const urlCart = "http://localhost:8080/api/carts"
-const urlUserLogin = "http://localhost:8080/api/sessions/login"
-const urlUserLogout = "http://localhost:8080/api/sessions/logout"
-const urlUserRegister = "http://localhost:8080/api/sessions/signin"
-const urlUserForgot = "http://localhost:8080/api/sessions/forgot"
-const urlUserTicket = "http://localhost:8080/api/carts/usertickets"
+const urlProd = "products"
+const urlProdSearch = "products/searchproducts"
+const urlCart = "carts"
+const urlUserLogin = "sessions/login"
+const urlUserLogout = "sessions/logout"
+const urlUserRegister = "sessions/signin"
+const urlUserForgot = "sessions/forgot"
+const urlUserTicket = "carts/usertickets"
+const urlContact = "contact"
 
 export const DataProvider = ({ children }) => {
 
-    const dt = DateTime.now().setLocale('es').toLocaleString(DateTime.DATE_FULL);
-
-    const [products, setProducts] = useState([])
-    const [productDetail, setProductDetail] = useState(null)
-    const [cart, setCart] = useState([])
-    const [user, setUser] = useState(null);
+    const [ products, setProducts ] = useState([])
+    const [ productDetail, setProductDetail ] = useState(null)
+    const [ cart, setCart ] = useState([])
+    const [ cartProdWidget, setCartProdWidget ] = useState(0)
+    const [ user, setUser ] = useState(null);
     const [ ticket, setTicket ] = useState([])
 
-    const [categoryFilter, setCategoryFilter] = useState("todos")
-    const [priceFilter, setPriceFilter] = useState("todos")
-    const [limitFilter, setLimitFilter] = useState(2)
-    const [page, setPage] = useState(1)
+    const [ categoryFilter, setCategoryFilter ] = useState("todos")
+    const [ priceFilter, setPriceFilter ] = useState("todos")
+    const [ limitFilter, setLimitFilter ] = useState(2)
+    const [ page, setPage ] = useState(1)
 
     useEffect(() => {
         function axiosData() {
@@ -54,6 +54,12 @@ export const DataProvider = ({ children }) => {
         axiosData();
     }, [categoryFilter, priceFilter, limitFilter, page])
 
+    const cartQuantity = (cart) => {
+        const cartProdQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+        setCartProdWidget(cartProdQuantity)
+        return 
+    }
+
     const getProduct = (pid) => {
         axios.get(urlProd + "/" + pid)
             .then(response => {
@@ -69,6 +75,7 @@ export const DataProvider = ({ children }) => {
         axios.get(urlCart + "/" + cid, { withCredentials: true })
             .then(response => {
                 setCart(response.data.payload.products);
+                cartQuantity(response.data.payload.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -90,8 +97,8 @@ export const DataProvider = ({ children }) => {
                     timer: 1500
                 }).then(result => {
                     setUser(response.data.payload);
+                    cartQuantity(response.data.payload.cart.products)
                 });
-
             })
             .catch(error => {
                 if (error.response.statusText === "Unauthorized") {
@@ -155,7 +162,6 @@ export const DataProvider = ({ children }) => {
             }).then(result => {
                 window.location.replace("/account");
             });
-
         })
             .catch(error => {
                 if (error.response.data.status === "UserError") {
@@ -191,6 +197,7 @@ export const DataProvider = ({ children }) => {
             .then(response => {
                 toast.success('Se vació el carrito correctamente.');
                 setCart(response.data.payload.products)
+                cartQuantity(response.data.payload.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -202,8 +209,8 @@ export const DataProvider = ({ children }) => {
         axios.delete(urlCart + "/product/" + pid, { withCredentials: true })
             .then(response => {
                 toast.success('Se eliminó el producto correctamente.');
-                console.log(response.data.payload);
                 setCart(response.data.payload.products)
+                cartQuantity(response.data.payload.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -215,6 +222,7 @@ export const DataProvider = ({ children }) => {
         axios.post(urlCart + "/addproduct/" + pid, { quantity: quantity }, { withCredentials: true })
             .then(response => {
                 toast.success('Se agregó el producto al carrito.');
+                cartQuantity(response.data.payload.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -259,6 +267,7 @@ export const DataProvider = ({ children }) => {
                             icon: "success"
                         })
                         setCart(response.data.payload.cart.products)
+                        cartQuantity(response.data.payload.products)
                     })
                     .catch(error => {
                         toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -280,6 +289,23 @@ export const DataProvider = ({ children }) => {
             })
     }
 
+    const sendContactMail = (e) => {
+        const name = e.name
+        const email = e.email
+        const tel = e.telephone
+        const subject = e.subject
+        const message = e.message
+        axios.post(urlContact, { name, email, tel, subject, message })
+        .then(response => {
+            if(response.data.status === "Success"){
+                toast.success('Se envió el mensaje correctamente.');
+            }
+        }).catch(error => {
+            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            console.log(error)
+        })
+    }
+
     //Sistema de alta y bajas del Administrador
     const [productsFound, setproductsFound] = useState([]);
 
@@ -291,15 +317,8 @@ export const DataProvider = ({ children }) => {
         const stock = e.stock
         const category = e.category
         const thumbnails = e.thumbnails
-        axios.post(urlProd, {
-            title,
-            description,
-            code,
-            price,
-            stock,
-            category,
-            thumbnails
-        }, { withCredentials: true }).then(response => {
+        axios.post(urlProd, { title, description, code, price, stock, category, thumbnails }, { withCredentials: true })
+        .then(response => {
             toast.success('Se agregó el producto correctamente.');
             console.log(response);
         }).catch(error => {
@@ -365,7 +384,8 @@ export const DataProvider = ({ children }) => {
             products, cart, handleemptycart,
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
-            handleAdd, getProduct, productDetail, setPage, buyCart, dt, getUserCart, getUserTickets, ticket
+            handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
+            cartProdWidget
         }}>
             {children}
         </DataContext.Provider>

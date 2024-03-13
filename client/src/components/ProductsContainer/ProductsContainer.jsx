@@ -1,26 +1,15 @@
 import { useContext } from "react";
 import { DataContext } from "../context/dataContext";
-import { Link } from "react-router-dom";
 import ProductCard from "../ProductCard/ProductCard";
-import userGuestLogo from "./assets/profilePhoto.png";
+import chatIcon from "./assets/chatIcon.png";
+import { NavLink } from "react-router-dom";
 
 export default function ProductsContainer() {
-    const { products, user, setCategoryFilter, setPriceFilter, setLimitFilter, logout, setPage } = useContext(DataContext)
+    const { products, user, setCategoryFilter, setPriceFilter, setLimitFilter, setPage } = useContext(DataContext)
     return (
         <>
             <div className="welcome-container">
-                {user === null ?
-                    <><h1>Bienvenido Invitado!</h1>
-                        <p>Loguéate para poder comprar</p>
-                        <a href="/account"><button>LogIn</button></a></> :
-                    <><h1>Bienvenido {user.name}!</h1>
-                        <div className="logout-container">
-                            {!user.photo ? <button onClick={logout}>Cerrar sesión<img src={userGuestLogo} alt="User profile photo"></img></button> :
-                            <button onClick={logout}>Cerrar sesión<img src={user.photo} alt="User profile photo"></img></button>}
-                        </div></>
-                }
-                {user !== null && user.role === "user" && <Link to={"/cart"} rel="noreferrer">Ir al carrito</Link>} 
-                {user !== null && user.role === "admin" && <Link to={"/realtimeproducts"} rel="noreferrer"><button>Manager de Productos</button></Link>}
+                {user === null ? <><h1>Bienvenido Invitado!</h1><p>Loguéate para poder comprar</p></> : <h1>Bienvenido {user.name}!</h1>}
             </div>
 
             <div className="filter-container">
@@ -78,6 +67,9 @@ export default function ProductsContainer() {
                     </div>
                 </>
             }
+            {user != null && <NavLink to={"/chat"} rel="noreferrer" >
+                <img src={chatIcon} className="chat-icon" alt="Chat Icono" />
+            </NavLink>}
         </>
     )
 }
