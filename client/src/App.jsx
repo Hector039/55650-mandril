@@ -10,7 +10,6 @@ import NavBar from "./components/NavBar/NavBar";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Contact from "./components/Contact/Contact";
 import UserTickets from "./components/UserTickets/UserTickets";
-import Chat from "./components/Chat/Chat";
 import { ToastContainer } from 'react-toastify';
 import './App.css'
 
@@ -30,7 +29,6 @@ export default function App() {
           <Route exact path={"/logout"} element={<Logout />} />
           <Route exact path={"/realtimeproducts"} element={<System />} />
           <Route exact path={"/contact"} element={<Contact />} />
-          <Route exact path={"/chat"} element={<Chat />} />
         </Routes>
       </BrowserRouter>
 

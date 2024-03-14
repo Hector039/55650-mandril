@@ -8,15 +8,6 @@ a {
     text-decoration: none;
 }
 
-.chat-icon{
-    position: fixed;
-    width: 100px;
-    filter: brightness(1.1);
-    mix-blend-mode: multiply;
-    right: 10px;
-    bottom: 160px;
-}
-
 .top-navbar {
     display: flex;
     align-items: center;

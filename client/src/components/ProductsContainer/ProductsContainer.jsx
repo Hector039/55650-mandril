@@ -67,9 +67,7 @@ export default function ProductsContainer() {
                     </div>
                 </>
             }
-            {user != null && <NavLink to={"/chat"} rel="noreferrer" >
-                <img src={chatIcon} className="chat-icon" alt="Chat Icono" />
-            </NavLink>}
+            
         </>
     )
 }

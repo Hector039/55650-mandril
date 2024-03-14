@@ -6,7 +6,6 @@ const env = getEnvironment();
 export let usersDao;
 export let productsDao;
 export let cartsDao;
-export let chatsDao;
 
 switch (env.PERSISTENCE) {
     case "DATABASE":
@@ -22,8 +21,6 @@ switch (env.PERSISTENCE) {
         const { default: cartsDaoMongo } = await import("./database/carts.service.js");
         cartsDao = new cartsDaoMongo();
 
-        const { default: chatsDaoMongo } = await import("./database/chats.service.js");
-        chatsDao = new chatsDaoMongo();
         break;
 
     case "FILESYSTEM":
@@ -36,8 +33,6 @@ switch (env.PERSISTENCE) {
         const { default: cartsDaoFileSystem } = await import("./filesystem/carts.service.js");
         cartsDao = new cartsDaoFileSystem();
 
-        const { default: chatsDaoFileSystem } = await import("./filesystem/chats.service.js");
-        chatsDao = new chatsDaoFileSystem();
         break;
 
     default: throw new Error("La persistencia ingresada no existe");
