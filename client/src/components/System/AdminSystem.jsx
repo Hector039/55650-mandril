@@ -36,8 +36,7 @@ export default function System() {
         <>
             <div className="welcome-container">
                 <h1>Bienvenido administrador {user.name}!</h1>
-                <button onClick={logout}>Cerrar sesión</button>
-                <a href="/"><button>Volver al listado</button></a>
+                <a href="/"><button className="info-button">Volver al listado</button></a>
             </div>
 
             <div className="sistema-container">

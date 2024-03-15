@@ -32,7 +32,7 @@ export default function ProductDetail() {
                         <p>Descripción: {productDetail.description}</p>
 
                         <div className="buttons-card-detalle">
-                            <NavLink to={"/"} className="boton-ver-mas">Volver al listado</NavLink>
+                            <NavLink to={"/"} className="info-button">Volver al listado</NavLink>
                             {
                                 user !== null && user.role === "user" && <button className="cart-button-detalle" onClick={() => handleAdd(pid, quantityProd)}>Añadir al Carrito</button>
                             }

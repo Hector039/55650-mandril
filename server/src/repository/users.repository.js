@@ -12,6 +12,7 @@ export default class UsersRepository {
 
     saveUser = async (user) => {
         const newUser = new UsersDTO(user);
+        newUser["password"] = user.password
         const result = await this.dao.saveUser(newUser);
         return result;
     };

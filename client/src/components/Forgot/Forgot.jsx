@@ -17,17 +17,21 @@ export default function Forgot() {
     return (
         <>
             <div className="cuenta-registrarse">
-                    <p className="cuenta-title">Restaurar contraseña:</p>
-                    <form onSubmit={handleSubmit(forgot)}>
-                        <input type="email" id="email" name="email" placeholder="Dirección Correo Electrónico *" {...register("email", { required: true })} />
-                        <input type="password" id="password" name="password" placeholder="Contraseña nueva *" {...register("password", { required: true })} />
-                        <input type="password" id="repassword" name="repassword" placeholder="Repite contraseña *" {...register("repassword", { required: true })} />
-                        <p>Recuerda que tu contraseña debe tener mínimo 6 carácteres.</p>
+                <h2 className="cuenta-title">Restaurar contraseña:</h2>
+                <form onSubmit={handleSubmit(forgot)}>
+                    <input type="email" id="email" name="email" placeholder="Dirección Correo Electrónico *" {...register("email", { required: true })} />
+                    <input type="password" id="password" name="password" placeholder="Contraseña nueva *" {...register("password", { required: true })} />
+                    <input type="password" id="repassword" name="repassword" placeholder="Repite contraseña *" {...register("repassword", { required: true })} />
+                    <p>Recuerda que tu contraseña debe tener mínimo 3 carácteres.</p>
+                    <div className="forgot-buttons">
                         <button type="submit" className="cuenta-button" >Restaurar</button>
-                    </form>
-                </div>
+                        <Link to={"/account"} className="cuenta-button">Volver al Login</Link>
+                    </div>
+                </form>
+                
+            </div>
 
-                <Link to={"/account"} className="boton-ver-mas">Volver al Login</Link>
+
         </>
 
     )

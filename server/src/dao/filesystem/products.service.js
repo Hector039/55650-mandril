@@ -28,9 +28,7 @@ export default class ProductService {
             const status = true;
             const productos = await this.getAllProducts();
             const productIndex = productos.findIndex(producto => producto.code === code);
-            if(productIndex > -1){
-                throw new Error(`El código ${code} del producto ingresado ya existe.`);
-            }
+            if(productIndex > -1) return "errorCode"
             const newProduct = new Product(
                 ++this.#ultimoId,
                 title,
@@ -75,9 +73,9 @@ export default class ProductService {
     async getProductById(id) {
         try {
             const productos = await this.getAllProducts();
-            const productoById = productos.find(producto => producto._id === parseInt(id));
-            if (productoById === undefined) {
-                throw new Error(`Producto ${id} no encontrado, intente con otro ID.`);
+            let productoById = productos.find(producto => producto._id === parseInt(id));
+            if(productoById === undefined){
+                productoById = null
             }
             return productoById;
         } catch (error) {
@@ -87,11 +85,10 @@ export default class ProductService {
 
     async updateProduct(pid, product){
         try{
-            let productos = await this.getAllProducts();
+            const productos = await this.getAllProducts();
+            const productCodeIndex = productos.findIndex(producto => producto.code === product.code);
+            if(productCodeIndex > -1) return "errorCode"
             const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
-            if (productIndex < 0) {
-                throw new Error(`Producto ${pid} no encontrado`);
-            }
             product["_id"] = parseInt(pid)
             productos.splice(productIndex, 1, product);
             await this.guardarProductos(productos);
@@ -105,9 +102,6 @@ export default class ProductService {
         try{
             const productos = await this.getAllProducts();
             const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
-            if (productIndex < 0) {
-                throw new Error(`Producto ${pid} no encontrado`);
-            }
             productos.splice(productIndex, 1);
             await this.guardarProductos(productos);
             return productos[productIndex];

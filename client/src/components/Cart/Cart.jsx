@@ -13,8 +13,14 @@ export default function Cart() {
     return (
         <div className="carrito">
             <h1>Carrito de {user.name}</h1>
+
+            <div className="ticket-back-cart-buttons">
+                {user !== null && user.role === "user" && 
+            <NavLink to={`/usertickets/${user.email}`} className="info-button">Consulta Tickets.</NavLink>}
+            <NavLink to={"/"} className="info-button" >Volver a los productos</NavLink>
+            </div>
+
             {cart.length > 0 &&
-                <div className="carrito-main">
                     <table>
                         <thead>
                             <tr>
@@ -36,6 +42,7 @@ export default function Cart() {
                                         <th>${prod.product.price}</th>
                                         <th>{prod.quantity}</th>
                                         <th>${(prod.quantity * prod.product.price).toFixed(2)}</th>
+                                        <th></th>
                                     </tr>
                                 ))
                             }
@@ -48,12 +55,10 @@ export default function Cart() {
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th></th>
                                 <th>{(cart.reduce((acc, item) => acc + (item.quantity * item.product.price), 0)).toFixed(2)}</th>
                             </tr>
                         </tfoot>
                     </table>
-                </div>
             }
             {
                 cart.length > 0 ?
@@ -63,8 +68,8 @@ export default function Cart() {
                     </div> :
                     <h2 className="carrito-mensaje">Aún no hay productos en el carrito</h2>
             }
-            {user !== null && user.role === "user" && <NavLink to={`/usertickets/${user.email}`} className="info-button">Consulta histórico de Tickets.</NavLink>}
-            <Link to={"/"} className="carrito-comprar-button" >Volver a los productos</Link>
+            
+            
         </div>
     )
 }

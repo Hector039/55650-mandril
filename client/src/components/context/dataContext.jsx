@@ -30,7 +30,7 @@ export const DataProvider = ({ children }) => {
 
     const [ categoryFilter, setCategoryFilter ] = useState("todos")
     const [ priceFilter, setPriceFilter ] = useState("todos")
-    const [ limitFilter, setLimitFilter ] = useState(2)
+    const [ limitFilter, setLimitFilter ] = useState(3)
     const [ page, setPage ] = useState(1)
 
     useEffect(() => {
@@ -47,7 +47,7 @@ export const DataProvider = ({ children }) => {
                 })
                 .then(response => {
                     setProducts(response.data.payload)
-                    setUser(response.data.payload.user);
+                    setUser(response.data.user);
                 })
                 .catch(error => console.log(error))
         }
@@ -63,7 +63,7 @@ export const DataProvider = ({ children }) => {
     const getProduct = (pid) => {
         axios.get(urlProd + "/" + pid)
             .then(response => {
-                setProductDetail(response.data.payload);
+                setProductDetail(response.data);
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -74,8 +74,8 @@ export const DataProvider = ({ children }) => {
     const getUserCart = (cid) => {
         axios.get(urlCart + "/" + cid, { withCredentials: true })
             .then(response => {
-                setCart(response.data.payload.products);
-                cartQuantity(response.data.payload.products)
+                setCart(response.data.products);
+                cartQuantity(response.data.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -96,8 +96,8 @@ export const DataProvider = ({ children }) => {
                     showConfirmButton: false,
                     timer: 1500
                 }).then(result => {
-                    setUser(response.data.payload);
-                    cartQuantity(response.data.payload.cart.products)
+                    setUser(response.data);
+                    cartQuantity(response.data.cart.products)
                 });
             })
             .catch(error => {
@@ -129,7 +129,7 @@ export const DataProvider = ({ children }) => {
                     showConfirmButton: false,
                     timer: 1500
                 }).then(result => {
-                    setUser(response.data.payload);
+                    setUser(response.data);
                 });
             })
             .catch(error => {
@@ -196,8 +196,8 @@ export const DataProvider = ({ children }) => {
         axios.delete(urlCart + "/" + cid, { withCredentials: true })
             .then(response => {
                 toast.success('Se vació el carrito correctamente.');
-                setCart(response.data.payload.products)
-                cartQuantity(response.data.payload.products)
+                setCart(response.data.products)
+                cartQuantity(response.data.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -209,8 +209,8 @@ export const DataProvider = ({ children }) => {
         axios.delete(urlCart + "/product/" + pid, { withCredentials: true })
             .then(response => {
                 toast.success('Se eliminó el producto correctamente.');
-                setCart(response.data.payload.products)
-                cartQuantity(response.data.payload.products)
+                setCart(response.data.products)
+                cartQuantity(response.data.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -222,7 +222,7 @@ export const DataProvider = ({ children }) => {
         axios.post(urlCart + "/addproduct/" + pid, { quantity: quantity }, { withCredentials: true })
             .then(response => {
                 toast.success('Se agregó el producto al carrito.');
-                cartQuantity(response.data.payload.products)
+                cartQuantity(response.data.products)
             })
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -243,12 +243,11 @@ export const DataProvider = ({ children }) => {
             if (result.isConfirmed) {
                 axios.post(urlCart + "/" + cid + "/purchase", { purchaseDatetime: purchaseDate }, { withCredentials: true })
                     .then((response) => {
-                        console.log(response.data);
-                        if (response.data.payload.ticket.code === undefined) {
+                        if (response.data.ticket.code === undefined) {
                             MySwal.fire({
                                 title: "Compra no realizada.",
                                 html: `
-                                    <p>ID ticket: ${response.data.payload.ticket}</p>
+                                    <p>ID ticket: ${response.data.ticket}</p>
                                     <p>Ningún producto de tu carrito está disponible.</p>
                                     `,
                                 icon: "warning"
@@ -258,16 +257,16 @@ export const DataProvider = ({ children }) => {
                         MySwal.fire({
                             title: "Compra confirmada!",
                             html: `
-                                <p>ID ticket: ${response.data.payload.ticket.code}</p>
-                                <p>Fecha: ${response.data.payload.ticket.purchase_datetime}</p>
-                                <p>Total: ${response.data.payload.ticket.amount}</p>
+                                <p>ID ticket: ${response.data.ticket.code}</p>
+                                <p>Fecha: ${response.data.ticket.purchase_datetime}</p>
+                                <p>Total: ${response.data.ticket.amount}</p>
                                 <p>Los productos no disponibles no se procesaron.</p>
                                 `,
                             text: "Te enviaremos un mail con el ticket de tu pedido.",
                             icon: "success"
                         })
-                        setCart(response.data.payload.cart.products)
-                        cartQuantity(response.data.payload.products)
+                        setCart(response.data.cart.products)
+                        cartQuantity(response.data.cart.products)
                     })
                     .catch(error => {
                         toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -279,7 +278,7 @@ export const DataProvider = ({ children }) => {
 
     const getUserTickets = (userEmail) => {
         axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
-            .then(response => setTicket(response.data.payload))
+            .then(response => setTicket(response.data))
             .catch(error => {
                 if(error.response.data.status === "UserError"){
                     return toast.error(error.response.data.userError);
@@ -322,6 +321,10 @@ export const DataProvider = ({ children }) => {
             toast.success('Se agregó el producto correctamente.');
             console.log(response);
         }).catch(error => {
+            if(error.response.status === 409){
+                toast.error(error.response.data.message);
+                return
+            }
             toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             console.log(error)
         })
@@ -363,6 +366,10 @@ export const DataProvider = ({ children }) => {
             toast.success('Se actualizó el producto correctamente.');
             console.log(response);
         }).catch(error => {
+            if(error.response.status === 409){
+                toast.error(error.response.data.message);
+                return
+            }
             toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             console.log(error)
         })
@@ -372,7 +379,7 @@ export const DataProvider = ({ children }) => {
     const searchProduct = (text) => {
         const productName = text.nombreProducto;
         axios.get(urlProdSearch + "/" + productName, { withCredentials: true })
-            .then(response => setproductsFound(response.data.payload))
+            .then(response => setproductsFound(response.data))
             .catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error.response)

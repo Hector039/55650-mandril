@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { sendContactMail } from "../controllers/contact.controller.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
+import { fakerProducts } from "../controllers/fakerProducts.controller.js";
 
 const router = Router();
 
-router.post("/", handlePolicies(["PUBLIC"]), sendContactMail);
+router.get("/", handlePolicies(["PUBLIC"]), fakerProducts);
 
 export default router;

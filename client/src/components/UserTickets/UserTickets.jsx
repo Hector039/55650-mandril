@@ -8,20 +8,18 @@ const UserTickets = () => {
     const { userEmail } = useParams();
 
     useEffect(() => {
-    getUserTickets(userEmail)
+        getUserTickets(userEmail)
     }, [])
-    
-    return (
-        <>
-            <h1>Histórico de tickets </h1>
-                    {
-                        ticket.map((obj) => {
-                            return <Ticket key={obj._id} ticket={obj} />
-                        })
-                    }
-            <Link to={"/cart"} className="carrito-comprar-button" >Volver al Carrito</Link>
-        </>
 
+    return (
+        <div className="ticket-main">
+            <h1>Histórico de tickets </h1>
+            {ticket.map((obj) => { return <Ticket key={obj._id} ticket={obj} /> })}
+            <div className="user-ticket-butons">
+                <Link to={"/cart"} className="info-button" >Volver al Carrito</Link>
+                <Link to={"/"} className="info-button" >Volver al Listado</Link>
+            </div>
+        </div>
     )
 }
 

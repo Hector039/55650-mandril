@@ -78,10 +78,6 @@ export default class CartService {
         try {
             const carts = await this.getCarts();
             const cartIndex = carts.findIndex((cart) => cart._id === parseInt(cid));
-            if (cartIndex < 0) {
-                throw new Error(`El carrito ${cid} no existe.`);
-            }
-
             const cartIndexProduct = carts[cartIndex].products.findIndex((prod) => prod.product === parseInt(pid));
 
             if (cartIndexProduct < 0) {

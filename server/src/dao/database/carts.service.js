@@ -63,7 +63,7 @@ export default class CartService {
                 await cartModel.updateOne({ _id: cartById._id, "products.product": pid }, { $set: { "products.$.quantity": quantity } });
             }
             const updatedCart = await this.getCartById(cartById._id);
-            return updatedCart.products;
+            return updatedCart;
         } catch (error) {
             throw error;
         }

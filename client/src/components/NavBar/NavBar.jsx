@@ -4,7 +4,7 @@ import Logo from "./assets/logo.png";
 import FacebookIcon from "./assets/facebook-icon.jpg";
 import InstagramIcon from "./assets/instagram-icon.jpg";
 import WhatsappIcon from "./assets/WhatsApp.svg.png";
-import userGuestLogo from "./assets/profilePhoto.png";
+import guestUserPhoto from "./assets/userguest3.png";
 //import { useEffect, useState } from "react";
 //import getDolars from "../../apisThirdParty/apiDolar.js";
 import { DateTime } from "luxon";
@@ -68,37 +68,28 @@ export default function NavBar() {
                 </div>
 
                 <div className="navbar-menu">
-                    {
-                        user != null &&
-                        user.role === "admin" &&
-                        <NavLink to={"/realtimeproducts"} className="navbar-item-sistema" style={({ isActive }) => {
-                            return { fontWeight: isActive ? "bold" : "" }
-                        }}>Sistema</NavLink>
-                    }
-                    <NavLink to={"/"} className="navbar-item" style={({ isActive }) => {
-                        return { fontWeight: isActive ? "bold" : "" }
-                    }}>Inicio</NavLink>
-                    <NavLink to={"/account"} className="navbar-item" style={({ isActive }) => {
-                        return { fontWeight: isActive ? "bold" : "" }
-                    }}>Mi Cuenta</NavLink>
-                    <NavLink to={"/contact"} className="navbar-item" style={({ isActive }) => {
-                        return { fontWeight: isActive ? "bold" : "" }
-                    }}>Contacto</NavLink>
-                    {user != null &&
-                        user.role === "user" &&
-                        <NavLink to={"/cart"} className="navbar-item" style={({ isActive }) => {
-                            return { fontWeight: isActive ? "bold" : "" }
-                        }}>Carrito</NavLink>}
+                    { user != null && user.role === "admin" &&
+                    <NavLink to={"/realtimeproducts"} className="navbar-item-sistema" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Sistema</NavLink> }
+                    <NavLink to={"/"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Inicio</NavLink>
+                    <NavLink to={"/account"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Mi Cuenta</NavLink>
+                    <NavLink to={"/contact"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Contacto</NavLink>
+                    {user != null && user.role === "user" &&
+                    <><NavLink to={"/cart"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Carrito</NavLink>
+                    <CartWidget /></> }
+                        
                 </div>
                 <div>
-                    {user != null && <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
-                        return { fontWeight: isActive ? "bold" : "" }
-                    }}>{user.email}</NavLink>}
-                    {user != null && <div className="logout-container">
-                        {!user ? <button onClick={logout}>Cerrar sesión<img src={userGuestLogo} alt="User profile photo"></img></button> :
-                            <button onClick={logout}>Cerrar sesión<img src={user.photo} alt="User profile photo"></img></button>}
+
+                    {user !== null && <div className="logout-container">
+
+                        {user?.photo === undefined ? <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
+                            return { fontWeight: isActive ? "bold" : "" }}}><img src={guestUserPhoto} className="profile-photo" alt="User profile photo" />{user.email}</NavLink> : 
+                            <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
+                                return { fontWeight: isActive ? "bold" : "" }}}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}
+
+                            <button onClick={logout}>Cerrar sesión</button>
+
                     </div>}
-                    {user != null && user.role === "user" && <CartWidget />}
                 </div>
             </div>
         </nav >

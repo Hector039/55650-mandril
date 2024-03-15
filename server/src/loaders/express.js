@@ -7,6 +7,9 @@ import getEnvironment from "../config/process.config.js";
 import __dirname from "../tools/utils.js";
 import cors from "cors";
 import session from "express-session";
+import errorHandler from "../middlewares/errorHandler.js";
+import CustomError from "../tools/customErrors/customError.js";
+import TErrors from "../tools/customErrors/enum.js";
 
 const env = getEnvironment();
 
@@ -30,8 +33,21 @@ export default async function appLoader(app) {
     initializePassport();
     app.use(passport.initialize());
     app.use(passport.session());
-
+    
+    
     app.use("/", indexRoute);
+    
+    
+    app.get("*", (req, res) => {
+        CustomError.createError({
+            name: "Ups!",
+            cause: req.url,
+            message: "La ruta que buscas no existe",
+            code: TErrors.ROUTING,
+        });
+    });
+    
+    app.use(errorHandler);
 
     return app;
 }

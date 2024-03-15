@@ -1,8 +1,6 @@
 import { useContext } from "react";
 import { DataContext } from "../context/dataContext";
 import ProductCard from "../ProductCard/ProductCard";
-import chatIcon from "./assets/chatIcon.png";
-import { NavLink } from "react-router-dom";
 
 export default function ProductsContainer() {
     const { products, user, setCategoryFilter, setPriceFilter, setLimitFilter, setPage } = useContext(DataContext)
@@ -41,16 +39,16 @@ export default function ProductsContainer() {
                 <div className="limit-product">
                     <label htmlFor="limit-select">Productos por página:</label>
                     <select name="limit" id="limit-select" onChange={e => setLimitFilter(e.target.value)}>
-                        <option value="2">2</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
+                        <option value="3">3</option>
+                        <option value="6">6</option>
+                        <option value="12">12</option>
                     </select>
                 </div>
 
             </div>
 
             <div className="products-container">
-                {products.length === 0 ? <p>Error recibiendo los productos</p> : <ProductCard products={products.payload} />}
+                {products.length === 0 ? <p>Error recibiendo los productos</p> : <ProductCard products={products} />}
             </div>
 
             {products.pagingCounter &&

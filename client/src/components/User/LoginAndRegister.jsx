@@ -68,7 +68,7 @@ export default function Account() {
                     </form>
                 </div>
             </section>
-            <Link to={"/"} className="boton-ver-mas">Volver al listado</Link>
+            <Link to={"/"} className="info-button">Volver al listado</Link>
         </div>
     )
 }

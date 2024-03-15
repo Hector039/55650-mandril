@@ -49,18 +49,6 @@
         "cart": 22
     },
     {
-        "_id": 7,
-        "firstName": "Hector",
-        "lastName": "Hector",
-        "email": "elector22@gmail.com",
-        "password": "yfwnk7",
-        "role": "user",
-        "idgoogle": "109314102480647809075",
-        "idgithub": null,
-        "cart": 23,
-        "pasword": "$2b$10$zEfhcagKPnLIMk8qQBlB3.tVLa0caWIF/LNdTS.O/k/Gqxw1FcGg2"
-    },
-    {
         "_id": 8,
         "firstName": "Tito",
         "lastName": "Tito",
@@ -70,5 +58,16 @@
         "idgoogle": null,
         "idgithub": null,
         "cart": 24
+    },
+    {
+        "_id": 10,
+        "firstName": "Hector",
+        "lastName": "Hector",
+        "email": "elector22@gmail.com",
+        "password": "u1dosh",
+        "role": "user",
+        "idgoogle": "109314102480647809075",
+        "idgithub": null,
+        "cart": 26
     }
 ]

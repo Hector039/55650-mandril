@@ -1,32 +1,42 @@
 import { productsService } from "../repository/index.js";
+import CustomError from "../tools/customErrors/customError.js";
+import TErrors from "../tools/customErrors/enum.js";
+import { generateProductErrorInfo } from "../tools/customErrors/info.js";
 
 async function param(req, res, next, pid) {//param
     try {
         const productById = await productsService.getProductById(pid);
         if (productById === null) {
             req.product = null;
-            res.status(404).json({ error: "Producto inexistente." })
+            CustomError.createError({
+                message: `Producto ID: ${pid} no encontrado.`,
+                cause: generateProductErrorInfo(null),
+                code: TErrors.NOT_FOUND,
+            });
         }
         req.product = productById;
         next();
-    } catch (error) { res.status(500).json({ error: error.message }) }
-}
-
-async function searchProducts(req, res) {
-    const { text } = req.params;
-    try {
-        let products = await productsService.searchProducts(text);
-        res.sendSuccess( products );
     } catch (error) {
-        res.sendServerError(error);
+        next(error);
     }
 }
 
-async function getProductsFs(req, res) {
+async function searchProducts(req, res, next) {
+    const { text } = req.params;
+    try {
+        let products = await productsService.searchProducts(text);
+        res.status(200).send(products);
+    } catch (error) {
+        next(error)
+    }
+}
+
+async function getProductsFs(req, res, next) {
     const { limit, sort, category, page } = req.query;
     try {
+
         const options = {
-            limit: limit === undefined ? 2 : parseInt(limit),
+            limit: limit === undefined ? 3 : parseInt(limit),
             sort: sort === undefined ? "todos" : sort,
             category: category === undefined ? "todos" : category
         }
@@ -48,13 +58,13 @@ async function getProductsFs(req, res) {
         }
         let payload = allProducts.filter((data, index) => index < options.limit);
         const user = req.user
-        res.sendSuccess(  {user, payload}  );
+        res.status(200).send({ user, payload });
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 
-async function getProductsPaginated(req, res) {//get
+async function getProductsPaginated(req, res, next) {//get
     const { limit, sort, page, category } = req.query;
     try {
         let options = {
@@ -66,7 +76,7 @@ async function getProductsPaginated(req, res) {//get
         };
         const find = category === "todos" ? {} : { category: category };
         const report = await productsService.paginateProduct(find, options);
-        res.sendSuccess({
+        res.status(200).send({
             payload: report.docs,
             totalPages: report.totalPages,
             prevPage: report.prevPage,
@@ -78,41 +88,67 @@ async function getProductsPaginated(req, res) {//get
             user: req.user
         });
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 
-async function getProductById(req, res) {//get
+async function getProductById(req, res, next) {//get
     try {
         const productById = req.product;
-        res.sendSuccess(productById);
+        res.status(200).send(productById);
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 
-async function saveProduct(req, res) {//post
+async function saveProduct(req, res, next) {//post
     const { title, description, code, price, stock, category, thumbnails } = req.body;
     try {
-        const newProduct = await productsService.saveProduct({
-            title,
-            description,
-            code,
-            price,
-            stock,
-            category,
-            thumbnails
-        });
-        res.sendSuccess( newProduct );
+        if (!title || !description || !code || !price || !stock || !category){
+            CustomError.createError({
+                message: `Datos no recibidos o inválidos.`,
+                cause: generateProductErrorInfo({title, description, code, price, stock, category, thumbnails}),
+                code: TErrors.INVALID_TYPES,
+            });
+        }
+
+            const newProduct = await productsService.saveProduct({
+                title,
+                description,
+                code,
+                price,
+                stock,
+                category,
+                thumbnails
+            });
+
+            if(newProduct === "errorCode"){
+                CustomError.createError({
+                    message: `El código ${code} del producto ingresado ya existe.`,
+                    cause: generateProductErrorInfo(null),
+                    code: TErrors.CONFLICT,
+                });
+                
+            }
+
+        res.status(200).send(newProduct);
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 
-async function updateProduct(req, res) {//put
+async function updateProduct(req, res, next) {//put
     const { title, description, code, price, stock, category, thumbnails, status } = req.body;
     try {
-        const productId = req.product._id;
+        if (!title || !description || !code || !price || !stock || !category || !status){
+            CustomError.createError({
+                message: `Datos no recibidos o inválidos.`,
+                cause: generateProductErrorInfo({title, description, code, price, stock, category, thumbnails, status}),
+                code: TErrors.INVALID_TYPES
+            });
+        }
+        const productId = req.product._id; 
+
         const newProduct = {
             title,
             description,
@@ -123,20 +159,29 @@ async function updateProduct(req, res) {//put
             thumbnails,
             status
         };
+        
         const response = await productsService.updateProduct(productId, newProduct);
-        res.sendSuccess( response );
+
+        if(response === "errorCode"){
+            CustomError.createError({
+                message: `El código ${code} del producto ingresado ya existe.`,
+                cause: generateProductErrorInfo({title, description, code, price, stock, category, thumbnails, status}),
+                code: TErrors.CONFLICT
+            });
+        }
+        res.status(200).send(response);
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 
-async function deleteProduct(req, res) {
+async function deleteProduct(req, res, next) {
     try {
         const productId = req.product._id;
         await productsService.deleteProduct(productId);
-        res.sendSuccess();
+        res.status(200).send();
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 

@@ -13,7 +13,7 @@ const transport = nodemailer.createTransport({
     }
 })
 
-async function sendContactMail(req, res) {//post
+async function sendContactMail(req, res, next) {//post
     const { name, email, tel, subject, message } = req.body;
     try {
         const telephone = !tel ? "Sin datos" : tel
@@ -39,9 +39,9 @@ async function sendContactMail(req, res) {//post
                 cid: "logo"
             }] 
         });
-        res.sendSuccess();
+        res.status(200).send();
     } catch (error) {
-        res.sendServerError(error);
+        next(error)
     }
 }
 

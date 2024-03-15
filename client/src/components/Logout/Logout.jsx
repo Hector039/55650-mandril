@@ -12,7 +12,7 @@ export default function Logout () {
     
     return (
         <div className="logout-page">
-            <p>Te esperamos pronto!</p>
+            <h2>Te esperamos pronto!</h2>
             <a href="/account"><button>Volver a loguearse</button></a>
         </div>
     )
