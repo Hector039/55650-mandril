@@ -48,7 +48,7 @@ export default function ProductsContainer() {
             </div>
 
             <div className="products-container">
-                {products.length === 0 ? <p>Error recibiendo los productos</p> : <ProductCard products={products} />}
+                {!products.payload ? <p>Error recibiendo los productos</p> : <ProductCard products={products.payload} />}
             </div>
 
             {products.pagingCounter &&

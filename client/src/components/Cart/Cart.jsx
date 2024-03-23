@@ -16,7 +16,7 @@ export default function Cart() {
 
             <div className="ticket-back-cart-buttons">
                 {user !== null && user.role === "user" && 
-            <NavLink to={`/usertickets/${user.email}`} className="info-button">Consulta Tickets.</NavLink>}
+            <NavLink to={`/usertickets/${user.email}`} className="info-button">Consulta Tickets</NavLink>}
             <NavLink to={"/"} className="info-button" >Volver a los productos</NavLink>
             </div>
 

@@ -47,7 +47,7 @@ export const DataProvider = ({ children }) => {
                     withCredentials: true
                 })
                 .then(response => {
-                    setProducts(response.data.payload)
+                    setProducts(response.data)
                     setUser(response.data.user);
                 })
                 .catch(error => console.log(error))
