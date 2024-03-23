@@ -19,7 +19,7 @@ export default class UserService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/dao/filesystem/archivoUsers.json";
+        this.#path = "src/services/filesystem/archivoUsers.json";
         this.#setUltimoId();
     }
 

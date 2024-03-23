@@ -1,7 +1,7 @@
+import { cartsService, usersService } from "../services/factory.js";
 import passport from "passport";
 import getEnvironment from "./process.config.js";
 import local from "passport-local";
-import { usersService, cartsService } from "../repository/index.js";
 import { createHash, isValidPass } from "../tools/utils.js";
 import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";

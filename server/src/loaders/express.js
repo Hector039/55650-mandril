@@ -10,6 +10,7 @@ import session from "express-session";
 import errorHandler from "../middlewares/errorHandler.js";
 import CustomError from "../tools/customErrors/customError.js";
 import TErrors from "../tools/customErrors/enum.js";
+import { addLogger } from "../tools/winstonLogger.js";
 
 const env = getEnvironment();
 
@@ -24,6 +25,7 @@ export default async function appLoader(app) {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static(__dirname + "/public"));
+    app.use(addLogger);
     app.use(session({
         secret: env.USERCOOKIESECRET,
         resave: false,

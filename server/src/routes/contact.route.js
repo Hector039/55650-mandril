@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { sendContactMail } from "../controllers/contact.controller.js";
+import ContactController from "../controllers/contact.controller.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
+
+const contactController = new ContactController();
 
 const router = Router();
 
-router.post("/", handlePolicies(["PUBLIC"]), sendContactMail);
+router.post("/", handlePolicies(["PUBLIC"]), contactController.sendContactMail);
 
 export default router;

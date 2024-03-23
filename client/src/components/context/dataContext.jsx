@@ -12,11 +12,12 @@ export const DataContext = createContext([]);
 const urlProd = "products"
 const urlProdSearch = "products/searchproducts"
 const urlCart = "carts"
+const urlBuyCart = "tickets"
 const urlUserLogin = "sessions/login"
 const urlUserLogout = "sessions/logout"
 const urlUserRegister = "sessions/signin"
 const urlUserForgot = "sessions/forgot"
-const urlUserTicket = "carts/usertickets"
+const urlUserTicket = "tickets"
 const urlContact = "contact"
 
 export const DataProvider = ({ children }) => {
@@ -241,7 +242,7 @@ export const DataProvider = ({ children }) => {
             confirmButtonText: "Comprar!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post(urlCart + "/" + cid + "/purchase", { purchaseDatetime: purchaseDate }, { withCredentials: true })
+                axios.post(urlBuyCart + "/" + cid + "/purchase", { purchaseDatetime: purchaseDate }, { withCredentials: true })
                     .then((response) => {
                         if (response.data.ticket.code === undefined) {
                             MySwal.fire({
@@ -280,8 +281,8 @@ export const DataProvider = ({ children }) => {
         axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
             .then(response => setTicket(response.data))
             .catch(error => {
-                if(error.response.data.status === "UserError"){
-                    return toast.error(error.response.data.userError);
+                if(error.response.statusText === "Not Found"){
+                    return toast.error(error.response.data.message);
                 }
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error.response)

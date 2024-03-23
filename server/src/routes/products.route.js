@@ -1,20 +1,22 @@
 import { Router } from "express";
-import { param, getProductsPaginated, getProductById, saveProduct, updateProduct, deleteProduct, getProductsFs, searchProducts } from "../controllers/products.controller.js";
+import ProductsController from "../controllers/products.controller.js";
+import { productsService } from "../services/factory.js";
 import getEnvironment from "../config/process.config.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";
 
+const productsController = new ProductsController(productsService)
 const env = getEnvironment();
 const router = Router();
 
-const persistenceProducts = env.PERSISTENCE === "DATABASE" ? getProductsPaginated : getProductsFs;
+const persistenceProducts = env.PERSISTENCE === "DATABASE" ? productsController.getProductsPaginated : productsController.getProductsFs;
 
-router.param("pid", param);
+router.param("pid", productsController.param);
 router.get("/", userPassJwt(), handlePolicies(["PUBLIC"]), persistenceProducts);
-router.get("/:pid", handlePolicies(["PUBLIC"]), getProductById);
-router.get("/searchproducts/:text", userPassJwt(), handlePolicies(["ADMIN"]), searchProducts);
-router.post("/", userPassJwt(), handlePolicies(["ADMIN"]), saveProduct);
-router.put("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), updateProduct);
-router.delete("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), deleteProduct);
+router.get("/:pid", handlePolicies(["PUBLIC"]), productsController.getProductById);
+router.get("/searchproducts/:text", userPassJwt(), handlePolicies(["ADMIN"]), productsController.searchProducts);
+router.post("/", userPassJwt(), handlePolicies(["ADMIN"]), productsController.saveProduct);
+router.put("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), productsController.updateProduct);
+router.delete("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), productsController.deleteProduct);
 
 export default router;

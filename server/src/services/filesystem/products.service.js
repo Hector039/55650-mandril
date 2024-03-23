@@ -19,7 +19,7 @@ export default class ProductService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/dao/filesystem/archivoProductos.json";
+        this.#path = "src/services/filesystem/archivoProductos.json";
         this.#setUltimoId();
     }
 

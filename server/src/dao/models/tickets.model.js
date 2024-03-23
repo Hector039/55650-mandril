@@ -9,5 +9,5 @@ const ticketSchema = new mongoose.Schema({
     code: { type: String, require: true, unique: true },
 });
 
-const ticketModel = mongoose.model(ticketCollection, ticketSchema);
-export default ticketModel;
+const ticketsModel = mongoose.model(ticketCollection, ticketSchema);
+export default ticketsModel;

@@ -19,7 +19,7 @@ export default class CartService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/dao/filesystem/archivoCarritos.json";
+        this.#path = "src/services/filesystem/archivoCarritos.json";
         this.#setUltimoId();
     }
 
