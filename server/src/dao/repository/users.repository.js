@@ -15,8 +15,13 @@ export default class UsersRepository {
     };
 
     updateUser = async (email, toUpdate) => {
-        const user = await this.usersModel.findOneAndUpdate({ email: email }, { password: toUpdate }, { new: true });
+        const user = await this.usersModel.findOneAndUpdate({ email: email }, { password: toUpdate });
         return user;
+    };
+
+    userVerification = async (email) => {
+        await this.usersModel.findOneAndUpdate({ email: email }, { verified: true });
+        return
     };
 
 }

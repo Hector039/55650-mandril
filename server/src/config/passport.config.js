@@ -39,15 +39,16 @@ const initializePassport = () => {
                         email: profile._json?.email,
                         password: Math.random().toString(36).substring(7),
                         idgoogle: profile.id,
-                        cart
+                        cart,
+                        verified: true
                     });
 
                     const userUpdated = await usersService.getUser(profile.id);
                     userUpdated["photo"] = profile._json.picture;
                     userUpdated["userCart"] = newCart
-                    const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
+                    await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
                     
-                    return cb(null, userUpdated, { messages: mailResult });
+                    return cb(null, userUpdated);
                 }
 
                 user["photo"] = profile._json.picture;
@@ -75,9 +76,7 @@ const initializePassport = () => {
                 if (user === null) {
 
                     const userEmail = await usersService.getUser(profile._json?.email);
-                    if (userEmail) {
-                        return done(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
-                    }
+                    if (userEmail)  return done(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
 
                     const newCart = await cartsService.saveCart();
                     const cart = newCart._id;
@@ -88,15 +87,15 @@ const initializePassport = () => {
                         email: profile._json?.email,
                         password: Math.random().toString(36).substring(7),
                         idgithub: profile.id,
-                        cart
+                        cart,
+                        verified: true
                     });
 
                     const userUpdated = await usersService.getUser(profile?.id);
                     userUpdated["photo"] = profile._json.avatar_url;
                     userUpdated["userCart"] = newCart
-                    const mailResult = await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
-
-                    return done(null, userUpdated, { messages: mailResult });
+                    await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
+                    return done(null, userUpdated);
                 }
                 user["photo"] = profile._json.avatar_url;
                 const userCart = await cartsService.getCartById(user.cart);
@@ -114,9 +113,7 @@ const initializePassport = () => {
             const { firstName, lastName, email } = req.body;
             try {
                 const user = await usersService.getUser(email);
-                if (user !== null) {
-                    return done(null, false, { messages: "El Usuario ya existe." });
-                };
+                if (user) return done(null, false, { messages: "El Usuario ya existe." });
 
                 const newCart = await cartsService.saveCart();
                 const cart = newCart._id;
@@ -129,10 +126,10 @@ const initializePassport = () => {
                     cart
                 });
 
-                const userUpdated = await usersService.getUser(email);
-                userUpdated["userCart"] = newCart
-                const mailResult = await mailer({mail: email, name: firstName}, "Bienvenido a nuestro e-commerce!")
-                return done(null, userUpdated, { messages: mailResult });
+                await mailer({mail: email, name: firstName}, 
+                    `Bienvenido a nuestro e-commerce!, para terminar el registro, verifica tu cuenta: <a href="http://localhost:8080/api/sessions/userverification/${email}">Activar cuenta</a>`
+                    )
+                return done(null, email);
             } catch (error) {
                 return done(error, null);
             }
@@ -144,12 +141,11 @@ const initializePassport = () => {
         async (usermail, password, done) => {
             try {
                 const user = await usersService.getUser(usermail);
-                if (user === null) {
-                    return done(null, false, { messages: "El Usuario no existe." });
-                };
-                if (!isValidPass(password, user.password)) {
-                    return done(null, false, { messages: "Usuario o contraseña incorrecto." });
-                };
+
+                if (user === null) return done(null, false, { messages: "El Usuario no existe." }); 
+                if (!isValidPass(password, user.password)) return done(null, false, { messages: "Usuario o contraseña incorrecto." });
+                if (user.verified === false) return done(null, false, { messages: "Esta cuenta aún no está verificada. Valídala con el link en tu correo." });
+
                 const userCart = await cartsService.getCartById(user.cart);
                 user["userCart"] = userCart
                 return done(null, user)

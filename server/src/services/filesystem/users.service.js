@@ -1,7 +1,7 @@
 import fs from "fs";
 
 class User {
-    constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart) {
+    constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart, verified) {
         this._id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -10,7 +10,8 @@ class User {
         this.role = role;
         this.idgoogle = idgoogle;
         this.idgithub = idgithub;
-        this.cart = cart
+        this.cart = cart;
+        this.verified = verified
     }
 }
 
@@ -76,6 +77,7 @@ export default class UserService {
     async saveUser({firstName, lastName, email, password, idgoogle, idgithub, cart}) {
         try {
             const role = "user";
+            const verified = false
             const users = await this.getAllUsers();
             
             const newUser = new User(
@@ -87,7 +89,8 @@ export default class UserService {
                 role,
                 idgoogle,
                 idgithub,
-                cart
+                cart,
+                verified
             );
             users.push(newUser);
             await this.guardarUsers(users);
@@ -104,12 +107,28 @@ export default class UserService {
             if (userIndex < 0) {
                 throw new Error(`Usuario con email:${email} no encontrado`);
             }
-            users[userIndex].pasword = toUpdate;
+            users[userIndex].password = toUpdate;
             users.splice(userIndex, 0, users[userIndex]);
             await this.guardarUsers(users);
             const usersUpdated = await this.getAllUsers();
             const userIndexUpdated = usersUpdated.findIndex(user => user.email === email);
             return usersUpdated[userIndexUpdated];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async userVerification(email) {
+        try {
+            const users = await this.getAllUsers();
+            const userIndex = users.findIndex(user => user.email === email);
+            if (userIndex < 0) {
+                throw new Error(`Usuario con email:${email} no encontrado`);
+            }
+            users[userIndex].verified = true;
+            users.splice(userIndex, 0, users[userIndex]);
+            await this.guardarUsers(users);
+            return
         } catch (error) {
             throw error;
         }

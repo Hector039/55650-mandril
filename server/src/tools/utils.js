@@ -15,7 +15,7 @@ export default __dirname;
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 export const isValidPass = (password, userPassword) => bcrypt.compareSync(password, userPassword);
 export const generateToken = (user) => {
-    const token = jwt.sign(user, env.USERCOOKIESECRET, { expiresIn: "5h" });
+    const token = jwt.sign(user, env.USERCOOKIESECRET, { expiresIn: "1h" });
     return token;
 };
 

@@ -11,6 +11,8 @@ const router = Router();
 router.post("/login", isSessionOn(), passportCall("login"), handlePolicies(["PUBLIC"]), usersController.userLogin);
 router.post("/signin", isSessionOn(), passportCall("signin"), handlePolicies(["PUBLIC"]), usersController.userSignIn);
 router.post("/forgot", isSessionOn(), handlePolicies(["PUBLIC"]), usersController.userForgotPass);
+router.get("/passrestoration/:email", isSessionOn(), handlePolicies(["PUBLIC"]), usersController.passRestoration);
+router.get("/userverification/:email", isSessionOn(), handlePolicies(["PUBLIC"]), usersController.userVerified);
 router.get("/logout", handlePolicies(["PUBLIC"]), usersController.userLogout);
 router.get("/github", isSessionOn(), passportCall("github"), handlePolicies(["PUBLIC"]), usersController.gitHub);
 router.get("/ghstrategy", isSessionOn(), passportCall("github"), handlePolicies(["PUBLIC"]), usersController.gitHubStrategy);

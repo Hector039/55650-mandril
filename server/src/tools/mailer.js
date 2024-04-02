@@ -15,9 +15,7 @@ const transport = nodemailer.createTransport({
 
 export default async function mailer(user, message) {
     try {
-        if(user.name === null || user.mail === null || message === null) {
-            return "Error o falta de datos de usuario. No se envió el email."
-        }
+        if(!user.name || !user.mail || !message) return "Error o falta de datos de usuario. No se envió el email."
         await transport.sendMail({
             from: `Coder Test ${env.MAILER_USER}`,
             to: user.mail,

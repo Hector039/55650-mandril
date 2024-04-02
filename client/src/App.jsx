@@ -12,6 +12,7 @@ import Contact from "./components/Contact/Contact";
 import UserTickets from "./components/UserTickets/UserTickets";
 import { ToastContainer } from 'react-toastify';
 import './App.css'
+import PassRestoration from "./components/Forgot/passRestoration";
 
 export default function App() {
 
@@ -22,10 +23,11 @@ export default function App() {
         <Routes>
           <Route exact path={"/"} element={<ProductsContainer />} />
           <Route exact path={"/productdetail/:pid"} element={<ProductDetail />} />
-          <Route exact path={"/usertickets/:userEmail"} element={<UserTickets />} />
+          <Route exact path={"/usertickets/:email"} element={<UserTickets />} />
           <Route exact path={"/cart"} element={<Cart />} />
           <Route exact path={"/account"} element={<Account />} />
-          <Route exact path={"/forgot"} element={<Forgot />} />
+          <Route exact path={"/forgot/:email"} element={<Forgot />} />
+          <Route exact path={"/passrestoration"} element={<PassRestoration />} />
           <Route exact path={"/logout"} element={<Logout />} />
           <Route exact path={"/realtimeproducts"} element={<System />} />
           <Route exact path={"/contact"} element={<Contact />} />

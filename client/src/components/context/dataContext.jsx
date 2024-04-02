@@ -19,20 +19,21 @@ const urlUserRegister = "sessions/signin"
 const urlUserForgot = "sessions/forgot"
 const urlUserTicket = "tickets"
 const urlContact = "contact"
+const urlUserPassRestoration = "sessions/passrestoration"
 
 export const DataProvider = ({ children }) => {
 
-    const [ products, setProducts ] = useState([])
-    const [ productDetail, setProductDetail ] = useState(null)
-    const [ cart, setCart ] = useState([])
-    const [ cartProdWidget, setCartProdWidget ] = useState(0)
-    const [ user, setUser ] = useState(null);
-    const [ ticket, setTicket ] = useState([])
+    const [products, setProducts] = useState([])
+    const [productDetail, setProductDetail] = useState(null)
+    const [cart, setCart] = useState([])
+    const [cartProdWidget, setCartProdWidget] = useState(0)
+    const [user, setUser] = useState(null);
+    const [ticket, setTicket] = useState([])
 
-    const [ categoryFilter, setCategoryFilter ] = useState("todos")
-    const [ priceFilter, setPriceFilter ] = useState("todos")
-    const [ limitFilter, setLimitFilter ] = useState(3)
-    const [ page, setPage ] = useState(1)
+    const [categoryFilter, setCategoryFilter] = useState("todos")
+    const [priceFilter, setPriceFilter] = useState("todos")
+    const [limitFilter, setLimitFilter] = useState(3)
+    const [page, setPage] = useState(1)
 
     useEffect(() => {
         function axiosData() {
@@ -43,7 +44,7 @@ export const DataProvider = ({ children }) => {
                         category: categoryFilter,
                         sort: priceFilter,
                         page: page
-                    }, 
+                    },
                     withCredentials: true
                 })
                 .then(response => {
@@ -58,7 +59,7 @@ export const DataProvider = ({ children }) => {
     const cartQuantity = (cart) => {
         const cartProdQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
         setCartProdWidget(cartProdQuantity)
-        return 
+        return
     }
 
     const getProduct = (pid) => {
@@ -102,20 +103,14 @@ export const DataProvider = ({ children }) => {
                 });
             })
             .catch(error => {
-                if (error.response.statusText === "Unauthorized") {
-                    toast.error(error.response.data.error);
-                    return
-                }
+                if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
 
     const newRegister = (e) => {
-        if (e.password !== e.repassword) {
-            toast.error('Los passwords no coinciden. Intenta de nuevo');
-            return;
-        }
+        if (e.password !== e.repassword) return toast.error('Los passwords no coinciden. Intenta de nuevo');
         axios.post(urlUserRegister, {
             firstName: e.firstname,
             lastName: e.lastname,
@@ -124,53 +119,60 @@ export const DataProvider = ({ children }) => {
         }, { withCredentials: true })
             .then(response => {
                 Swal.fire({
-                    position: "top-end",
                     icon: "success",
-                    title: "Registro correcto!",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(result => {
-                    setUser(response.data);
-                });
+                    title: response.data,
+                    showConfirmButton: true
+                })
             })
             .catch(error => {
-                console.log(error.response);
-                if (error.response.statusText === "Unauthorized") {
-                    toast.error(error.response.data.error);
-                    return
-                }
+                if (error.response.statusText && error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
     }
 
-    const forgot = (e) => {
-        if (e.password !== e.repassword) {
-            toast.error('Los passwords no coinciden. Intenta de nuevo');
-            return;
-        }
-        axios.post(urlUserForgot, {
-            email: e.email,
-            password: e.password
-        }, { withCredentials: true })
-        .then(response => {
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Contraseña restaurada!.",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(result => {
-                window.location.replace("/account");
-            });
-        })
+    const passRestoration = (e) => {
+        if (!e.email) return toast.error('Verifica que el e-mail esté correcto.');
+        axios.get(urlUserPassRestoration + "/" + e.email, { withCredentials: true })
+            .then(response => {
+                Swal.fire({
+                    icon: "success",
+                    title: response.data,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
             .catch(error => {
-                if (error.response.data.status === "UserError") {
-                    toast.error(error.response.data.userError);
-                    return
-                }
+                console.log(error);
+                if (error.response.status === 400) return toast.error(error.response.data.message);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-                console.log(error)
+            })
+    }
+
+    const forgot = (e) => {
+        if (e.password !== e.repassword) return toast.error('Los passwords no coinciden. Intenta de nuevo');
+        axios.post(urlUserForgot, { email: e.email, password: e.password }, { withCredentials: true })
+            .then(response => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Contraseña restaurada!.",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(result => {
+                    window.location.replace("/account");
+                });
+            })
+            .catch(error => {
+                if (error.response.data.code === 1) {
+                    toast.error(error.response.data.message)
+                    setTimeout(() => {
+                        window.location.replace("/passrestoration");
+                    }, 2000)
+                    return 
+                };
+                if (error.response.data.code === 2) return toast.error(error.response.data.message)
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             })
     }
 
@@ -281,7 +283,7 @@ export const DataProvider = ({ children }) => {
         axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
             .then(response => setTicket(response.data))
             .catch(error => {
-                if(error.response.statusText === "Not Found"){
+                if (error.response.statusText === "Not Found") {
                     return toast.error(error.response.data.message);
                 }
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -296,14 +298,14 @@ export const DataProvider = ({ children }) => {
         const subject = e.subject
         const message = e.message
         axios.post(urlContact, { name, email, tel, subject, message })
-        .then(response => {
-            if(response.data.status === "Success"){
-                toast.success('Se envió el mensaje correctamente.');
-            }
-        }).catch(error => {
-            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-            console.log(error)
-        })
+            .then(response => {
+                if (response.data.status === "Success") {
+                    toast.success('Se envió el mensaje correctamente.');
+                }
+            }).catch(error => {
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
     }
 
     //Sistema de alta y bajas del Administrador
@@ -318,17 +320,17 @@ export const DataProvider = ({ children }) => {
         const category = e.category
         const thumbnails = e.thumbnails
         axios.post(urlProd, { title, description, code, price, stock, category, thumbnails }, { withCredentials: true })
-        .then(response => {
-            toast.success('Se agregó el producto correctamente.');
-            console.log(response);
-        }).catch(error => {
-            if(error.response.status === 409){
-                toast.error(error.response.data.message);
-                return
-            }
-            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-            console.log(error)
-        })
+            .then(response => {
+                toast.success('Se agregó el producto correctamente.');
+                console.log(response);
+            }).catch(error => {
+                if (error.response.status === 409) {
+                    toast.error(error.response.data.message);
+                    return
+                }
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
     }
 
     const deleteProduct = (id) => {
@@ -367,7 +369,7 @@ export const DataProvider = ({ children }) => {
             toast.success('Se actualizó el producto correctamente.');
             console.log(response);
         }).catch(error => {
-            if(error.response.status === 409){
+            if (error.response.status === 409) {
                 toast.error(error.response.data.message);
                 return
             }
@@ -393,7 +395,7 @@ export const DataProvider = ({ children }) => {
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget
+            cartProdWidget, passRestoration
         }}>
             {children}
         </DataContext.Provider>

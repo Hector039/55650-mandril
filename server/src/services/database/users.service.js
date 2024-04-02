@@ -17,9 +17,14 @@ export default class UserService {
         return result;
     }
 
-    async updateUser(id, password) {
-        const result = await this.userRepo.updateUser(id, password);
+    async updateUser(email, password) {
+        const result = await this.userRepo.updateUser(email, password);
         return result;
+    }
+
+    async userVerification(email) {
+        await this.userRepo.userVerification(email);
+        return
     }
 
 };

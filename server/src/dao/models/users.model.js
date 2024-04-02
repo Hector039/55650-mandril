@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "carts"
-    }
+    },
+    verified: { type: Boolean, default: false }
 });
 
 const usersModel = mongoose.model(userCollection, userSchema);

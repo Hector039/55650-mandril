@@ -14,9 +14,9 @@ const persistenceProducts = env.PERSISTENCE === "DATABASE" ? productsController.
 router.param("pid", productsController.param);
 router.get("/", userPassJwt(), handlePolicies(["PUBLIC"]), persistenceProducts);
 router.get("/:pid", handlePolicies(["PUBLIC"]), productsController.getProductById);
-router.get("/searchproducts/:text", userPassJwt(), handlePolicies(["ADMIN"]), productsController.searchProducts);
-router.post("/", userPassJwt(), handlePolicies(["ADMIN"]), productsController.saveProduct);
-router.put("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), productsController.updateProduct);
-router.delete("/:pid", userPassJwt(), handlePolicies(["ADMIN"]), productsController.deleteProduct);
+router.get("/searchproducts/:text", userPassJwt(), handlePolicies(["ADMIN", "PREMIUM"]), productsController.searchProducts);
+router.post("/", userPassJwt(), handlePolicies(["ADMIN", "PREMIUM"]), productsController.saveProduct);
+router.put("/:pid", userPassJwt(), handlePolicies(["ADMIN", "PREMIUM"]), productsController.updateProduct);
+router.delete("/:pid", userPassJwt(), handlePolicies(["ADMIN", "PREMIUM"]), productsController.deleteProduct);
 
 export default router;

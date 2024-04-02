@@ -25,9 +25,16 @@ export default function Account() {
     const {
         register: register2,
         handleSubmit: handleSubmit2,
+        reset,
+        formState,
+        formState: { isSubmitSuccessful }
     } = useForm({
         mode: "onBlur",
     });
+
+    useEffect(() => {
+        if (formState.isSubmitSuccessful) reset();
+      }, [formState, reset]);
 
     return (
         <div className="cuenta-main">
@@ -43,7 +50,7 @@ export default function Account() {
                             <input type="password" id="pass" name="password" placeholder="Contraseña *" {...register("password", { required: true })} />
                             <button type="submit" className="cuenta-button">Acceder</button>
                         </form>
-                        <Link to={"/forgot"} className="boton-ver-mas">Olvidaste tu contraseña?</Link>
+                        <Link to={"/passrestoration"} className="boton-ver-mas">Olvidaste tu contraseña?</Link>
                         <p className="cuenta-title">O también:</p>
                         <div className="social-login-container">
                             <button onClick={loginGoogle}>Ingresar con Google <img src={googleLogo} alt="Google Logo"></img></button>
@@ -63,7 +70,7 @@ export default function Account() {
                         <input type="password" id="password" name="password" placeholder="Contraseña nueva *" {...register2("password", { required: true })} />
                         <input type="password" id="repassword" name="repassword" placeholder="Repite contraseña *" {...register2("repassword", { required: true })} />
                         <p>Tus datos personales solo se utilizarán para procesar tu pedido.</p>
-                        <p>Recuerda que tu contraseña debe tener mínimo 6 carácteres.</p>
+                        <p>Recuerda que tu contraseña debe tener mínimo 3 carácteres.</p>
                         <button type="submit" className="cuenta-button" >Registrarse</button>
                     </form>
                 </div>

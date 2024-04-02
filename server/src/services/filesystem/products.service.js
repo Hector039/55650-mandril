@@ -1,7 +1,7 @@
 import fs from "fs";
 
 class Product {
-    constructor(id, title, description, code, price, stock, category, thumbnails, status) {
+    constructor(id, title, description, code, price, stock, category, thumbnails, status, owner) {
         this._id = id;
         this.title = title;
         this.description = description;
@@ -11,6 +11,7 @@ class Product {
         this.category = category;
         this.thumbnails = thumbnails;
         this.status = status
+        this.owner = owner
     }
 }
 
@@ -26,6 +27,7 @@ export default class ProductService {
     async saveProduct({title, description, code, price, stock, category, thumbnails}) {
         try {
             const status = true;
+            const owner = "admin";
             const productos = await this.getAllProducts();
             const productIndex = productos.findIndex(producto => producto.code === code);
             if(productIndex > -1) return "errorCode"
@@ -38,7 +40,8 @@ export default class ProductService {
                 stock,
                 category,
                 [ thumbnails ],
-                status
+                status,
+                owner
             );
             productos.push(newProduct);
             await this.guardarProductos(productos);
