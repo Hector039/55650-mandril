@@ -24,10 +24,9 @@ export default class ProductService {
         this.#setUltimoId();
     }
 
-    async saveProduct({title, description, code, price, stock, category, thumbnails}) {
+    async saveProduct({title, description, code, price, stock, category, thumbnails, owner}) {
         try {
             const status = true;
-            const owner = "admin";
             const productos = await this.getAllProducts();
             const productIndex = productos.findIndex(producto => producto.code === code);
             if(productIndex > -1) return "errorCode"
@@ -107,7 +106,7 @@ export default class ProductService {
             const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
             productos.splice(productIndex, 1);
             await this.guardarProductos(productos);
-            return productos[productIndex];
+            return
         }catch(error){
             throw error;
         }

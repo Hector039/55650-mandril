@@ -123,6 +123,21 @@ a {
     padding: 20px;
 }
 
+.user-type-selector{
+    font-size: 1rem;
+    background-color: #4b9d40;
+    color: white;
+    padding: 10px;
+    border-style: none;
+    border-radius: 5px;
+}
+
+.user-type-text{
+    text-align: center;
+    color: yellow;
+    padding-bottom: 5px;
+}
+
 .cart-widget {
     margin: 20px;
     cursor: pointer;
@@ -940,6 +955,7 @@ textarea {
 .logout-container {
     display: flex;
     flex-direction: column;
+    padding: 5px;
 }
 
 .logout-container img {

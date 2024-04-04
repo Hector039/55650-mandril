@@ -3,8 +3,9 @@ import TErrors from "../tools/customErrors/enum.js";
 import { generateProductErrorInfo } from "../tools/customErrors/info.js";
 
 export default class ProductsController {
-    constructor(service) {
-        this.productsService = service;
+    constructor(prodservice, userservice) {
+        this.productsService = prodservice;
+        this.usersService = userservice;
     }
 
     param = async (req, res, next, pid) => {//param
@@ -106,7 +107,7 @@ export default class ProductsController {
     }
 
     saveProduct = async (req, res, next) => {//post
-        const { title, description, code, price, stock, category, thumbnails } = req.body;
+        const { title, description, code, price, stock, category, thumbnails, owner } = req.body;
         try {
             if (!title || !description || !code || !price || !stock || !category) {
                 CustomError.createError({
@@ -115,7 +116,7 @@ export default class ProductsController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-
+            
             const newProduct = await this.productsService.saveProduct({
                 title,
                 description,
@@ -123,7 +124,8 @@ export default class ProductsController {
                 price,
                 stock,
                 category,
-                thumbnails
+                thumbnails,
+                owner
             });
 
             if (newProduct === "errorCode") {
@@ -141,12 +143,20 @@ export default class ProductsController {
     }
 
     updateProduct = async (req, res, next) => {//put
-        const { title, description, code, price, stock, category, thumbnails, status } = req.body;
+        const { title, description, code, price, stock, category, thumbnails, status, owner } = req.body;
         try {
             if (!title || !description || !code || !price || !stock || !category || !status) {
                 CustomError.createError({
                     message: `Datos no recibidos o inválidos.`,
                     cause: generateProductErrorInfo({ title, description, code, price, stock, category, thumbnails, status }),
+                    code: TErrors.INVALID_TYPES
+                });
+            }
+            const user = await this.usersService.getUser(owner)
+            if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
+                CustomError.createError({
+                    message: `Solo el administrador puede modificar este producto.`,
+                    cause: generateProductErrorInfo(user.role),
                     code: TErrors.INVALID_TYPES
                 });
             }
@@ -160,7 +170,8 @@ export default class ProductsController {
                 stock,
                 category,
                 thumbnails,
-                status
+                status,
+                owner
             };
 
             const response = await this.productsService.updateProduct(productId, newProduct);
@@ -179,7 +190,16 @@ export default class ProductsController {
     }
 
     deleteProduct = async (req, res, next) => {
+        const owner = req.user.id
         try {
+            const user = await this.usersService.getUser(owner)
+            if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
+                CustomError.createError({
+                    message: `Solo el administrador puede eliminar este producto.`,
+                    cause: generateProductErrorInfo(user.role),
+                    code: TErrors.INVALID_TYPES
+                });
+            }
             const productId = req.product._id;
             await this.productsService.deleteProduct(productId);
             res.status(200).send();

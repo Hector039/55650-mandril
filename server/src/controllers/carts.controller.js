@@ -163,6 +163,13 @@ export default class CartsController {
                     code: TErrors.NOT_FOUND,
                 });
             }
+            if(req.user.role === "premium" && productId.owner.toString() === req.user.id.toString()){
+                CustomError.createError({
+                    message: `No puedes agregar al carrito un producto creado por tí.`,
+                    cause: generateProductErrorInfo(null),
+                    code: TErrors.CONFLICT,
+                });
+            }
 
             const updatedCart = await this.cartsService.addProductAndQuantityToCart(userCart, pid, quantity);
             res.status(200).send(updatedCart);

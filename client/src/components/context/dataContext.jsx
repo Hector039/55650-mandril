@@ -20,6 +20,7 @@ const urlUserForgot = "sessions/forgot"
 const urlUserTicket = "tickets"
 const urlContact = "contact"
 const urlUserPassRestoration = "sessions/passrestoration"
+const urlUserType = "sessions/premium"
 
 export const DataProvider = ({ children }) => {
 
@@ -169,7 +170,7 @@ export const DataProvider = ({ children }) => {
                     setTimeout(() => {
                         window.location.replace("/passrestoration");
                     }, 2000)
-                    return 
+                    return
                 };
                 if (error.response.data.code === 2) return toast.error(error.response.data.message)
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
@@ -228,6 +229,7 @@ export const DataProvider = ({ children }) => {
                 cartQuantity(response.data.products)
             })
             .catch(error => {
+                if (error.response.data.code === 5) return toast.error(error.response.data.message);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
@@ -283,9 +285,7 @@ export const DataProvider = ({ children }) => {
         axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
             .then(response => setTicket(response.data))
             .catch(error => {
-                if (error.response.statusText === "Not Found") {
-                    return toast.error(error.response.data.message);
-                }
+                if (error.response.statusText === "Not Found") return toast.error(error.response.data.message);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error.response)
             })
@@ -299,13 +299,31 @@ export const DataProvider = ({ children }) => {
         const message = e.message
         axios.post(urlContact, { name, email, tel, subject, message })
             .then(response => {
-                if (response.data.status === "Success") {
-                    toast.success('Se envió el mensaje correctamente.');
-                }
+                if (response.data.status === "Success") toast.success('Se envió el mensaje correctamente.');
             }).catch(error => {
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
+    }
+
+    const userTypeSelector = (email) => {
+        axios.get(urlUserType + "/" + email, { withCredentials: true })
+            .then(response => {
+                MySwal.fire({
+                    title: response.data.message,
+                    text: "Vuelve a iniciar sesión para ver los cambios.",
+                    icon: "success",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido!"
+                }).then(resp => {
+                    logout()
+                })
+            }).catch(error => {
+                if (error.response.status === 409) return toast.error(error.response.data.message);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
+
     }
 
     //Sistema de alta y bajas del Administrador
@@ -319,7 +337,8 @@ export const DataProvider = ({ children }) => {
         const stock = e.stock
         const category = e.category
         const thumbnails = e.thumbnails
-        axios.post(urlProd, { title, description, code, price, stock, category, thumbnails }, { withCredentials: true })
+        const owner = user.id
+        axios.post(urlProd, { title, description, code, price, stock, category, thumbnails, owner }, { withCredentials: true })
             .then(response => {
                 toast.success('Se agregó el producto correctamente.');
                 console.log(response);
@@ -334,12 +353,13 @@ export const DataProvider = ({ children }) => {
     }
 
     const deleteProduct = (id) => {
-        axios.delete(urlProd + "/" + id, { withCredentials: true })
+        axios.delete(urlProd + "/" + id, { withCredentials: true } )
             .then(response => {
                 toast.success('Se eliminó el producto correctamente.');
                 console.log(response.data)
             })
             .catch(error => {
+                if (error.response.data.code === 2) return toast.error(error.response.data.message);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
@@ -356,26 +376,17 @@ export const DataProvider = ({ children }) => {
         const thumbnails = product.thumbnails
         const status = product.status
         const id = product._id
-        axios.put(urlProd + "/" + id, {
-            title,
-            description,
-            code,
-            price,
-            stock,
-            category,
-            thumbnails,
-            status
-        }, { withCredentials: true }).then(response => {
-            toast.success('Se actualizó el producto correctamente.');
-            console.log(response);
-        }).catch(error => {
-            if (error.response.status === 409) {
-                toast.error(error.response.data.message);
-                return
-            }
-            toast.error('Ocurrió un error inesperado. Intenta de nuevo');
-            console.log(error)
-        })
+        const owner = user.id
+        axios.put(urlProd + "/" + id, { title, description, code, price, stock, category, thumbnails, status, owner }, { withCredentials: true })
+            .then(response => {
+                toast.success('Se actualizó el producto correctamente.');
+                console.log(response);
+            }).catch(error => {
+                if (error.response.status === 409) return toast.error(error.response.data.message);
+                if (error.response.data.code === 2) return toast.error(error.response.data.message);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
         setproductsFound([]);
     }
 
@@ -395,7 +406,7 @@ export const DataProvider = ({ children }) => {
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget, passRestoration
+            cartProdWidget, passRestoration, userTypeSelector
         }}>
             {children}
         </DataContext.Provider>

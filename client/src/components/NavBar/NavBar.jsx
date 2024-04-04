@@ -9,12 +9,12 @@ import guestUserPhoto from "./assets/userguest3.png";
 //import getDolars from "../../apisThirdParty/apiDolar.js";
 import { DateTime } from "luxon";
 import { DataContext } from "../context/dataContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 
 export default function NavBar() {
 
-    const { user, logout } = useContext(DataContext);
+    const { user, logout, userTypeSelector } = useContext(DataContext);
 
     const dt = DateTime.now().setLocale('es').toLocaleString(DateTime.DATE_MED);
 
@@ -28,6 +28,7 @@ export default function NavBar() {
             axiosData();
         }, [])
      */
+
     return (
         <nav className="navbar">
             <div className="top-navbar">
@@ -68,30 +69,36 @@ export default function NavBar() {
                 </div>
 
                 <div className="navbar-menu">
-                    { user != null && user.role === "admin" &&
-                    <NavLink to={"/realtimeproducts"} className="navbar-item-sistema" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Sistema</NavLink> }
+                    {user != null && (user.role === "admin" || user.role === "premium") &&
+                        <NavLink to={"/realtimeproducts"} className="navbar-item-sistema" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Sistema</NavLink>}
                     <NavLink to={"/"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Inicio</NavLink>
                     <NavLink to={"/account"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Mi Cuenta</NavLink>
                     <NavLink to={"/contact"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Contacto</NavLink>
-                    {user != null && user.role === "user" &&
-                    <><NavLink to={"/cart"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Carrito</NavLink>
-                    <CartWidget /></> }
-                        
+                    {user != null && (user.role === "user" || user.role === "premium") &&
+                        <><NavLink to={"/cart"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Carrito</NavLink>
+                            <CartWidget /></>}
+
                 </div>
-                <div>
+               
 
                     {user !== null && <div className="logout-container">
 
                         {user?.photo === undefined ? <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
-                            return { fontWeight: isActive ? "bold" : "" }}}><img src={guestUserPhoto} className="profile-photo" alt="User profile photo" />{user.email}</NavLink> : 
+                            return { fontWeight: isActive ? "bold" : "" }
+                        }}><img src={guestUserPhoto} className="profile-photo" alt="User profile photo" />{user.email}</NavLink> :
                             <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
-                                return { fontWeight: isActive ? "bold" : "" }}}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}
-
-                            <button onClick={logout}>Cerrar sesión</button>
+                                return { fontWeight: isActive ? "bold" : "" }
+                            }}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}
+                        {user.role === "premium" && <h3 className="user-type-text">Eres {user.role}! </h3>}
+                        <button onClick={logout}>Cerrar sesión</button>
 
                     </div>}
-                </div>
+
+               
             </div>
+            {user !== null && <div className="logout-container">
+             {user.role !== "admin" && <button onClick={() => userTypeSelector(user.email)} className="user-type-selector">{user.role === "user" ? "Quiero ser PREMIUM!" : "Quiero ser STANDARD" }</button>}
+            </div>}
         </nav >
     )
 }

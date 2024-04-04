@@ -1,11 +1,11 @@
 import { Router } from "express";
 import ProductsController from "../controllers/products.controller.js";
-import { productsService } from "../services/factory.js";
+import { productsService, usersService } from "../services/factory.js";
 import getEnvironment from "../config/process.config.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";
 
-const productsController = new ProductsController(productsService)
+const productsController = new ProductsController(productsService, usersService)
 const env = getEnvironment();
 const router = Router();
 

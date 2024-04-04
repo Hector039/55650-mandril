@@ -22,7 +22,7 @@ export default function Product({ product }) {
 
                 <div className="buttons-card">
                     <NavLink to={`/productdetail/${product._id}`} className="info-button">Ver Detalle</NavLink>
-                    {user !== null && user.role === "user" &&
+                    {user !== null && (user.role === "user" || user.role === "premium") &&
                         <button className="cart-button" onClick={() => handleAdd(product._id, quantityProd)}>Añadir al Carrito</button>}
                 </div>
             </div>

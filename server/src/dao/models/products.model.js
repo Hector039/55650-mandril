@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
         default: true
     },
     owner: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         default: "admin"
     }
 });

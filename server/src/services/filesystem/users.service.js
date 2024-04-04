@@ -104,11 +104,9 @@ export default class UserService {
         try {
             const users = await this.getAllUsers();
             const userIndex = users.findIndex(user => user.email === email);
-            if (userIndex < 0) {
-                throw new Error(`Usuario con email:${email} no encontrado`);
-            }
+            if (userIndex < 0) throw new Error(`Usuario con email:${email} no encontrado`);
             users[userIndex].password = toUpdate;
-            users.splice(userIndex, 0, users[userIndex]);
+            users.splice(userIndex, 1, users[userIndex]);
             await this.guardarUsers(users);
             const usersUpdated = await this.getAllUsers();
             const userIndexUpdated = usersUpdated.findIndex(user => user.email === email);
@@ -122,11 +120,23 @@ export default class UserService {
         try {
             const users = await this.getAllUsers();
             const userIndex = users.findIndex(user => user.email === email);
-            if (userIndex < 0) {
-                throw new Error(`Usuario con email:${email} no encontrado`);
-            }
+            if (userIndex < 0) throw new Error(`Usuario con email:${email} no encontrado`);0
             users[userIndex].verified = true;
-            users.splice(userIndex, 0, users[userIndex]);
+            users.splice(userIndex, 1, users[userIndex]);
+            await this.guardarUsers(users);
+            return
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async premiumSelector(email, userType) {
+        try {
+            const users = await this.getAllUsers();
+            const userIndex = users.findIndex(user => user.email === email);
+            if (userIndex < 0)  throw new Error(`Usuario con email:${email} no encontrado`);
+            users[userIndex].role = userType;
+            users.splice(userIndex, 1, users[userIndex]);
             await this.guardarUsers(users);
             return
         } catch (error) {

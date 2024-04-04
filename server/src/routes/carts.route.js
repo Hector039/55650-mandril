@@ -7,10 +7,10 @@ import { userPassJwt } from "../middlewares/userPassJwt.js";
 const cartsController = new CartsController(cartsService, productsService);
 const router = Router();
 
-router.get("/:cid", userPassJwt(), handlePolicies(["USER"]), cartsController.getCart);
-router.delete("/product/:pid", userPassJwt(), handlePolicies(["USER"]), cartsController.deleteProductToCart);
-router.delete("/:cid", userPassJwt(), handlePolicies(["USER"]), cartsController.deleteAllProducts);
-router.put("/:cid/product/:pid", userPassJwt(), handlePolicies(["USER"]), cartsController.updateCart);
-router.post("/addproduct/:pid", userPassJwt(), handlePolicies(["USER"]), cartsController.addProductAndQuantity);
+router.get("/:cid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), cartsController.getCart);
+router.delete("/product/:pid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), cartsController.deleteProductToCart);
+router.delete("/:cid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), cartsController.deleteAllProducts);
+router.put("/:cid/product/:pid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), cartsController.updateCart);
+router.post("/addproduct/:pid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), cartsController.addProductAndQuantity);
 
 export default router;

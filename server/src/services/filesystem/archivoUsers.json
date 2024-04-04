@@ -3,10 +3,11 @@
         "_id": 1,
         "firstName": "hector",
         "lastName": "mandril",
-        "email": "elector@gmail.com",
-        "password": "$2b$10$9aGg7Zigju5EFU9hEsPPJuJYMs6Ct3G6B2rb0bz0TrtuYefWMunNG",
+        "email": "elector22@gmail.com",
+        "password": "$2b$10$g0O9okimUPlogjRmxLhYbe4FnRTpaIbX3R5m7hqcfFedo8DmNiRt6",
         "role": "admin",
-        "cart": 7
+        "cart": 7,
+        "verified": true
     },
     {
         "_id": 2,
@@ -15,7 +16,8 @@
         "email": "juan@gmail.com",
         "password": "$2b$10$N2qQxUKJlMNpg4HxEiCMz.47/bC7x3EUZ8lBg87poLbNxpBPffUnC",
         "role": "user",
-        "cart": 8
+        "cart": 8,
+        "verified": true
     },
     {
         "_id": 3,
@@ -24,7 +26,8 @@
         "email": "dani@gmail.com",
         "password": "$2b$10$GDHoJE5QQDAsFt/eFi7tv.2udduVKsqq4CYpYWusW9QJxr9KRnVjO",
         "role": "user",
-        "cart": 9
+        "cart": 9,
+        "verified": true
     },
     {
         "_id": 5,
@@ -35,7 +38,8 @@
         "role": "admin",
         "idgoogle": null,
         "idgithub": null,
-        "cart": 11
+        "cart": 11,
+        "verified": true
     },
     {
         "_id": 6,
@@ -46,28 +50,27 @@
         "role": "user",
         "idgoogle": null,
         "idgithub": null,
-        "cart": 22
+        "cart": 22,
+        "verified": true
     },
     {
-        "_id": 8,
-        "firstName": "Tito",
-        "lastName": "Tito",
+        "_id": 12,
+        "firstName": "hector",
+        "lastName": "mandrile",
         "email": "elector22@hotmail.com",
-        "password": "$2b$10$DCzw/Su/NMGlROZnfMYqGe2wzXlCw/X9XkEzj1PnV5ORydY22pzVu",
-        "role": "user",
-        "idgoogle": null,
-        "idgithub": null,
-        "cart": 24
+        "password": "$2b$10$BiwOa8yx.NR30fpiXvp6au8IhFuUCkfuNqQ3RaHKcvB8K.cnpw9Iu",
+        "role": "premium",
+        "cart": 28,
+        "verified": true
     },
     {
-        "_id": 10,
-        "firstName": "Hector",
-        "lastName": "Hector",
-        "email": "elector22@gmail.com",
-        "password": "u1dosh",
+        "_id": 13,
+        "firstName": "Chaqueño",
+        "lastName": "Palavecino",
+        "email": "chaquenio@gmail.com",
+        "password": "$2b$10$1IMKrUjSf4YRS2TwhbM4c.W6NlJ2njepwtdMfziWKzxS57mJQXWbG",
         "role": "user",
-        "idgoogle": "109314102480647809075",
-        "idgithub": null,
-        "cart": 26
+        "cart": 29,
+        "verified": true
     }
 ]

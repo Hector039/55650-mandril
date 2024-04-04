@@ -40,6 +40,26 @@ export default class UsersController {
         }
     }
 
+    premiumSelector = async (req, res, next) => {//put
+        const { email } = req.params;
+        try {
+            const user = await this.usersService.getUser(email);
+            if (user === null) {
+                CustomError.createError({
+                    message: "Usuario no encontrado.",
+                    cause: generateUserErrorInfo(email),
+                    code: TErrors.INVALID_TYPES,
+                });
+            }
+            if(user.role === "user") await this.usersService.premiumSelector(email, "premium");
+            else await this.usersService.premiumSelector(email, "user");
+            const userUpdated = await this.usersService.getUser(email);
+            res.status(200).send({message: `Felicitaciones!. Ahora eres ${userUpdated.role}.`, userNewRole: userUpdated.role})
+        } catch (error) {
+            next(error)
+        }
+    }
+
     userVerified = async (req, res, next) => {//post
         try {
             const { email } = req.params;

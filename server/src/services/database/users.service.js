@@ -27,4 +27,9 @@ export default class UserService {
         return
     }
 
+    async premiumSelector(email, userType) {
+        await this.userRepo.premiumSelector(email, userType);
+        return
+    }
+
 };

@@ -6,7 +6,7 @@ import ProductsFounded from "./ProductsFounded";
 
 export default function System() {
 
-    const { addProduct, productsFound, searchProduct, user, logout } = useContext(DataContext);
+    const { addProduct, productsFound, searchProduct, user } = useContext(DataContext);
 
 
     const {
@@ -35,7 +35,7 @@ export default function System() {
     return (
         <>
             <div className="welcome-container">
-                <h1>Bienvenido administrador {user.name}!</h1>
+                <h1>Bienvenido {user.name}!</h1>
                 <a href="/"><button className="info-button">Volver al listado</button></a>
             </div>
 

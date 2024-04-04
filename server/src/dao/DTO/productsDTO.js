@@ -9,5 +9,6 @@ export default class ProductsDTO {
         this.category = product.category;
         this.thumbnails = product.thumbnails === null ? ["https://www.remab.net/wp-content/uploads/2020/08/sin_imagen.jpg"] : [product.thumbnails];
         this.status = product.status;
+        this.owner = product.owner;
     }
 }
