@@ -5,11 +5,12 @@ export default class UsersRepository {
 
     getUser = async (id) => {
         let user = await this.usersModel.findOne({$or: [{email: id}, {idgoogle: id}, {idgithub: id}]}).populate("cart").lean();
-        if (user === null){ 
+        return user;
+    };
+
+    getUserById = async (id) => {
             const userById = await this.usersModel.findById(id).populate("cart").lean();
             return userById
-        }
-        return user;
     };
 
     saveUser = async (user) => {

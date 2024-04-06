@@ -10,6 +10,11 @@ export default class UserService {
         return result;
     }
 
+    async getUserById(id) {
+        const result = await this.userRepo.getUserById(id);
+        return result;
+    }
+
     async saveUser(user) {
         const newUser = new UsersDTO(user);
         newUser["password"] = user.password

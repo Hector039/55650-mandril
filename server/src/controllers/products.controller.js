@@ -152,7 +152,7 @@ export default class ProductsController {
                     code: TErrors.INVALID_TYPES
                 });
             }
-            const user = await this.usersService.getUser(owner)
+            const user = await this.usersService.getUserById(owner)
             if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
                 CustomError.createError({
                     message: `Solo el administrador puede modificar este producto.`,
@@ -192,7 +192,7 @@ export default class ProductsController {
     deleteProduct = async (req, res, next) => {
         const owner = req.user.id
         try {
-            const user = await this.usersService.getUser(owner)
+            const user = await this.usersService.getUserById(owner)
             if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
                 CustomError.createError({
                     message: `Solo el administrador puede eliminar este producto.`,

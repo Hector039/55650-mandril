@@ -28,16 +28,11 @@ export default class UserService {
         try {
             const users = await this.getAllUsers();
             const userByEmail = users.find(user => user.email === emailOrId);
-            const userById = users.find(user => user._id === emailOrId);
             const userByGoogleId = users.find(user => user.idgoogle === emailOrId);
             const userByGithubId = users.find(user => user.idgithub === emailOrId);
             let user = null;
             if(userByEmail !== undefined){
                 user = userByEmail
-                return user;
-            }
-            if(userById !== undefined){
-                user = userById
                 return user;
             }
             if(userByGoogleId !== undefined){
@@ -49,6 +44,16 @@ export default class UserService {
                 return user;
             }
             return user;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUserById(id) {
+        try {
+            const users = await this.getAllUsers();
+            const userById = users.find(user => user._id === id);
+            return userById;
         } catch (error) {
             throw error;
         }

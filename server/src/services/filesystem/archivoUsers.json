@@ -5,7 +5,7 @@
         "lastName": "mandril",
         "email": "elector22@gmail.com",
         "password": "$2b$10$g0O9okimUPlogjRmxLhYbe4FnRTpaIbX3R5m7hqcfFedo8DmNiRt6",
-        "role": "admin",
+        "role": "premium",
         "cart": 7,
         "verified": true
     },
