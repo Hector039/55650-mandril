@@ -6,6 +6,7 @@ import ticketRouter from "./tickets.route.js";
 import contactRouter from "./contact.route.js";
 import mockRouter from "./mock.route.js";
 import loggerTestRouter from "./loggerTest.route.js";
+import apiDocsRouter from "./swagger.route.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/api/tickets", ticketRouter);
 router.use("/api/contact", contactRouter);
 router.use("/api/mockingproducts", mockRouter);
 router.use("/api/loggerTest", loggerTestRouter);
+router.use("/api/apidocs", apiDocsRouter);
 
 export default router;
