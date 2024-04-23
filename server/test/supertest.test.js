@@ -1,11 +1,15 @@
 import supertest from "supertest";
 import { expect } from "chai";
 import { Command } from "commander";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 import UserServiceFs from "../src/services/filesystem/users.service.js";
 import CartServiceFs from "../src/services/filesystem/carts.service.js";
 import repositories from "../src/dao/repository/index.js";
 import UserService from "../src/services/database/users.service.js";
 import CartService from "../src/services/database/carts.service.js";
+
+dotenv.config({ path: "src/config/.env.development" });
 
 const application = new Command();
 application
@@ -21,6 +25,40 @@ let testProductTwo;
 let testCookie;
 
 describe("Testing de integración Ecommerce", () => {
+    after(async function () {
+        switch (options.persistence.toUpperCase()) {
+            case "DATABASE":
+                await mongoose.connect(process.env.DB_URL);
+                console.log("Mongo connected");
+                const userServiceDb = new UserService(repositories.users);
+                const cartServiceDb = new CartService(repositories.carts);
+                try {
+                    await userServiceDb.deleteUser(temporalUser.id);
+                    console.log("Usuario de prueba eliminado.");
+                    await cartServiceDb.deleteCart(temporalUser.cartId);
+                    console.log("Carrito de prueba eliminado.");
+                } catch (error) {
+                    console.log(error);
+                }
+                console.log("Test finalizado.");
+                await mongoose.disconnect();
+                break;
+            case "FILESYSTEM":
+                const userServiceFs = new UserServiceFs();
+                const cartServiceFs = new CartServiceFs();
+                try {
+                    await userServiceFs.deleteUser(temporalUser.id);
+                    console.log("Usuario de prueba eliminado.");
+                    await cartServiceFs.deleteCart(temporalUser.cartId);
+                    console.log("Carrito de prueba eliminado.");
+                } catch (error) {
+                    console.log(error);
+                }
+                console.log("Test finalizado.");
+                break;
+            default: throw new Error("La persistencia ingresada no existe");
+        }
+    });
     describe("Testing sessions de usuarios", () => {
         it("Endpoint POST debe devolver un error por falta de datos de usuario al momento del registro", async () => {
 
@@ -165,7 +203,7 @@ describe("Testing de integración Ecommerce", () => {
         it("Endpoint PUT debe devolver el producto modificado por su ID", async () => {
             const productToUpdate = { title: "Mesa", description: "Mesa de madera para oficina", code: "mes002", price: 12000, stock: 10, category: "muebles", status: true, owner: temporalUser.id }
             await requester.put(`/api/products/${testProduct._id}`).set("Cookie", [testCookie]).send(productToUpdate);
-            const { statusCode,_body } = await requester.get(`/api/products/${testProduct._id}`).send();
+            const { statusCode, _body } = await requester.get(`/api/products/${testProduct._id}`).send();
             expect(statusCode).to.be.eql(200)
             expect(_body).to.have.property("_id")
             expect(_body).to.have.property("code");
@@ -231,39 +269,6 @@ describe("Testing de integración Ecommerce", () => {
             expect(_body.products).to.be.an("array");
             expect(_body.products.length).to.be.eql(0);
         })
-    })
-    after(async function () {
-        switch (options.persistence.toUpperCase()) {
-            case "DATABASE":
-                const userServiceDb = new UserService(repositories.users);
-                const cartServiceDb = new CartService(repositories.carts);
-                try {
-                    if (temporalUser !== undefined) await userServiceDb.deleteUser(temporalUser.id);
-                } catch (error) {
-                    console.log(error);
-                }
-                try {
-                    if (temporalUser !== undefined) await cartServiceDb.deleteCart(temporalUser.cartId);
-                } catch (error) {
-                    console.log(error);
-                }
-                break;
-            case "FILESYSTEM":
-                const userServiceFs = new UserServiceFs();
-                const cartServiceFs = new CartServiceFs();
-                try {
-                    if (temporalUser !== undefined) await userServiceFs.deleteUser(temporalUser.id);
-                } catch (error) {
-                    console.log(error);
-                }
-                try {
-                    if (temporalUser !== undefined) await cartServiceFs.deleteCart(temporalUser.cartId)
-                } catch (error) {
-                    console.log(error);
-                }
-                break;
-            default: throw new Error("La persistencia ingresada no existe");
-        }
     })
 })
 
