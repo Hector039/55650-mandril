@@ -46,4 +46,9 @@ export default class CartsRepository {
             const updatedCart = await this.getCartById(cartById._id);
         return updatedCart;
     };
+
+    deleteCart = async (id) => {
+        await this.CartModel.findOneAndDelete({ _id: id });
+        return;
+    };
 }

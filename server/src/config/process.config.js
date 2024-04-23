@@ -41,4 +41,3 @@ const getEnvironment = () => {
 };
 
 export default getEnvironment;
-

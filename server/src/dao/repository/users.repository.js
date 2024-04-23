@@ -34,4 +34,9 @@ export default class UsersRepository {
         return
     };
 
+    deleteUser = async (id) => {
+        await this.usersModel.findOneAndDelete({ _id: id });
+        return;
+};
+
 }

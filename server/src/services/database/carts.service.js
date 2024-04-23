@@ -56,4 +56,13 @@ export default class CartService {
             throw error;
         }
     };
+
+    async deleteCart(id) {
+        try {
+            await this.cartRepo.deleteCart(id);
+            return;
+        } catch (error) {
+            throw error;
+        }
+    };
 };

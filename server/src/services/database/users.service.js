@@ -37,4 +37,8 @@ export default class UserService {
         return
     }
 
+    async deleteUser(id) {
+        await this.userRepo.deleteUser(id);
+        return;
+    }
 };

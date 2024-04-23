@@ -47,7 +47,7 @@ const initializePassport = () => {
                     userUpdated["photo"] = profile._json.picture;
                     userUpdated["userCart"] = newCart
                     await mailer({ mail: userUpdated.email, name: userUpdated.firstName }, "Bienvenido a nuestro e-commerce!")
-                    
+
                     return cb(null, userUpdated);
                 }
 
@@ -76,7 +76,7 @@ const initializePassport = () => {
                 if (user === null) {
 
                     const userEmail = await usersService.getUser(profile._json?.email);
-                    if (userEmail)  return done(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
+                    if (userEmail) return done(null, userEmail, { messages: "El Email asociado a ese Usuario ya existe." });
 
                     const newCart = await cartsService.saveCart();
                     const cart = newCart._id;
@@ -117,7 +117,7 @@ const initializePassport = () => {
 
                 const newCart = await cartsService.saveCart();
                 const cart = newCart._id;
-                
+
                 await usersService.saveUser({
                     firstName,
                     lastName,
@@ -126,9 +126,9 @@ const initializePassport = () => {
                     cart
                 });
 
-                await mailer({mail: email, name: firstName}, 
+                /* await mailer({ mail: email, name: firstName },
                     `Bienvenido a nuestro e-commerce!, para terminar el registro, verifica tu cuenta: <a href="http://localhost:8080/api/sessions/userverification/${email}">Activar cuenta</a>`
-                    )
+                ) */
                 return done(null, email);
             } catch (error) {
                 return done(error, null);
@@ -142,7 +142,7 @@ const initializePassport = () => {
             try {
                 const user = await usersService.getUser(usermail);
 
-                if (user === null) return done(null, false, { messages: "El Usuario no existe." }); 
+                if (user === null) return done(null, false, { messages: "El Usuario no existe." });
                 if (!isValidPass(password, user.password)) return done(null, false, { messages: "Usuario o contraseña incorrecto." });
                 if (user.verified === false) return done(null, false, { messages: "Esta cuenta aún no está verificada. Valídala con el link en tu correo." });
 

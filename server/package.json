@@ -5,9 +5,12 @@
   "main": "ProductManager.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch src/app.js --mode production --persistence database -u adminprod -p admin ",
-    "dev": "node --watch src/app.js --mode development --persistence database -u admindev -p admin "
+    "dev": "node --watch src/app.js --mode development --persistence database -u admindev -p admin ",
+    "test": "mocha test/supertest.test.js --persistence database "
+  },
+  "mocha": {
+    "timeout": 15000
   },
   "keywords": [],
   "author": "",
@@ -37,6 +40,9 @@
     "winston": "^3.12.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1"
+    "@faker-js/faker": "^8.4.1",
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "supertest": "^6.3.4"
   }
 }

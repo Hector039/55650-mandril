@@ -149,6 +149,19 @@ export default class UserService {
         }
     }
 
+    async deleteUser(id) {
+        try {
+            const users = await this.getAllUsers();
+            const userIndex = users.findIndex(user => user._id === parseInt(id));
+            if (userIndex < 0)  throw new Error(`Usuario con id:${id} no encontrado`);
+            users.splice(userIndex, 1);
+            await this.guardarUsers(users);
+            return
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async #setUltimoId() {
         try {
             const users = await this.getAllUsers();

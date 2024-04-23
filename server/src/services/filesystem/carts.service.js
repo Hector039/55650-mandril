@@ -74,6 +74,19 @@ export default class CartService {
         }
     }
 
+    async deleteCart(id) {
+        try {
+            const carts = await this.getCarts();
+            const cartIndex = carts.findIndex(cart => cart._id === parseInt(id));
+            if (cartIndex < 0)  throw new Error(`Cart con id:${id} no encontrado`);
+            carts.splice(cartIndex, 1);
+            await this.saveCarts(carts);
+            return
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async addProductAndQuantityToCart(cid, pid, quantity) {
         try {
             const carts = await this.getCarts();
