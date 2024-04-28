@@ -5,6 +5,7 @@ import { passportCall } from "../middlewares/passportCall.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { isSessionOn } from "../middlewares/isSessionOn.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";
+import { uploadMultiple } from "../middlewares/multer.js";
 
 const usersController = new UsersController(usersService);
 const router = Router();
@@ -20,5 +21,6 @@ router.get("/ghstrategy", isSessionOn(), passportCall("github"), handlePolicies(
 router.get("/google", isSessionOn(), passportCall("google"), handlePolicies(["PUBLIC"]), usersController.google);
 router.get("/googlestrategy", isSessionOn(), passportCall("google"), handlePolicies(["PUBLIC"]), usersController.googleStrategy);
 router.get("/premium/:email", userPassJwt(),  handlePolicies(["USER", "PREMIUM"]), usersController.premiumSelector);
+router.post("/:uid/documents", userPassJwt(),  handlePolicies(["USER"]), uploadMultiple, usersController.uploads);
 
 export default router;

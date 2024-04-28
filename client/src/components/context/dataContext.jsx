@@ -57,6 +57,26 @@ export const DataProvider = ({ children }) => {
         axiosData();
     }, [categoryFilter, priceFilter, limitFilter, page])
 
+    const uploads = async (data) => {
+        const formData = new FormData();
+        formData.append("avatar", data.avatar[0])
+        formData.append("idDoc", data.idDoc[0])
+        formData.append("adressDoc", data.adressDoc[0])
+        formData.append("accountDoc", data.accountDoc[0])
+        await axios.postForm(`sessions/${user.id}/documents`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true
+        })
+            .then(response => {
+                toast.success('Se envió la información correctamente.');
+            })
+            .catch(error => {
+                console.log(error)
+                if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
+                if (error.response.status === 400) return toast.error(error.response.data.message);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
     const cartQuantity = (cart) => {
         const cartProdQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
         setCartProdWidget(cartProdQuantity)
@@ -87,10 +107,7 @@ export const DataProvider = ({ children }) => {
     }
 
     const login = async (e) => {
-        await axios.post(urlUserLogin, {
-            email: e.email,
-            password: e.password
-        }, { withCredentials: true })
+        await axios.post(urlUserLogin, { email: e.email, password: e.password }, { withCredentials: true })
             .then(response => {
                 Swal.fire({
                     position: "top-end",
@@ -101,6 +118,7 @@ export const DataProvider = ({ children }) => {
                 }).then(result => {
                     setUser(response.data);
                     cartQuantity(response.data.cart.products)
+                    window.location.replace("/");
                 });
             })
             .catch(error => {
@@ -320,6 +338,7 @@ export const DataProvider = ({ children }) => {
                 })
             }).catch(error => {
                 if (error.response.status === 409) return toast.error(error.response.data.message);
+                if (error.response.status === 400) return toast.error(error.response.data.message);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })
@@ -353,7 +372,7 @@ export const DataProvider = ({ children }) => {
     }
 
     const deleteProduct = (id) => {
-        axios.delete(urlProd + "/" + id, { withCredentials: true } )
+        axios.delete(urlProd + "/" + id, { withCredentials: true })
             .then(response => {
                 toast.success('Se eliminó el producto correctamente.');
                 console.log(response.data)
@@ -406,7 +425,7 @@ export const DataProvider = ({ children }) => {
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget, passRestoration, userTypeSelector
+            cartProdWidget, passRestoration, userTypeSelector, uploads
         }}>
             {children}
         </DataContext.Provider>

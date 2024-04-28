@@ -14,7 +14,16 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "carts"
     },
-    verified: { type: Boolean, default: false }
+    verified: { type: Boolean, default: false },
+    documents:
+     [
+        {
+            name: { type: String },
+            reference: { type: String },
+            _id: false,
+        }
+    ],
+    last_connection: { type: String, default: null }
 });
 
 const usersModel = mongoose.model(userCollection, userSchema);

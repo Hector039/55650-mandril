@@ -4,13 +4,13 @@ export default class UsersRepository {
     }
 
     getUser = async (id) => {
-        let user = await this.usersModel.findOne({$or: [{email: id}, {idgoogle: id}, {idgithub: id}]}).populate("cart").lean();
+        let user = await this.usersModel.findOne({ $or: [{ email: id }, { idgoogle: id }, { idgithub: id }] }).populate("cart").lean();
         return user;
     };
 
     getUserById = async (id) => {
-            const userById = await this.usersModel.findById(id).populate("cart").lean();
-            return userById
+        const userById = await this.usersModel.findById(id).populate("cart").lean();
+        return userById
     };
 
     saveUser = async (user) => {
@@ -37,6 +37,19 @@ export default class UsersRepository {
     deleteUser = async (id) => {
         await this.usersModel.findOneAndDelete({ _id: id });
         return;
-};
+    };
+
+    updateField = async (id, keyToUpdate, valueToUpdate) => {
+        const user = await this.getUserById(id)
+        let obj = {};
+        if (keyToUpdate === "documents") {
+            const docsExists = user.documents.find(doc => doc.name === valueToUpdate.name);
+            if (!docsExists) await this.usersModel.findByIdAndUpdate(user._id, { $push: { documents: { name: valueToUpdate.name, reference: valueToUpdate.reference } } });
+            return
+        }
+        obj[keyToUpdate] = valueToUpdate;
+        await this.usersModel.findOneAndUpdate({ _id: id }, obj);
+        return;
+    };
 
 }

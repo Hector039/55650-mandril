@@ -3,21 +3,14 @@ import { DataContext } from "../context/dataContext";
 import { useContext, useEffect } from "react";
 import googleLogo from "./assets/googleLogo.png";
 import githubLogo from "./assets/githubLogo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Account() {
-    const navigate = useNavigate();
-    const { login, newRegister, user, loginGoogle, loginGithub } = useContext(DataContext);
-
-    useEffect(() => {
-        if (user !== null) {
-            navigate("/")
-        }
-    }, [user])
+    const { login, newRegister, user, loginGoogle, loginGithub, uploads } = useContext(DataContext);
 
     const {
         register,
-        handleSubmit,
+        handleSubmit
     } = useForm({
         mode: "onBlur",
     });
@@ -32,6 +25,13 @@ export default function Account() {
         mode: "onBlur",
     });
 
+    const {
+        register: register3,
+        handleSubmit: handleSubmit3,
+    } = useForm({
+        mode: "onBlur",
+    });
+
     useEffect(() => {
         if (formState.isSubmitSuccessful) reset();
       }, [formState, reset]);
@@ -42,7 +42,8 @@ export default function Account() {
 
             <section className="cuenta-info">
                 {
-                    !user &&
+                    !user ? 
+                    <>
                     <div className="cuenta-acceder">
                         <p className="cuenta-title">Acceder usuario existente:</p>
                         <form onSubmit={handleSubmit(login)}>
@@ -59,7 +60,7 @@ export default function Account() {
                             <button onClick={loginGithub}>Ingresar con GitHub <img src={githubLogo} alt="GitHub Logo"></img></button>
                         </div>
                     </div>
-                }
+                
 
                 <div className="cuenta-registrarse">
                     <p className="cuenta-title">Registrar cuenta nueva:</p>
@@ -74,6 +75,22 @@ export default function Account() {
                         <button type="submit" className="cuenta-button" >Registrarse</button>
                     </form>
                 </div>
+                </> :
+                <div className="cuenta-registrarse">
+                <p className="cuenta-title">Envío de información de usuario:</p>
+                <form onSubmit={handleSubmit3(uploads)} >
+                    <input type="file" id="avatar" name="avatar" {...register3("avatar")} />
+                    <input type="file" id="idDoc" name="idDoc" placeholder="Foto identificación" {...register3("idDoc")} />
+                    <input type="file" id="adressDoc" name="adressDoc" placeholder="Comprobante de domicilio" {...register3("adressDoc")} />
+                    <input type="file" id="accountDoc" name="accountDoc" placeholder="Estado de cuenta" {...register3("accountDoc")} />
+                    <p>Tus documentos personales solo se utilizarán para procesar tu identidad y cuenta.</p>
+                    <p>Solo se aceptan las siguientes extensiones de archivo: jpg, jpeg, gif, png, pdf, doc, docx.</p>
+                    <p>Recuerda que para ser PREMIUM debes haber subido todos los documentos.</p>
+                    <button type="submit" className="cuenta-button" >Enviar</button>
+                </form>
+            </div>
+                
+            }
             </section>
             <Link to={"/"} className="info-button">Volver al listado</Link>
         </div>

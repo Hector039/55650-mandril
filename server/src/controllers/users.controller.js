@@ -12,6 +12,30 @@ export default class UsersController {
         this.usersService = service;
     }
 
+    uploads = async (req, res, next) => {//post
+        const avatar = req.files.avatar !== undefined ? req.files.avatar[0] : undefined;
+        const idDoc = req.files.idDoc !== undefined ? req.files.idDoc[0] : undefined;
+        const adressDoc = req.files.adressDoc !== undefined ? req.files.adressDoc[0] : undefined;
+        const accountDoc = req.files.accountDoc !== undefined ? req.files.accountDoc[0] : undefined;
+        const user = req.user;
+        try {
+            if (!avatar && !idDoc && !adressDoc && !accountDoc) {
+                CustomError.createError({
+                    message: "No se recibió ningún archivo.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.INVALID_TYPES,
+                });
+            }
+            if(avatar) await this.usersService.updateField(user.id, "documents", { name: avatar.fieldname, reference: avatar.destination});
+            if(idDoc) await this.usersService.updateField(user.id, "documents", { name: idDoc.fieldname, reference: idDoc.destination});
+            if(adressDoc) await this.usersService.updateField(user.id, "documents", { name: adressDoc.fieldname, reference: adressDoc.destination});
+            if(accountDoc) await this.usersService.updateField(user.id, "documents", { name: accountDoc.fieldname, reference: accountDoc.destination});
+            res.status(200).send(`Archivo/s recibido/s!`)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     userLogin = async (req, res, next) => {//post
         try {
             const email = req.user.email;
@@ -20,12 +44,13 @@ export default class UsersController {
             const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
             const name = req.user.firstName;
             const id = req.user._id;
-            let token = generateToken({ email, role, cart, name, id, cartId });
+            const lastConnection = req.user.last_connection;
+            let token = generateToken({ email, role, cart, name, id, cartId, lastConnection });
             res.cookie("cookieToken", token, {
                 httpOnly: true,
                 maxAge: 60 * 60 * 1000,
                 secure: env.USERCOOKIESECRET
-            }).status(200).send({ email, role, cart, name, id, cartId });
+            }).status(200).send({ email, role, cart, name, id, cartId, lastConnection });
         } catch (error) {
             next(error)
         }
@@ -51,10 +76,19 @@ export default class UsersController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            if(user.role === "user") await this.usersService.premiumSelector(email, "premium");
+            const docs = ["idDoc", "adressDoc", "accountDoc"];
+            const isAllDocs = user.documents.filter(doc => docs.includes(doc.name));
+            if(isAllDocs.length < 3 && user.role === "user") {
+                CustomError.createError({
+                    message: "Para ser PREMIUM debes presentar todos los documentos en la sección Mi Cuenta.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.INVALID_TYPES,
+                });
+            }
+            if (user.role === "user") await this.usersService.premiumSelector(email, "premium");
             else await this.usersService.premiumSelector(email, "user");
             const userUpdated = await this.usersService.getUser(email);
-            res.status(200).send({message: `Felicitaciones!. Ahora eres ${userUpdated.role}.`, userNewRole: userUpdated.role})
+            res.status(200).send({ message: `Felicitaciones!. Ahora eres ${userUpdated.role}.`, userNewRole: userUpdated.role })
         } catch (error) {
             next(error)
         }
@@ -94,7 +128,7 @@ export default class UsersController {
                 });
             }
             //await mailer({ mail: email, name: user.firstName },
-                //`Haz click en el enlace para restaurar tu contraseña: <a href="http://localhost:5173/forgot/${email}">Restaurar</a>`)
+            //`Haz click en el enlace para restaurar tu contraseña: <a href="http://localhost:5173/forgot/${email}">Restaurar</a>`)
             res.cookie("tempCookie", "temporalCookie", { maxAge: 1000 * 60 * 60 }).status(200).send(`Se envió la solicitud de restauración a ${email}`);
         } catch (error) {
             next(error)

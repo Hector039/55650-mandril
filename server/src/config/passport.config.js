@@ -145,7 +145,7 @@ const initializePassport = () => {
                 if (user === null) return done(null, false, { messages: "El Usuario no existe." });
                 if (!isValidPass(password, user.password)) return done(null, false, { messages: "Usuario o contraseña incorrecto." });
                 if (user.verified === false) return done(null, false, { messages: "Esta cuenta aún no está verificada. Valídala con el link en tu correo." });
-
+                await usersService.updateField(user._id, "last_connection", new Date().toString());
                 const userCart = await cartsService.getCartById(user.cart);
                 user["userCart"] = userCart
                 return done(null, user)

@@ -41,4 +41,9 @@ export default class UserService {
         await this.userRepo.deleteUser(id);
         return;
     }
+
+    async updateField(id, keyToUpdate, valueToUpdate) {
+        await this.userRepo.updateField(id, keyToUpdate, valueToUpdate);
+        return;
+    }
 };
