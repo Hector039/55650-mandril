@@ -90,8 +90,6 @@ export default function NavBar() {
                                 return { fontWeight: isActive ? "bold" : "" }
                             }}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}
                         {user.role === "premium" && <h3 className="user-type-text">Eres {user.role}! </h3>}
-                        <p>Última conexión:</p>
-                        <p>{user.lastConnection}</p>
                         <button onClick={logout}>Cerrar sesión</button>
 
                     </div>}

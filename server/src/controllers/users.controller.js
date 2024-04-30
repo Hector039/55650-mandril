@@ -12,25 +12,39 @@ export default class UsersController {
         this.usersService = service;
     }
 
-    uploads = async (req, res, next) => {//post
-        const avatar = req.files.avatar !== undefined ? req.files.avatar[0] : undefined;
-        const idDoc = req.files.idDoc !== undefined ? req.files.idDoc[0] : undefined;
-        const adressDoc = req.files.adressDoc !== undefined ? req.files.adressDoc[0] : undefined;
-        const accountDoc = req.files.accountDoc !== undefined ? req.files.accountDoc[0] : undefined;
-        const user = req.user;
+    avatar = async (req, res, next) => {//post
+        const avatar = req.file !== undefined ? req.file : undefined;
         try {
-            if (!avatar && !idDoc && !adressDoc && !accountDoc) {
+            if (!avatar) {
                 CustomError.createError({
                     message: "No se recibió ningún archivo.",
                     cause: generateUserErrorInfo(null),
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            if(avatar) await this.usersService.updateField(user.id, "documents", { name: avatar.fieldname, reference: avatar.destination});
+            res.status(200).send(`Nueva foto de perfil recibida!`)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    docs = async (req, res, next) => {//post
+        const idDoc = req.files.idDoc !== undefined ? req.files.idDoc[0] : undefined;
+        const adressDoc = req.files.adressDoc !== undefined ? req.files.adressDoc[0] : undefined;
+        const accountDoc = req.files.accountDoc !== undefined ? req.files.accountDoc[0] : undefined;
+        const user = req.user;
+        try {
+            if (!idDoc && !adressDoc && !accountDoc) {
+                CustomError.createError({
+                    message: "No se recibió ningún archivo.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.INVALID_TYPES,
+                });
+            }
             if(idDoc) await this.usersService.updateField(user.id, "documents", { name: idDoc.fieldname, reference: idDoc.destination});
             if(adressDoc) await this.usersService.updateField(user.id, "documents", { name: adressDoc.fieldname, reference: adressDoc.destination});
             if(accountDoc) await this.usersService.updateField(user.id, "documents", { name: accountDoc.fieldname, reference: accountDoc.destination});
-            res.status(200).send(`Archivo/s recibido/s!`)
+            res.status(200).send(`Documento/s recibido/s!`)
         } catch (error) {
             next(error)
         }
@@ -43,14 +57,20 @@ export default class UsersController {
             const cart = req.user.userCart;
             const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
             const name = req.user.firstName;
+            const lastName = req.user.lastName;
             const id = req.user._id;
             const lastConnection = req.user.last_connection;
-            let token = generateToken({ email, role, cart, name, id, cartId, lastConnection });
+            const docs = ["idDoc", "adressDoc", "accountDoc"];
+            const isAllDocs = docs.filter(doc => {
+                const docsExists = req.user.documents.find(e => e.name === doc)
+                if (!docsExists) return true;
+            });
+            let token = generateToken({ email, role, cart, name, id, cartId, lastConnection, lastName, isAllDocs });
             res.cookie("cookieToken", token, {
                 httpOnly: true,
                 maxAge: 60 * 60 * 1000,
                 secure: env.USERCOOKIESECRET
-            }).status(200).send({ email, role, cart, name, id, cartId, lastConnection });
+            }).status(200).send({ email, role, cart, name, id, cartId, lastConnection, isAllDocs, lastName });
         } catch (error) {
             next(error)
         }

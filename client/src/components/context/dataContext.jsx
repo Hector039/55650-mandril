@@ -57,12 +57,41 @@ export const DataProvider = ({ children }) => {
         axiosData();
     }, [categoryFilter, priceFilter, limitFilter, page])
 
+    const avatar = async (data) => {
+        const formData = new FormData();
+        console.log(data.avatar[0]);
+        formData.append("avatar", data.avatar[0]);
+        //if (data.avatar) if ([...data.avatar].length === 1) docs.push([...data.avatar][0])
+        await axios.postForm(`sessions/${user.id}/avatar`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true
+        })
+            .then(response => {
+                toast.success('Se envió la foto correctamente.');
+            })
+            .catch(error => {
+                console.log(error)
+                if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
+                if (error.response.status === 400) return toast.error(error.response.data.message);
+                if (error.response.status === 500) return toast.error(error.response.data.cause);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+            })
+    }
+
     const uploads = async (data) => {
         const formData = new FormData();
-        formData.append("avatar", data.avatar[0])
-        formData.append("idDoc", data.idDoc[0])
-        formData.append("adressDoc", data.adressDoc[0])
-        formData.append("accountDoc", data.accountDoc[0])
+        console.log(data);
+        
+        if (data.idDoc) if ([...data.idDoc].length === 1) {
+            formData.append("idDoc", data.idDoc[0]);
+        }
+        if (data.adressDoc) if ([...data.adressDoc].length === 1) {
+            formData.append("adressDoc", data.adressDoc[0]);
+        }
+        if (data.accountDoc) if ([...data.accountDoc].length === 1) {
+            formData.append("accountDoc", data.accountDoc[0]);
+        }
+        
         await axios.postForm(`sessions/${user.id}/documents`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
@@ -74,9 +103,11 @@ export const DataProvider = ({ children }) => {
                 console.log(error)
                 if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
                 if (error.response.status === 400) return toast.error(error.response.data.message);
+                if (error.response.status === 500) return toast.error(error.response.data.cause);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
             })
     }
+
     const cartQuantity = (cart) => {
         const cartProdQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
         setCartProdWidget(cartProdQuantity)
@@ -425,7 +456,7 @@ export const DataProvider = ({ children }) => {
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget, passRestoration, userTypeSelector, uploads
+            cartProdWidget, passRestoration, userTypeSelector, uploads, avatar
         }}>
             {children}
         </DataContext.Provider>
