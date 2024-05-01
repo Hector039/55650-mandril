@@ -59,16 +59,12 @@ export const DataProvider = ({ children }) => {
 
     const avatar = async (data) => {
         const formData = new FormData();
-        console.log(data.avatar[0]);
         formData.append("avatar", data.avatar[0]);
-        //if (data.avatar) if ([...data.avatar].length === 1) docs.push([...data.avatar][0])
         await axios.postForm(`sessions/${user.id}/avatar`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         })
-            .then(response => {
-                toast.success('Se envió la foto correctamente.');
-            })
+            .then(response => toast.success('Se envió la foto correctamente.'))
             .catch(error => {
                 console.log(error)
                 if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
@@ -80,25 +76,14 @@ export const DataProvider = ({ children }) => {
 
     const uploads = async (data) => {
         const formData = new FormData();
-        console.log(data);
-        
-        if (data.idDoc) if ([...data.idDoc].length === 1) {
-            formData.append("idDoc", data.idDoc[0]);
-        }
-        if (data.adressDoc) if ([...data.adressDoc].length === 1) {
-            formData.append("adressDoc", data.adressDoc[0]);
-        }
-        if (data.accountDoc) if ([...data.accountDoc].length === 1) {
-            formData.append("accountDoc", data.accountDoc[0]);
-        }
-        
+        if (data.idDoc) if ([...data.idDoc].length === 1) formData.append("idDoc", data.idDoc[0]);
+        if (data.adressDoc) if ([...data.adressDoc].length === 1) formData.append("adressDoc", data.adressDoc[0]);
+        if (data.accountDoc) if ([...data.accountDoc].length === 1) formData.append("accountDoc", data.accountDoc[0]);
         await axios.postForm(`sessions/${user.id}/documents`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         })
-            .then(response => {
-                toast.success('Se envió la información correctamente.');
-            })
+            .then(response => toast.success('Se envió la información correctamente.'))
             .catch(error => {
                 console.log(error)
                 if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);
@@ -380,23 +365,25 @@ export const DataProvider = ({ children }) => {
     const [productsFound, setproductsFound] = useState([]);
 
     const addProduct = (e) => {
-        const title = e.title
-        const description = e.description
-        const code = e.code
-        const price = e.price
-        const stock = e.stock
-        const category = e.category
-        const thumbnails = e.thumbnails
-        const owner = user.id
-        axios.post(urlProd, { title, description, code, price, stock, category, thumbnails, owner }, { withCredentials: true })
+        const formData = new FormData();
+        if (e.prodPic) if ([...e.prodPic].length > 0) {
+            [...e.prodPic].forEach(pic => formData.append("prodPic", pic))
+        };
+        formData.append("title", e.title)
+        formData.append("description", e.description)
+        formData.append("code", e.code)
+        formData.append("price", e.price)
+        formData.append("stock", e.stock)
+        formData.append("category", e.category)
+        formData.append("thumbnail", e.thumbnail)
+        formData.append("owner", user.id)
+        axios.postForm(urlProd, formData, { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true })
             .then(response => {
                 toast.success('Se agregó el producto correctamente.');
                 console.log(response);
             }).catch(error => {
-                if (error.response.status === 409) {
-                    toast.error(error.response.data.message);
-                    return
-                }
+                if (error.response.status === 409) return toast.error(error.response.data.message);
+                if (error.response.status === 500) return toast.error(error.response.data.cause);
                 toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                 console.log(error)
             })

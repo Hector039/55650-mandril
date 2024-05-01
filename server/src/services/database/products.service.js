@@ -20,6 +20,16 @@ export default class ProductService {
         return result;
     }
 
+    async getProductByCode(code) {
+        const result = await this.productsRepo.getProductByCode(code);
+        return result;
+    }
+
+    async updateProductThumbnail(id, picsPaths) {
+        await this.productsRepo.updateProductThumbnail(id, picsPaths);
+        return;
+    }
+
     async saveProduct(product) {
         const newProduct = new ProductsDTO(product);
         const result = await this.productsRepo.saveProduct(newProduct);

@@ -26,6 +26,18 @@ export default class ProductsRepository {
         return product;
     };
 
+    getProductByCode = async (code) => {
+        let product = await this.productsModel.findOne({ code: code }).lean();
+        return product;
+    };
+
+    updateProductThumbnail = async (id, picsPaths) => {
+        picsPaths.forEach(async path => {
+            await this.productsModel.findByIdAndUpdate(id, { $push: { thumbnails: path } });
+        });
+        return;
+    };
+
     updateProduct = async (pid, product) => {
         let codeProduct = await this.productsModel.findOne({ code: product.code });
         if (codeProduct) return "errorCode"

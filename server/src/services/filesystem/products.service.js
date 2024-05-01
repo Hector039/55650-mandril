@@ -29,7 +29,7 @@ export default class ProductService {
             const status = true;
             const productos = await this.getAllProducts();
             const productIndex = productos.findIndex(producto => producto.code === code);
-            if(productIndex > -1) return "errorCode"
+            if(productIndex > -1) return "errorCode"            
             const newProduct = new Product(
                 ++this.#ultimoId,
                 title,
@@ -38,7 +38,7 @@ export default class ProductService {
                 price,
                 stock,
                 category,
-                [ thumbnails ],
+                thumbnails,
                 status,
                 owner
             );
@@ -80,6 +80,33 @@ export default class ProductService {
                 productoById = null
             }
             return productoById;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getProductByCode(code) {
+        try {
+            const productos = await this.getAllProducts();
+            let productoByCode = productos.find(producto => producto.code === code);
+            if(productoByCode === undefined){
+                productoByCode = null
+            }
+            return productoByCode;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateProductThumbnail(id, picsPaths) {
+        try {
+            const productos = await this.getAllProducts();
+            const productIndex = productos.findIndex(producto => producto._id === parseInt(id));
+            picsPaths.forEach(path => {
+                productos[productIndex].thumbnails.unshift(path);
+            });
+            await this.guardarProductos(productos);
+            return;
         } catch (error) {
             throw error;
         }

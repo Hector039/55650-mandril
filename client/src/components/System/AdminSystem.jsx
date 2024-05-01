@@ -21,7 +21,7 @@ export default function System() {
 
     useEffect(() => {
         if (formState.isSubmitSuccessful) {
-            reset();
+            //reset();
         }
     }, [formState, reset]);
 
@@ -50,7 +50,7 @@ export default function System() {
                         <input type="text" name="code" placeholder="Código" {...register("code", { required: true })} />
                         <input type="number" name="price" placeholder="Precio" {...register("price", { required: true })} />
                         <input type="number" name="stock" placeholder="Stock" {...register("stock", { required: true })} />
-                        <input type="text" name="thumbnails" placeholder="Link Imagen del producto" {...register("thumbnails")} />
+                        <input type="text" name="thumbnail" placeholder="Link Imagen del producto" {...register("thumbnail")} />
                         <select name="category" id="category-select" {...register("category", { required: true })}>
                             <option value="muebles">Muebles</option>
                             <option value="iluminación">Iluminación</option>
@@ -61,7 +61,10 @@ export default function System() {
                             <option value="accesorios">Accesorios</option>
                             <option value="decoración">Decoración</option>
                         </select>
-
+                        <label>
+                            Agrega hasta 3 fotos por producto (jpeg, jpg, gif, png). Ctrl + click para seleccionar varios:
+                            <input type="file" id="prodPic" name="prodPic" {...register("prodPic")} multiple/>
+                        </label>
                         <div className="sistema-bajas-modif-botones">
                             <button type="submit" className="sistema-boton">Cargar Producto</button>
                             <button type="reset" className="sistema-boton-eliminar" onClick={reset}>Reset</button>

@@ -1,3 +1,4 @@
+import fs from "fs";
 import CustomError from "../tools/customErrors/customError.js";
 import TErrors from "../tools/customErrors/enum.js";
 import { generateProductErrorInfo } from "../tools/customErrors/info.js";
@@ -45,7 +46,7 @@ export default class ProductsController {
                 sort: sort === undefined ? "todos" : sort,
                 category: category === undefined ? "todos" : category
             }
-            
+
             let allProducts = await this.productsService.getAllProducts();
 
             if (options.category !== "todos") {
@@ -107,7 +108,8 @@ export default class ProductsController {
     }
 
     saveProduct = async (req, res, next) => {//post
-        const { title, description, code, price, stock, category, thumbnails, owner } = req.body;
+        const { title, description, code, price, stock, category, thumbnail, owner } = req.body;
+        const prodPic = req.files;
         try {
             if (!title || !description || !code || !price || !stock || !category) {
                 CustomError.createError({
@@ -116,7 +118,7 @@ export default class ProductsController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            
+            const thumbnails = thumbnail === "" ? [] : [thumbnail];
             const newProduct = await this.productsService.saveProduct({
                 title,
                 description,
@@ -135,7 +137,15 @@ export default class ProductsController {
                     code: TErrors.CONFLICT,
                 });
             }
-
+            if (prodPic.length !== 0) {
+                const updatedProduct = await this.productsService.getProductByCode(newProduct.code);
+                const filesPaths = [];
+                prodPic.forEach( async pic => {
+                    const filePath = `${pic.destination}/${updatedProduct._id}-${pic.filename}`
+                    fs.rename(`${pic.destination}/${pic.filename}`, filePath, () => {filesPaths.push(filePath)})
+                });
+                await this.productsService.updateProductThumbnail(updatedProduct._id, filesPaths);
+            }
             res.status(200).send(newProduct);
         } catch (error) {
             next(error)
@@ -153,7 +163,7 @@ export default class ProductsController {
                 });
             }
             const user = await this.usersService.getUserById(owner)
-            if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
+            if (user.role === "premium" && req.product.owner.toString() !== user._id.toString()) {
                 CustomError.createError({
                     message: `Solo el administrador puede modificar este producto.`,
                     cause: generateProductErrorInfo(user.role),
@@ -193,7 +203,7 @@ export default class ProductsController {
         const owner = req.user.id
         try {
             const user = await this.usersService.getUserById(owner)
-            if(user.role === "premium" && req.product.owner.toString() !== user._id.toString()){
+            if (user.role === "premium" && req.product.owner.toString() !== user._id.toString()) {
                 CustomError.createError({
                     message: `Solo el administrador puede eliminar este producto.`,
                     cause: generateProductErrorInfo(user.role),
