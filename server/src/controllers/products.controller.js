@@ -140,9 +140,9 @@ export default class ProductsController {
             if (prodPic.length !== 0) {
                 const updatedProduct = await this.productsService.getProductByCode(newProduct.code);
                 const filesPaths = [];
-                prodPic.forEach( async pic => {
-                    const filePath = `${pic.destination}/${updatedProduct._id}-${pic.filename}`
-                    fs.rename(`${pic.destination}/${pic.filename}`, filePath, () => {filesPaths.push(filePath)})
+                prodPic.forEach( pic => {
+                    fs.renameSync(`${pic.destination}/${pic.filename}`, `${pic.destination}/${updatedProduct._id}-${pic.filename}`)
+                    filesPaths.push(`http://localhost:8080/${updatedProduct._id}-${pic.filename}`)
                 });
                 await this.productsService.updateProductThumbnail(updatedProduct._id, filesPaths);
             }

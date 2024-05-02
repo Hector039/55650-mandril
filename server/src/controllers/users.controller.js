@@ -13,7 +13,9 @@ export default class UsersController {
     }
 
     avatar = async (req, res, next) => {//post
-        const avatar = req.file !== undefined ? req.file : undefined;
+        const avatar = req.file;
+        const user = req.user;
+        console.log(avatar);
         try {
             if (!avatar) {
                 CustomError.createError({
@@ -22,7 +24,9 @@ export default class UsersController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            res.status(200).send(`Nueva foto de perfil recibida!`)
+            await this.usersService.updateField(user.id, "avatar", avatar.destination);
+            const userUpdated = await this.usersService.getUserById(user.id);
+            res.status(200).send({ message: "Nueva foto de perfil recibida!", user: userUpdated })
         } catch (error) {
             next(error)
         }
@@ -41,9 +45,9 @@ export default class UsersController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            if(idDoc) await this.usersService.updateField(user.id, "documents", { name: idDoc.fieldname, reference: idDoc.destination});
-            if(adressDoc) await this.usersService.updateField(user.id, "documents", { name: adressDoc.fieldname, reference: adressDoc.destination});
-            if(accountDoc) await this.usersService.updateField(user.id, "documents", { name: accountDoc.fieldname, reference: accountDoc.destination});
+            if (idDoc) await this.usersService.updateField(user.id, "documents", { name: idDoc.fieldname, reference: idDoc.destination });
+            if (adressDoc) await this.usersService.updateField(user.id, "documents", { name: adressDoc.fieldname, reference: adressDoc.destination });
+            if (accountDoc) await this.usersService.updateField(user.id, "documents", { name: accountDoc.fieldname, reference: accountDoc.destination });
             res.status(200).send(`Documento/s recibido/s!`)
         } catch (error) {
             next(error)
@@ -98,7 +102,7 @@ export default class UsersController {
             }
             const docs = ["idDoc", "adressDoc", "accountDoc"];
             const isAllDocs = user.documents.filter(doc => docs.includes(doc.name));
-            if(isAllDocs.length < 3 && user.role === "user") {
+            if (isAllDocs.length < 3 && user.role === "user") {
                 CustomError.createError({
                     message: "Para ser PREMIUM debes presentar todos los documentos en la sección Mi Cuenta.",
                     cause: generateUserErrorInfo(null),

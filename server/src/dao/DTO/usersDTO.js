@@ -7,5 +7,6 @@ export default class UsersDTO {
         this.idgoogle = user.idgoogle === undefined ? null : user.idgoogle;
         this.idgithub = user.idgithub === undefined ? null : user.idgithub;
         this.verified = user.verified === undefined ? false : user.verified;
+        this.avatar = user.avatar;
     }
 }

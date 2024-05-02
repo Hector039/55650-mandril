@@ -1,7 +1,8 @@
 import fs from "fs";
+import { profilesImgPath } from "../../data/profiles/pathProfiles.js";
 
 class User {
-    constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart, verified, documents, last_connection) {
+    constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart, verified, documents, last_connection, avatar) {
         this._id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -14,6 +15,7 @@ class User {
         this.verified = verified;
         this.documents = documents;
         this.last_connection = last_connection
+        this.avatar = avatar
     }
 }
 
@@ -86,6 +88,8 @@ export default class UserService {
             const role = "user";
             const verified = false
             const last_connection = null;
+            const avatar = profilesImgPath + "userguest3.png";
+            console.log(avatar);
             let documents = [];
             const users = await this.getAllUsers();
 
@@ -101,7 +105,8 @@ export default class UserService {
                 cart,
                 verified,
                 documents,
-                last_connection
+                last_connection,
+                avatar
             );
             users.push(newUser);
             await this.guardarUsers(users);

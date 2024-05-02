@@ -64,7 +64,11 @@ export const DataProvider = ({ children }) => {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         })
-            .then(response => toast.success('Se envió la foto correctamente.'))
+            .then(response => {
+                console.log(response);
+                setUser(response.data.user);
+                toast.success(response.data.message)
+            })
             .catch(error => {
                 console.log(error)
                 if (error.response.statusText === "Unauthorized") return toast.error(error.response.data.error);

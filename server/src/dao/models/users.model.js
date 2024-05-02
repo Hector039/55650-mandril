@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { profilesImgPath } from "../../data/profiles/pathProfiles.js";
 
 const userCollection = "users";
 
@@ -8,6 +9,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true, max: 8 },
     role: { type: String, default: "user" },
+    avatar: { type: String, default: profilesImgPath + "userguest3.png" },
     idgoogle: { type: String, default: null, unique: true },
     idgithub: { type: String, default: null, unique: true },
     cart: {
@@ -16,13 +18,13 @@ const userSchema = new mongoose.Schema({
     },
     verified: { type: Boolean, default: false },
     documents:
-     [
-        {
-            name: { type: String },
-            reference: { type: String },
-            _id: false,
-        }
-    ],
+        [
+            {
+                name: { type: String },
+                reference: { type: String },
+                _id: false,
+            }
+        ],
     last_connection: { type: String, default: null }
 });
 
