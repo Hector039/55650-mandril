@@ -80,8 +80,13 @@
         "role": "user",
         "cart": 39,
         "verified": true,
-        "documents": [],
-        "last_connection": "3/5/2024, 03:26:46",
+        "documents": [
+            {
+                "name": "idDoc",
+                "reference": "src/data/documents"
+            }
+        ],
+        "last_connection": "3/5/2024, 07:04:13",
         "avatar": "http://localhost:8080/pala@gmail.com-Fri May 03 2024-www.YTS.MXvv.jpg"
     }
 ]
