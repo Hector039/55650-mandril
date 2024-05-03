@@ -15,7 +15,6 @@ export default class UsersController {
     avatar = async (req, res, next) => {//post
         const avatar = req.file;
         const user = req.user;
-        console.log(avatar);
         try {
             if (!avatar) {
                 CustomError.createError({
@@ -24,9 +23,9 @@ export default class UsersController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            await this.usersService.updateField(user.id, "avatar", avatar.destination);
-            const userUpdated = await this.usersService.getUserById(user.id);
-            res.status(200).send({ message: "Nueva foto de perfil recibida!", user: userUpdated })
+            const avatarPath = `http://localhost:8080/${avatar.filename}`;
+            await this.usersService.updateField(user.id, "avatar", avatarPath);
+            res.status(200).send({ message: "Nueva foto de perfil recibida!", avatar: avatarPath })
         } catch (error) {
             next(error)
         }
@@ -58,23 +57,25 @@ export default class UsersController {
         try {
             const email = req.user.email;
             const role = req.user.role;
+            const avatar = req.user.avatar;
             const cart = req.user.userCart;
             const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
             const name = req.user.firstName;
             const lastName = req.user.lastName;
             const id = req.user._id;
             const lastConnection = req.user.last_connection;
+            const documents = req.user.documents;
             const docs = ["idDoc", "adressDoc", "accountDoc"];
             const isAllDocs = docs.filter(doc => {
-                const docsExists = req.user.documents.find(e => e.name === doc)
+                const docsExists = documents.find(e => e.name === doc)
                 if (!docsExists) return true;
             });
-            let token = generateToken({ email, role, cart, name, id, cartId, lastConnection, lastName, isAllDocs });
+            let token = generateToken({ email, role, cart, name, id, cartId, lastConnection, lastName, isAllDocs, avatar, documents });
             res.cookie("cookieToken", token, {
                 httpOnly: true,
                 maxAge: 60 * 60 * 1000,
                 secure: env.USERCOOKIESECRET
-            }).status(200).send({ email, role, cart, name, id, cartId, lastConnection, isAllDocs, lastName });
+            }).status(200).send({ email, role, cart, name, id, cartId, lastConnection, isAllDocs, lastName, avatar, documents });
         } catch (error) {
             next(error)
         }

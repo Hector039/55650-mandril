@@ -4,7 +4,6 @@ import Logo from "./assets/logo.png";
 import FacebookIcon from "./assets/facebook-icon.jpg";
 import InstagramIcon from "./assets/instagram-icon.jpg";
 import WhatsappIcon from "./assets/WhatsApp.svg.png";
-import guestUserPhoto from "./assets/userguest3.png";
 //import { useEffect, useState } from "react";
 //import getDolars from "../../apisThirdParty/apiDolar.js";
 import { DateTime } from "luxon";
@@ -14,7 +13,7 @@ import { useContext, useEffect } from "react";
 
 export default function NavBar() {
 
-    const { user, logout, userTypeSelector } = useContext(DataContext);
+    const { user, logout, userTypeSelector, userAvatar, setUserAvatar } = useContext(DataContext);
 
     const dt = DateTime.now().setLocale('es').toLocaleString(DateTime.DATE_MED);
 
@@ -28,6 +27,11 @@ export default function NavBar() {
             axiosData();
         }, [])
      */
+
+        
+    useEffect(() => {
+        setUserAvatar(userAvatar)
+    }, [])
 
     return (
         <nav className="navbar">
@@ -85,7 +89,7 @@ export default function NavBar() {
 
                         {user?.photo === undefined ? <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
                             return { fontWeight: isActive ? "bold" : "" }
-                        }}><img src={guestUserPhoto} className="profile-photo" alt="User profile photo" />{user.email}</NavLink> :
+                        }}><img src={userAvatar} className="profile-photo" alt="User profile photo" />{user.email}</NavLink> :
                             <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
                                 return { fontWeight: isActive ? "bold" : "" }
                             }}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}

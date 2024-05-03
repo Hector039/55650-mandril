@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --watch src/app.js --mode production --persistence database -u adminprod -p admin ",
-    "dev": "node --watch src/app.js --mode development --persistence filesystem -u admindev -p admin ",
+    "dev": "node --watch src/app.js --mode development --persistence database -u admindev -p admin ",
     "test": "mocha test/supertest.test.js --persistence database "
   },
   "mocha": {

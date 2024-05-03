@@ -88,8 +88,7 @@ export default class UserService {
             const role = "user";
             const verified = false
             const last_connection = null;
-            const avatar = profilesImgPath + "userguest3.png";
-            console.log(avatar);
+            const avatar = "http://localhost:8080/userguest3.png";
             let documents = [];
             const users = await this.getAllUsers();
 

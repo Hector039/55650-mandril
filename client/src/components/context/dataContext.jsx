@@ -29,6 +29,7 @@ export const DataProvider = ({ children }) => {
     const [cart, setCart] = useState([])
     const [cartProdWidget, setCartProdWidget] = useState(0)
     const [user, setUser] = useState(null);
+    const [userAvatar, setUserAvatar] = useState(null);
     const [ticket, setTicket] = useState([])
 
     const [categoryFilter, setCategoryFilter] = useState("todos")
@@ -51,6 +52,7 @@ export const DataProvider = ({ children }) => {
                 .then(response => {
                     setProducts(response.data)
                     setUser(response.data.user);
+                    setUserAvatar(response.data.user?.avatar);
                 })
                 .catch(error => console.log(error))
         }
@@ -65,8 +67,7 @@ export const DataProvider = ({ children }) => {
             withCredentials: true
         })
             .then(response => {
-                console.log(response);
-                setUser(response.data.user);
+                setUserAvatar(response.data.avatar);
                 toast.success(response.data.message)
             })
             .catch(error => {
@@ -137,6 +138,7 @@ export const DataProvider = ({ children }) => {
                     timer: 1500
                 }).then(result => {
                     setUser(response.data);
+                    setUserAvatar(response.data.avatar)
                     cartQuantity(response.data.cart.products)
                     window.location.replace("/");
                 });
@@ -447,7 +449,7 @@ export const DataProvider = ({ children }) => {
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget, passRestoration, userTypeSelector, uploads, avatar
+            cartProdWidget, passRestoration, userTypeSelector, uploads, avatar, userAvatar, setUserAvatar
         }}>
             {children}
         </DataContext.Provider>
