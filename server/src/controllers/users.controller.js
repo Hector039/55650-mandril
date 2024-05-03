@@ -215,12 +215,21 @@ export default class UsersController {
     gitHubStrategy = async (req, res) => {//get
         const email = req.user.email;
         const role = req.user.role;
+        const avatar = req.user.avatar;
+        const lastName = req.user.lastName;
         const cart = req.user.userCart;
         const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
         const name = req.user.firstName;
         const id = req.user._id;
         const photo = req.user.photo;
-        let token = generateToken({ email, role, cart, name, photo, id, cartId });
+        const lastConnection = req.user.last_connection;
+        const documents = req.user.documents;
+        const docs = ["idDoc", "adressDoc", "accountDoc"];
+        const isAllDocs = docs.filter(doc => {
+            const docsExists = documents.find(e => e.name === doc)
+            if (!docsExists) return true;
+        });
+        let token = generateToken({ email, role, cart, name, id, cartId, lastConnection, lastName, isAllDocs, avatar, documents, photo });
         res.cookie("cookieToken", token, {
             httpOnly: true,
             maxAge: 60 * 60 * 1000,
@@ -233,12 +242,21 @@ export default class UsersController {
     googleStrategy = async (req, res) => {//get
         const email = req.user.email;
         const role = req.user.role;
+        const avatar = req.user.avatar;
+        const lastName = req.user.lastName;
         const cart = req.user.userCart;
         const cartId = typeof req.user.cart === "object" ? req.user.cart._id : req.user.cart;
         const name = req.user.firstName;
         const id = req.user._id;
         const photo = req.user.photo;
-        let token = generateToken({ email, role, cart, name, photo, id, cartId });
+        const lastConnection = req.user.last_connection;
+        const documents = req.user.documents;
+        const docs = ["idDoc", "adressDoc", "accountDoc"];
+        const isAllDocs = docs.filter(doc => {
+            const docsExists = documents.find(e => e.name === doc)
+            if (!docsExists) return true;
+        });
+        let token = generateToken({ email, role, cart, name, id, cartId, lastConnection, lastName, isAllDocs, avatar, documents, photo });
         res.cookie("cookieToken", token, {
             httpOnly: true,
             maxAge: 60 * 60 * 1000,

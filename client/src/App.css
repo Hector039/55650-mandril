@@ -494,6 +494,21 @@ input {
     font-size: 1.3rem;
 }
 
+.user-info-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.user-info{
+    display: flex;
+    gap: 70px;
+    margin: 30px;
+    align-items: center;
+}
+.profile-avatar {
+    width: 200px;
+    border-radius: 20px;
+}
 /*Forgot Sección*/
 .forgot-buttons{
     display: flex;

@@ -6,7 +6,7 @@ import githubLogo from "./assets/githubLogo.png";
 import { Link } from "react-router-dom";
 
 export default function Account() {
-    const { login, newRegister, user, loginGoogle, loginGithub, uploads, avatar } = useContext(DataContext);
+    const { login, newRegister, user, loginGoogle, loginGithub, uploads, avatar, userAvatar } = useContext(DataContext);
 
     const {
         register,
@@ -83,24 +83,28 @@ export default function Account() {
                                 </form>
                             </div>
                         </> :
-                        <>
+                        <div className="user-info-container">
+                                <h2>Información de cuenta:</h2>
+                            <div className="user-info">
+                                {user?.photo === undefined ? 
+                                <img src={userAvatar} className="profile-avatar" alt="User profile photo" /> :
+                                <img src={user.photo} className="profile-avatar" alt="User profile photo" />}
 
-                            <div className="cuenta-registrarse">
                                 <div>
-                                    <h2>Información de cuenta:</h2>
-                                    <div>
-                                        <p>Nombre completo: {user.name} {user.lastName}</p>
-                                        <p>E-Mail: {user.email}</p>
-                                        <p>Categoría actual: {user.role}</p>
-                                        <p>Última conexión: {user.lastConnection}</p>
-                                        {user.isAllDocs.length !== 0 &&<p>Documentos faltantes:</p>}
-                                        {user.isAllDocs.map((doc, index) => {
-                                            if (doc === "idDoc") return <p key={index}>Identificación</p>
-                                            if (doc === "adressDoc") return <p key={index}>Comprobante de domicilio</p>
-                                            if (doc === "accountDoc") return <p key={index}>Comprobante estado de cuenta</p>
-                                        })}
-                                    </div>
+                                    <p>Nombre completo: {user.name} {user.lastName}</p>
+                                    <p>E-Mail: {user.email}</p>
+                                    <p>Categoría actual: {user.role}</p>
+                                    <p>Última conexión: {user.lastConnection}</p>
+                                    {user.isAllDocs.length !== 0 && <p>Documentos faltantes:</p>}
+                                    {user.isAllDocs.map((doc, index) => {
+                                        if (doc === "idDoc") return <p key={index}>Identificación</p>
+                                        if (doc === "adressDoc") return <p key={index}>Comprobante de domicilio</p>
+                                        if (doc === "accountDoc") return <p key={index}>Comprobante estado de cuenta</p>
+                                    })}
                                 </div>
+                            </div>
+                            <div className="cuenta-registrarse">
+
                                 <p className="cuenta-title">Envío de información de usuario:</p>
                                 <form onSubmit={handleSubmit4(avatar)}>
                                     <label>
@@ -125,15 +129,15 @@ export default function Account() {
                                         </label>)
                                     })}
 
-                                    {user.isAllDocs.length !== 0 && 
-                                    <><p>Tus documentos personales solo se utilizarán para procesar tu identidad y cuenta.</p>
-                                    <p>Solo se aceptan las siguientes extensiones de archivo: jpg, jpeg, gif, png, pdf, doc, docx.</p>
-                                    <p>Recuerda que para ser PREMIUM debes haber subido todos los documentos.</p>
-                                    <button type="submit" className="cuenta-button" >Enviar documento/s</button></>}
-                                    
+                                    {user.isAllDocs.length !== 0 &&
+                                        <><p>Tus documentos personales solo se utilizarán para procesar tu identidad y cuenta.</p>
+                                            <p>Solo se aceptan las siguientes extensiones de archivo: jpg, jpeg, gif, png, pdf, doc, docx.</p>
+                                            <p>Recuerda que para ser PREMIUM debes haber subido todos los documentos.</p>
+                                            <button type="submit" className="cuenta-button" >Enviar documento/s</button></>}
+
                                 </form>
                             </div>
-                        </>
+                        </div>
                 }
             </section>
             <Link to={"/"} className="info-button">Volver al listado</Link>

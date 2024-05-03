@@ -29,9 +29,7 @@ export default function NavBar() {
      */
 
         
-    useEffect(() => {
-        setUserAvatar(userAvatar)
-    }, [])
+    useEffect(() => { setUserAvatar(userAvatar) }, [])
 
     return (
         <nav className="navbar">
