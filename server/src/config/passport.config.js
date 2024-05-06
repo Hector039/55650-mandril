@@ -1,4 +1,4 @@
-import { cartsService, usersService } from "../services/factory.js";
+import { cartsService, usersService } from "../services/index.js";
 import passport from "passport";
 import getEnvironment from "./process.config.js";
 import local from "passport-local";

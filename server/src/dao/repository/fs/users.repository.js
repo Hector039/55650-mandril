@@ -1,5 +1,5 @@
 import fs from "fs";
-import { profilesImgPath } from "../../data/profiles/pathProfiles.js";
+import { profilesImgPath } from "../../../data/profiles/pathProfiles.js";
 
 class User {
     constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart, verified, documents, last_connection, avatar) {
@@ -24,7 +24,7 @@ export default class UserService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/services/filesystem/archivoUsers.json";
+        this.#path = "src/dao/repository/fs/data/archivoUsers.json";
         this.#setUltimoId();
     }
 

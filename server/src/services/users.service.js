@@ -1,4 +1,4 @@
-import UsersDTO from "../../dao/DTO/usersDTO.js";
+import UsersDTO from "../DTO/usersDTO.js";
 
 export default class UserService {
     constructor(repository) {

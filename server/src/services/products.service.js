@@ -1,4 +1,4 @@
-import ProductsDTO from "../../dao/DTO/productsDTO.js";
+import ProductsDTO from "../DTO/productsDTO.js";
 
 export default class ProductService {
     constructor(repository) {

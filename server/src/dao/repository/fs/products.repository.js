@@ -20,7 +20,7 @@ export default class ProductService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/services/filesystem/archivoProductos.json";
+        this.#path = "src/dao/repository/fs/data/archivoProductos.json";
         this.#setUltimoId();
     }
 
@@ -28,8 +28,6 @@ export default class ProductService {
         try {
             const status = true;
             const productos = await this.getAllProducts();
-            const productIndex = productos.findIndex(producto => producto.code === code);
-            if(productIndex > -1) return "errorCode"            
             const newProduct = new Product(
                 ++this.#ultimoId,
                 title,
@@ -76,9 +74,7 @@ export default class ProductService {
         try {
             const productos = await this.getAllProducts();
             let productoById = productos.find(producto => producto._id === parseInt(id));
-            if(productoById === undefined){
-                productoById = null
-            }
+            if(productoById === undefined) productoById = null;
             return productoById;
         } catch (error) {
             throw error;
@@ -89,9 +85,7 @@ export default class ProductService {
         try {
             const productos = await this.getAllProducts();
             let productoByCode = productos.find(producto => producto.code === code);
-            if(productoByCode === undefined){
-                productoByCode = null
-            }
+            if(productoByCode === undefined) productoByCode = null;
             return productoByCode;
         } catch (error) {
             throw error;
@@ -115,8 +109,6 @@ export default class ProductService {
     async updateProduct(pid, product){
         try{
             const productos = await this.getAllProducts();
-            const productCodeIndex = productos.findIndex(producto => producto.code === product.code);
-            if(productCodeIndex > -1) return "errorCode"
             const productIndex = productos.findIndex(producto => producto._id === parseInt(pid));
             product["_id"] = parseInt(pid)
             productos.splice(productIndex, 1, product);

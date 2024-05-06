@@ -14,8 +14,6 @@ export default class ProductsRepository {
     };
 
     saveProduct = async (product) => {
-        let codeProduct = await this.productsModel.findOne({ code: product.code });
-        if (codeProduct) return "errorCode"
         let newProduct = new this.productsModel(product);
         let result = await newProduct.save();
         return result;
@@ -39,8 +37,6 @@ export default class ProductsRepository {
     };
 
     updateProduct = async (pid, product) => {
-        let codeProduct = await this.productsModel.findOne({ code: product.code });
-        if (codeProduct) return "errorCode"
         const result = await this.productsModel.updateOne({ _id: pid }, product);
         return result;
     };

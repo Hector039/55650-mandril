@@ -1,7 +1,7 @@
 import fs from "fs";
-import UserService from "./users.service.js";
-import ProductService from "./products.service.js";
-import TicketsService from "./tickets.service.js";
+import UserService from "./users.repository.js";
+import ProductService from "./products.repository.js";
+import TicketsService from "./tickets.repository.js";
 
 const productService = new ProductService();
 const ticketService = new TicketsService();
@@ -19,7 +19,7 @@ export default class CartService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/services/filesystem/archivoCarritos.json";
+        this.#path = "src/dao/repository/fs/data/archivoCarritos.json";
         this.#setUltimoId();
     }
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import ProductsController from "../controllers/products.controller.js";
-import { productsService, usersService } from "../services/factory.js";
+import { productsService, usersService } from "../services/index.js";
 import getEnvironment from "../config/process.config.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";

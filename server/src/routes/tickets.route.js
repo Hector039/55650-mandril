@@ -1,6 +1,6 @@
 import { Router } from "express";
 import TicketsController from "../controllers/tickets.controller.js";
-import { ticketsService, cartsService } from "../services/factory.js";
+import { ticketsService, cartsService } from "../services/index.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";
 

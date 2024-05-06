@@ -1,6 +1,6 @@
 import { Router } from "express";
 import CartsController from "../controllers/carts.controller.js";
-import { cartsService, productsService } from "../services/factory.js";
+import { cartsService, productsService } from "../services/index.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { userPassJwt } from "../middlewares/userPassJwt.js";
 

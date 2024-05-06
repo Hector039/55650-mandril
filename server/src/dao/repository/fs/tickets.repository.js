@@ -15,7 +15,7 @@ export default class TicketsService {
     #ultimoId = 0;
 
     constructor() {
-        this.#path = "src/services/filesystem/archivoTickets.json";
+        this.#path = "src/dao/repository/fs/data/archivoTickets.json";
         this.#setUltimoId();
     }
 

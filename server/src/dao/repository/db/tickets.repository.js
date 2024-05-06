@@ -41,10 +41,6 @@ export default class TicketsRepository {
                 })
             })
 
-            /* async function updateStock(prod) {
-                await this.productsModel.updateOne({ _id: prod._id }, { stock: prod.stock });
-            }
-            prodDataBase.forEach(updateStock); */
             prodDataBase.forEach( async prod => {
                 await this.productsModel.updateOne({ _id: prod._id }, { stock: prod.stock });
             })

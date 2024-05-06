@@ -1,6 +1,6 @@
 import { Router } from "express";
 import UsersController from "../controllers/users.controller.js"
-import { usersService } from "../services/factory.js";
+import { usersService } from "../services/index.js";
 import { passportCall } from "../middlewares/passportCall.js";
 import { handlePolicies } from "../middlewares/handlePolicies.js";
 import { isSessionOn } from "../middlewares/isSessionOn.js";

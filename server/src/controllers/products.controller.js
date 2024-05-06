@@ -114,8 +114,16 @@ export default class ProductsController {
             if (!title || !description || !code || !price || !stock || !category) {
                 CustomError.createError({
                     message: `Datos no recibidos o inválidos.`,
-                    cause: generateProductErrorInfo({ title, description, code, price, stock, category, thumbnails }),
+                    cause: generateProductErrorInfo({ title, description, code, price, stock, category, thumbnail }),
                     code: TErrors.INVALID_TYPES,
+                });
+            }
+            const prodCodeExist = await this.productsService.getProductByCode(code);
+            if (prodCodeExist) {
+                CustomError.createError({
+                    message: `El código ${code} del producto ingresado ya existe.`,
+                    cause: generateProductErrorInfo(null),
+                    code: TErrors.CONFLICT,
                 });
             }
             const thumbnails = thumbnail === "" ? [] : [thumbnail];
@@ -129,15 +137,7 @@ export default class ProductsController {
                 thumbnails,
                 owner
             });
-
-            if (newProduct === "errorCode") {
-                CustomError.createError({
-                    message: `El código ${code} del producto ingresado ya existe.`,
-                    cause: generateProductErrorInfo(null),
-                    code: TErrors.CONFLICT,
-                });
-            }
-            if (prodPic.length !== 0) {
+            if (prodPic !== undefined && prodPic.length !== 0) {
                 const updatedProduct = await this.productsService.getProductByCode(newProduct.code);
                 const filesPaths = [];
                 prodPic.forEach( pic => {
@@ -184,15 +184,15 @@ export default class ProductsController {
                 owner
             };
 
-            const response = await this.productsService.updateProduct(productId, newProduct);
-
-            if (response === "errorCode") {
+            const prodCodeexist = await this.productsService.getProductByCode(code);
+            if (prodCodeexist) {
                 CustomError.createError({
                     message: `El código ${code} del producto ingresado ya existe.`,
                     cause: generateProductErrorInfo({ title, description, code, price, stock, category, thumbnails, status }),
                     code: TErrors.CONFLICT
                 });
             }
+            const response = await this.productsService.updateProduct(productId, newProduct);
             res.status(200).send(response);
         } catch (error) {
             next(error)

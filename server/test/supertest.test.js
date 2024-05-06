@@ -3,11 +3,16 @@ import { expect } from "chai";
 import { Command } from "commander";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import UserServiceFs from "../src/services/filesystem/users.service.js";
-import CartServiceFs from "../src/services/filesystem/carts.service.js";
-import repositories from "../src/dao/repository/index.js";
-import UserService from "../src/services/database/users.service.js";
-import CartService from "../src/services/database/carts.service.js";
+import UserServiceFs from "../src/dao/repository/fs/users.repository.js";
+import CartServiceFs from "../src/dao/repository/fs/carts.repository.js";
+import models from "../src/dao/models/index.js";
+import UserService from "../src/dao/repository/db/users.repository.js";
+import CartService from "../src/dao/repository/db/carts.repository.js";
+
+const userServiceDb = new UserService(models.user);
+const cartServiceDb = new CartService(models.cart);
+const userServiceFs = new UserServiceFs();
+const cartServiceFs = new CartServiceFs();
 
 dotenv.config({ path: "src/config/.env.development" });
 
@@ -30,8 +35,6 @@ describe("Testing de integración Ecommerce", () => {
             case "DATABASE":
                 await mongoose.connect(process.env.DB_URL);
                 console.log("Mongo connected");
-                const userServiceDb = new UserService(repositories.users);
-                const cartServiceDb = new CartService(repositories.carts);
                 try {
                     await userServiceDb.deleteUser(temporalUser.id);
                     console.log("Usuario de prueba eliminado.");
@@ -44,8 +47,6 @@ describe("Testing de integración Ecommerce", () => {
                 await mongoose.disconnect();
                 break;
             case "FILESYSTEM":
-                const userServiceFs = new UserServiceFs();
-                const cartServiceFs = new CartServiceFs();
                 try {
                     await userServiceFs.deleteUser(temporalUser.id);
                     console.log("Usuario de prueba eliminado.");
@@ -142,9 +143,28 @@ describe("Testing de integración Ecommerce", () => {
             temporalUser = _body;
             await requester.get(`/api/sessions/logout`).send();
         })
-        it("Endpoint GET debe cambiar la propiedad role a premium o user según corresponda", async () => {
+        it("Endpoint GET debe cambiar la propiedad role a premium o user según corresponda después de simular entregar todos los documentos", async () => {
             const testUser = { email: temporalUser.email, password: "4321" }
             const result = await requester.post("/api/sessions/login").send(testUser);
+            if (options.persistence.toUpperCase() === "DATABASE") {
+                await mongoose.connect(process.env.DB_URL);
+                try {
+                    await userServiceDb.updateField(result._body.id, "documents", { "name": "idDoc", "reference": "src/data/documents" });
+                    await userServiceDb.updateField(result._body.id, "documents", { "name": "adressDoc", "reference": "src/data/documents" });
+                    await userServiceDb.updateField(result._body.id, "documents", { "name": "accountDoc", "reference": "src/data/documents" });
+                } catch (error) {
+                    console.log(error);
+                }
+                await mongoose.disconnect();
+            }else {
+                try {
+                    await userServiceFs.updateField(result._body.id, "documents", { "name": "idDoc", "reference": "src/data/documents" });
+                    await userServiceFs.updateField(result._body.id, "documents", { "name": "adressDoc", "reference": "src/data/documents" });
+                    await userServiceFs.updateField(result._body.id, "documents", { "name": "accountDoc", "reference": "src/data/documents" });
+                } catch (error) {
+                    console.log(error);
+                }
+            }
             const { statusCode, ok, _body } = await requester.get(`/api/sessions/premium/${temporalUser.email}`).set("Cookie", [result.headers["set-cookie"][0]]).send();
             expect(statusCode).to.be.eql(200)
             expect(ok).to.be.true
