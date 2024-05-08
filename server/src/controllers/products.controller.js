@@ -140,7 +140,7 @@ export default class ProductsController {
             if (prodPic !== undefined && prodPic.length !== 0) {
                 const updatedProduct = await this.productsService.getProductByCode(newProduct.code);
                 const filesPaths = [];
-                prodPic.forEach( pic => {
+                prodPic.forEach(pic => {
                     fs.renameSync(`${pic.destination}/${pic.filename}`, `${pic.destination}/${updatedProduct._id}-${pic.filename}`)
                     filesPaths.push(`http://localhost:8080/${updatedProduct._id}-${pic.filename}`)
                 });
@@ -170,20 +170,6 @@ export default class ProductsController {
                     code: TErrors.INVALID_TYPES
                 });
             }
-            const productId = req.product._id;
-
-            const newProduct = {
-                title,
-                description,
-                code,
-                price,
-                stock,
-                category,
-                thumbnails,
-                status,
-                owner
-            };
-
             const prodCodeexist = await this.productsService.getProductByCode(code);
             if (prodCodeexist) {
                 CustomError.createError({
@@ -192,6 +178,9 @@ export default class ProductsController {
                     code: TErrors.CONFLICT
                 });
             }
+
+            const productId = req.product._id;
+            const newProduct = { title, description, code, price, stock, category, thumbnails, status, owner };
             const response = await this.productsService.updateProduct(productId, newProduct);
             res.status(200).send(response);
         } catch (error) {

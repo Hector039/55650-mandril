@@ -19,7 +19,7 @@ export default async function mailer(user, message) {
         await transport.sendMail({
             from: `Coder Test ${env.MAILER_USER}`,
             to: user.mail,
-            subject: `Buenas noticias ${user.name}!`,
+            subject: `Tenemos noticias ${user.name}!`,
             html: `
             <div>
             <h1>${message}</h1>

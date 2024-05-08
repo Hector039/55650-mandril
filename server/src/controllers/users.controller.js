@@ -1,6 +1,7 @@
 import { generateToken, createHash, isValidPass } from "../tools/utils.js";
 import getEnvironment from "../config/process.config.js";
 import mailer from "../tools/mailer.js";
+import moment from 'moment';
 import CustomError from "../tools/customErrors/customError.js";
 import TErrors from "../tools/customErrors/enum.js";
 import { generateUserErrorInfo } from "../tools/customErrors/info.js";
@@ -10,6 +11,93 @@ const env = getEnvironment();
 export default class UsersController {
     constructor(service) {
         this.usersService = service;
+    }
+
+    getAllUsers = async (req, res, next) => {//get
+        try {
+            const users = await this.usersService.getAllUsersFiltered();
+            if (!users) {
+                CustomError.createError({
+                    message: "Error recibiendo los usuarios, intenta de nuevo.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.DATABASE,
+                });
+            }
+            let inactiveUsers = 0;
+            const newDate = moment();
+            users.forEach(user => {
+                const userLastLogin = moment(user.last_connection.slice(0, 10), "DD MM YYYY")
+                if (newDate.diff(userLastLogin, 'days') > 1 && user.role !== "admin") inactiveUsers++;
+            });
+            res.status(200).send({ users: users, inactiveUsers: inactiveUsers })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    cleanUsers = async (req, res, next) => {//delete
+        try {
+            const users = await this.usersService.getAllUsersFiltered();
+            if (!users) {
+                CustomError.createError({
+                    message: "Error recibiendo los usuarios, intenta de nuevo.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.DATABASE,
+                });
+            }
+            let inactiveUsersDeleted = 0;
+            const newDate = moment();
+            for (let i = 0; i < users.length; i++) {
+                const userLastLogin = moment(users[i].last_connection.slice(0, 10), "DD MM YYYY");
+                if (newDate.diff(userLastLogin, 'days') > 1 && users[i].role !== "admin") {
+                await this.usersService.deleteUser(users[i]._id);
+                inactiveUsersDeleted++;
+                }
+            }
+            const usersUpdated = await this.usersService.getAllUsersFiltered();
+            res.status(200).send({ message: `Se eliminaron ${inactiveUsersDeleted} usuarios inactivos.`, users: usersUpdated })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    deleteUser = async (req, res, next) => {//delete
+        const { uid } = req.params;
+        try {
+            const user = await this.usersService.getUserById(uid);
+            if (!user) {
+                CustomError.createError({
+                    message: "Usuario inexistente en la base de datos.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.DATABASE,
+                });
+            }
+            if (user.role !== "admin") await this.usersService.deleteUser(user._id);
+            const usersUpdated = await this.usersService.getAllUsersFiltered();
+            res.status(200).send({ message: `Se eliminó a ${user.email} de la base de datos.`, users: usersUpdated })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    updateUserRole = async (req, res, next) => {//put
+        const { uid } = req.params;
+        try {
+            const user = await this.usersService.getUserById(uid);
+            if (!user) {
+                CustomError.createError({
+                    message: "Usuario inexistente en la base de datos.",
+                    cause: generateUserErrorInfo(null),
+                    code: TErrors.DATABASE,
+                });
+            }
+            if (user.role === "user" && user.role !== "admin") await this.usersService.premiumSelector(user.email, "premium");
+            else if ((user.role === "premium" && user.role !== "admin")) await this.usersService.premiumSelector(user.email, "user");
+            const usersUpdated = await this.usersService.getAllUsersFiltered();
+            res.status(200).send({ message: "Se cambió el tipo de usuario correctamente", users: usersUpdated })
+        } catch (error) {
+            next(error)
+        }
     }
 
     avatar = async (req, res, next) => {//post

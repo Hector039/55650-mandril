@@ -6,6 +6,7 @@ import { createHash, isValidPass } from "../tools/utils.js";
 import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";
 import mailer from "../tools/mailer.js";
+import moment from 'moment';
 
 const env = getEnvironment();
 
@@ -53,7 +54,8 @@ const initializePassport = () => {
 
                 user["photo"] = profile._json.picture;
                 const userCart = await cartsService.getCartById(user.cart);
-                user["userCart"] = userCart
+                user["userCart"] = userCart;
+                await usersService.updateField(user._id, "last_connection", moment().format("DD MM YYYY, h:mm:ss a"));
                 return cb(null, user);
 
             } catch (error) {
@@ -100,6 +102,7 @@ const initializePassport = () => {
                 user["photo"] = profile._json.avatar_url;
                 const userCart = await cartsService.getCartById(user.cart);
                 user["userCart"] = userCart
+                await usersService.updateField(user._id, "last_connection", moment().format("DD MM YYYY, h:mm:ss a"));
                 return done(null, user);
             } catch (error) {
                 return done(error, null)
@@ -145,7 +148,7 @@ const initializePassport = () => {
                 if (user === null) return done(null, false, { messages: "El Usuario no existe." });
                 if (!isValidPass(password, user.password)) return done(null, false, { messages: "Usuario o contraseña incorrecto." });
                 if (user.verified === false) return done(null, false, { messages: "Esta cuenta aún no está verificada. Valídala con el link en tu correo." });
-                await usersService.updateField(user._id, "last_connection", new Date().toLocaleString("es-ar"));
+                await usersService.updateField(user._id, "last_connection", moment().format("DD MM YYYY, h:mm:ss a"));
                 const userCart = await cartsService.getCartById(user.cart);
                 user["userCart"] = userCart
                 return done(null, user)

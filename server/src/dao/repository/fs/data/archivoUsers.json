@@ -1,1 +1,77 @@
-[{"_id":1,"firstName":"hector","lastName":"mandril","email":"elector22@gmail.com","password":"$2b$10$g0O9okimUPlogjRmxLhYbe4FnRTpaIbX3R5m7hqcfFedo8DmNiRt6","role":"premium","cart":7,"verified":true,"documents":[]},{"_id":2,"firstName":"juan","lastName":"magnin","email":"juan@gmail.com","password":"$2b$10$N2qQxUKJlMNpg4HxEiCMz.47/bC7x3EUZ8lBg87poLbNxpBPffUnC","role":"user","cart":8,"verified":true,"documents":[]},{"_id":3,"firstName":"daniel","lastName":"Scioli","email":"dani@gmail.com","password":"$2b$10$GDHoJE5QQDAsFt/eFi7tv.2udduVKsqq4CYpYWusW9QJxr9KRnVjO","role":"user","cart":9,"verified":true,"documents":[]},{"_id":5,"firstName":"Coder","lastName":"Coder","email":"adminCoder@coder.com","password":"$2b$10$IcOzTPdDYQO5BNDDA33//e/XxTapF/LpLhkmHgqxmKnAVPOn/6F86","role":"admin","idgoogle":null,"idgithub":null,"cart":11,"verified":true,"documents":[],"last_connection":"6/5/2024, 07:40:41"},{"_id":14,"firstName":"Vladimir","lastName":"Putin","email":"vladi@gmail.com","password":"$2b$10$3tu3W/u9NmEq3q1M5Vv5COQTtAgOimefs0qZoa3/49ux9FPp8ueJy","role":"premium","cart":36,"verified":true,"documents":[{"name":"idDoc","reference":"src/data/documents"},{"name":"adressDoc","reference":"src/data/documents"},{"name":"accountDoc","reference":"src/data/documents"}],"last_connection":"1/5/2024, 10:33:02"},{"_id":17,"firstName":"Chaqueño","lastName":"Palavecino","email":"pala@gmail.com","password":"$2b$10$a7pSb9fqtGAplvvyIdpqvuERP9zp9mNsNBL1vepwZOx.q7IO8Sxg6","role":"user","cart":39,"verified":true,"documents":[{"name":"idDoc","reference":"src/data/documents"}],"last_connection":"3/5/2024, 07:04:13","avatar":"http://localhost:8080/pala@gmail.com-Fri May 03 2024-www.YTS.MXvv.jpg"}]
+[
+    {
+        "_id": 1,
+        "firstName": "hector",
+        "lastName": "mandril",
+        "email": "elector22@gmail.com",
+        "password": "$2b$10$g0O9okimUPlogjRmxLhYbe4FnRTpaIbX3R5m7hqcfFedo8DmNiRt6",
+        "role": "premium",
+        "cart": 7,
+        "verified": true,
+        "documents": [],
+        "last_connection": "06/05/2024, 11:14:41"
+    },
+    {
+        "_id": 2,
+        "firstName": "juan",
+        "lastName": "magnin",
+        "email": "juan@gmail.com",
+        "password": "$2b$10$N2qQxUKJlMNpg4HxEiCMz.47/bC7x3EUZ8lBg87poLbNxpBPffUnC",
+        "role": "user",
+        "cart": 8,
+        "verified": true,
+        "documents": [],
+        "last_connection": "06/05/2024, 11:14:41"
+    },
+    {
+        "_id": 3,
+        "firstName": "daniel",
+        "lastName": "Scioli",
+        "email": "dani@gmail.com",
+        "password": "$2b$10$GDHoJE5QQDAsFt/eFi7tv.2udduVKsqq4CYpYWusW9QJxr9KRnVjO",
+        "role": "user",
+        "cart": 9,
+        "verified": true,
+        "documents": [],
+        "last_connection": "01/05/2024, 11:14:41"
+    },
+    {
+        "_id": 5,
+        "firstName": "Coder",
+        "lastName": "Coder",
+        "email": "adminCoder@coder.com",
+        "password": "$2b$10$IcOzTPdDYQO5BNDDA33//e/XxTapF/LpLhkmHgqxmKnAVPOn/6F86",
+        "role": "admin",
+        "idgoogle": null,
+        "idgithub": null,
+        "cart": 11,
+        "verified": true,
+        "documents": [],
+        "last_connection": "06/05/2024, 07:40:41"
+    },
+    {
+        "_id": 14,
+        "firstName": "Vladimir",
+        "lastName": "Putin",
+        "email": "vladi@gmail.com",
+        "password": "$2b$10$3tu3W/u9NmEq3q1M5Vv5COQTtAgOimefs0qZoa3/49ux9FPp8ueJy",
+        "role": "premium",
+        "cart": 36,
+        "verified": true,
+        "documents": [],
+        "last_connection": "06/05/2024, 10:33:02"
+    },
+    {
+        "_id": 17,
+        "firstName": "Chaqueño",
+        "lastName": "Palavecino",
+        "email": "pala@gmail.com",
+        "password": "$2b$10$a7pSb9fqtGAplvvyIdpqvuERP9zp9mNsNBL1vepwZOx.q7IO8Sxg6",
+        "role": "user",
+        "cart": 39,
+        "verified": true,
+        "documents": [],
+        "last_connection": "06/05/2024, 11:14:41",
+        "avatar": "http://localhost:8080/pala@gmail.comMon_May 06 2024www.YTS.MX.jpg"
+    }
+]

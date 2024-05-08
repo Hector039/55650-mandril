@@ -5,6 +5,11 @@ export default class UserService {
         this.userRepo = repository;
     }
 
+    async getAllUsersFiltered() {
+        const result = await this.userRepo.getAllUsersFiltered();
+        return result;
+    }
+
     async getUser(id) {
         const result = await this.userRepo.getUser(id);
         return result;

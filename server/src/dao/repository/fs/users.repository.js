@@ -71,6 +71,29 @@ export default class UserService {
         }
     }
 
+    async getAllUsersFiltered() {
+        try {
+            if (fs.existsSync(this.#path)) {
+                const users = JSON.parse(await fs.promises.readFile(this.#path, "utf-8"));
+                const usersFilteredData = users.map(user => {
+                    return { 
+                        _id: user._id, 
+                        firstName: user.firstName, 
+                        lastName: user.lastName, 
+                        email: user.email, 
+                        role: user.role, 
+                        verified: user.verified,
+                        last_connection: user.last_connection
+                    }
+                })
+                return usersFilteredData;
+            }
+            return [];
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getAllUsers() {
         try {
             if (fs.existsSync(this.#path)) {

@@ -3,6 +3,22 @@ export default class UsersRepository {
         this.usersModel = model;
     }
 
+    getAllUsersFiltered = async () => {
+        const users = await this.usersModel.find({}).lean();
+        const usersFilteredData = users.map(user => {
+            return { 
+                _id: user._id, 
+                firstName: user.firstName, 
+                lastName: user.lastName, 
+                email: user.email, 
+                role: user.role, 
+                verified: user.verified,
+                last_connection: user.last_connection
+            }
+        })
+        return usersFilteredData;
+    };
+
     getUser = async (id) => {
         let user = await this.usersModel.findOne({ $or: [{ email: id }, { idgoogle: id }, { idgithub: id }] }).populate("cart").lean();
         return user;
