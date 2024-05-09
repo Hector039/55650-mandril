@@ -56,7 +56,7 @@ export default class UserService {
     async getUserById(id) {
         try {
             const users = await this.getAllUsers();
-            const userById = users.find(user => user._id === id);
+            const userById = users.find(user => user._id === parseInt(id));
             return userById;
         } catch (error) {
             throw error;

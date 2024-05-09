@@ -23,9 +23,9 @@ router.get("/googlestrategy", isSessionOn(), passportCall("google"), handlePolic
 router.get("/premium/:email", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), usersController.premiumSelector);
 router.post("/:uid/documents", userPassJwt(), handlePolicies(["USER"]), uploads.fields([{ name: "idDoc" }, { name: "adressDoc" }, { name: "accountDoc" }]), usersController.docs);
 router.post("/:uid/avatar", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), uploads.single("avatar"), usersController.avatar);
-router.get("/getusers", userPassJwt(), /* handlePolicies(["ADMIN"]), */ usersController.getAllUsers);
-router.delete("/cleanusers", userPassJwt(),/*  handlePolicies(["ADMIN"]), */ usersController.cleanUsers);
-router.delete("/deleteuser/:uid", userPassJwt(), /* handlePolicies(["ADMIN"]), */ usersController.deleteUser);
-router.put("/updateuserrole/:uid", userPassJwt(), /* handlePolicies(["ADMIN"]), */ usersController.updateUserRole);
+router.get("/getusers", userPassJwt(), handlePolicies(["ADMIN"]), usersController.getAllUsers);
+router.delete("/cleanusers", userPassJwt(), handlePolicies(["ADMIN"]), usersController.cleanUsers);
+router.delete("/deleteuser/:uid", userPassJwt(), handlePolicies(["ADMIN"]), usersController.deleteUser);
+router.put("/updateuserrole/:uid", userPassJwt(), handlePolicies(["ADMIN"]), usersController.updateUserRole);
 
 export default router;

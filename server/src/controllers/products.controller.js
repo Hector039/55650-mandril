@@ -2,6 +2,7 @@ import fs from "fs";
 import CustomError from "../tools/customErrors/customError.js";
 import TErrors from "../tools/customErrors/enum.js";
 import { generateProductErrorInfo } from "../tools/customErrors/info.js";
+import mailer from "../tools/mailer.js";
 
 export default class ProductsController {
     constructor(prodservice, userservice) {
@@ -194,13 +195,24 @@ export default class ProductsController {
             const user = await this.usersService.getUserById(owner)
             if (user.role === "premium" && req.product.owner.toString() !== user._id.toString()) {
                 CustomError.createError({
-                    message: `Solo el administrador puede eliminar este producto.`,
+                    message: `Solo el administrador o el creador puede eliminar este producto.`,
                     cause: generateProductErrorInfo(user.role),
                     code: TErrors.INVALID_TYPES
                 });
             }
             const productId = req.product._id;
             await this.productsService.deleteProduct(productId);
+            if (user.role === "admin" && req.product.owner.toString() !== user._id.toString()) {
+                const userOwner = await this.usersService.getUserById(req.product.owner);
+                if (!userOwner) {
+                    CustomError.createError({
+                        message: `El creador de este producto no existe actualmente en la base de datos. No se envió el mail de notificación.`,
+                        cause: generateProductErrorInfo(userOwner),
+                        code: TErrors.NOT_FOUND
+                    });
+                }
+                await mailer({ mail: userOwner.email, name: userOwner.firstName }, `Te informamos que tu producto de código ${req.product.code} fue eliminado por un administrador.`)
+            }
             res.status(200).send();
         } catch (error) {
             next(error)

@@ -50,8 +50,10 @@ export default class UsersController {
             for (let i = 0; i < users.length; i++) {
                 const userLastLogin = moment(users[i].last_connection.slice(0, 10), "DD MM YYYY");
                 if (newDate.diff(userLastLogin, 'days') > 1 && users[i].role !== "admin") {
-                await this.usersService.deleteUser(users[i]._id);
-                inactiveUsersDeleted++;
+                    await this.usersService.deleteUser(users[i]._id);
+                    await mailer({ mail: users[i].email, name: users[i].firstName },
+                        "Lamentamos informarte que tu cuenta fue eliminada de nuestra base de datos por no registrar actividad desde hace 2 días. Te esperamos nuevamente!")
+                    inactiveUsersDeleted++;
                 }
             }
             const usersUpdated = await this.usersService.getAllUsersFiltered();
