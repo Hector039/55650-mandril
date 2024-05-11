@@ -21,6 +21,9 @@ const urlUserTicket = "tickets"
 const urlContact = "contact"
 const urlUserPassRestoration = "sessions/passrestoration"
 const urlUserType = "sessions/premium"
+const urlCleanUsers = "sessions/cleanusers"
+const urlDeleteUser = "sessions/deleteuser"
+const urlUpdateUserRole = "sessions/updateuserrole"
 
 export const DataProvider = ({ children }) => {
 
@@ -31,6 +34,8 @@ export const DataProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [userAvatar, setUserAvatar] = useState(null);
     const [ticket, setTicket] = useState([])
+    const [usersFiltered, setUsersFiltered] = useState([])
+    const [inactiveUsers, setInactiveUsers] = useState(null);
 
     const [categoryFilter, setCategoryFilter] = useState("todos")
     const [priceFilter, setPriceFilter] = useState("todos")
@@ -443,13 +448,87 @@ export const DataProvider = ({ children }) => {
             })
     }
 
+    const cleanUsers = () => {
+        MySwal.fire({
+            title: "Atención!",
+            text: "Se eliminarán los usuarios con 2 días o más sin actividad, estás seguro?.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Entendido!"
+        }).then(resp => {
+            if (resp.isConfirmed) {
+                axios.delete(urlCleanUsers, { withCredentials: true })
+                    .then(response => {
+                        toast.success(response.data.message);
+                        setUsersFiltered(response.data.users);
+                        setInactiveUsers(null)
+                    }).catch(error => {
+                        if (error.response.status === 409) return toast.error(error.response.data.message);
+                        if (error.response.status === 400) return toast.error(error.response.data.message);
+                        toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                        console.log(error)
+                    })
+            }
+        })
+    }
+
+    const deleteUser = (id) => {
+        MySwal.fire({
+            title: "Atención!",
+            text: "Se eliminará el usuario seleccionado, estás seguro?.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Entendido!"
+        }).then(resp => {
+            if (resp.isConfirmed) {
+                axios.delete(urlDeleteUser + "/" + id, { withCredentials: true })
+                    .then(response => {
+                        if (response.data.message) {
+                            toast.success(response.data.message);
+                            setUsersFiltered(response.data.users);
+                            return
+                        }
+                        toast.success("No se realizaron cambios");
+                    }).catch(error => {
+                        if (error.response.status === 409) return toast.error(error.response.data.message);
+                        if (error.response.status === 400) return toast.error(error.response.data.message);
+                        toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                        console.log(error)
+                    })
+            }
+
+        })
+    }
+    const updateUserRole = (e) => {
+        axios.put(urlUpdateUserRole + "/" + e._id, { role: e.role }, { withCredentials: true })
+            .then(response => {
+                if (response.data.message) {
+                    toast.success(response.data.message);
+                    setUsersFiltered(response.data.users);
+                    return;
+                }
+                toast.success("No se realizaron cambios");
+            }).catch(error => {
+                if (error.response.status === 409) return toast.error(error.response.data.message);
+                if (error.response.status === 400) return toast.error(error.response.data.message);
+                toast.error('Ocurrió un error inesperado. Intenta de nuevo');
+                console.log(error)
+            })
+
+    }
+
     return (
         <DataContext.Provider value={{
             products, cart, handleemptycart,
             deleteprod, login, newRegister, forgot, user, addProduct, deleteProduct, updateProduct, searchProduct, productsFound,
             setCategoryFilter, setPriceFilter, setLimitFilter, logout, loginGoogle, loginGithub,
             handleAdd, getProduct, productDetail, setPage, buyCart, getUserCart, getUserTickets, ticket, cartQuantity, sendContactMail,
-            cartProdWidget, passRestoration, userTypeSelector, uploads, avatar, userAvatar, setUserAvatar
+            cartProdWidget, passRestoration, userTypeSelector, uploads, avatar, userAvatar, setUserAvatar, cleanUsers, setUsersFiltered, usersFiltered,
+            inactiveUsers, setInactiveUsers, deleteUser, updateUserRole
         }}>
             {children}
         </DataContext.Provider>

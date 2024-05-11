@@ -74,9 +74,13 @@ export default class UsersController {
                     code: TErrors.DATABASE,
                 });
             }
-            if (user.role !== "admin") await this.usersService.deleteUser(user._id);
-            const usersUpdated = await this.usersService.getAllUsersFiltered();
-            res.status(200).send({ message: `Se eliminó a ${user.email} de la base de datos.`, users: usersUpdated })
+            if (user.role !== "admin") {
+                await this.usersService.deleteUser(user._id);
+                const usersUpdated = await this.usersService.getAllUsersFiltered();
+                res.status(200).send({ message: `Se eliminó a ${user.email} de la base de datos.`, users: usersUpdated });
+                return;
+            }
+            res.status(200).send()
         } catch (error) {
             next(error)
         }
@@ -84,6 +88,7 @@ export default class UsersController {
 
     updateUserRole = async (req, res, next) => {//put
         const { uid } = req.params;
+        const { role } = req.body;
         try {
             const user = await this.usersService.getUserById(uid);
             if (!user) {
@@ -93,10 +98,12 @@ export default class UsersController {
                     code: TErrors.DATABASE,
                 });
             }
-            if (user.role === "user" && user.role !== "admin") await this.usersService.premiumSelector(user.email, "premium");
-            else if ((user.role === "premium" && user.role !== "admin")) await this.usersService.premiumSelector(user.email, "user");
-            const usersUpdated = await this.usersService.getAllUsersFiltered();
-            res.status(200).send({ message: "Se cambió el tipo de usuario correctamente", users: usersUpdated })
+            if (user.role !== role && user.role !== "admin") {
+                await this.usersService.premiumSelector(user.email, role);
+                const usersUpdated = await this.usersService.getAllUsersFiltered();
+                res.status(200).send({ message: "Se cambió el tipo de usuario correctamente", users: usersUpdated })
+            }
+            res.status(200).send()
         } catch (error) {
             next(error)
         }

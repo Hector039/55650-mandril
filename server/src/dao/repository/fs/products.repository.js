@@ -38,7 +38,7 @@ export default class ProductService {
                 category,
                 thumbnails,
                 status,
-                owner
+                parseInt(owner)
             );
             productos.push(newProduct);
             await this.guardarProductos(productos);
