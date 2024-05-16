@@ -4,9 +4,7 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 
 export default function PassRestoration() {
-
     const { passRestoration } = useContext(DataContext);
-
     const { register, handleSubmit } = useForm({ mode: "onBlur" });
 
     return (

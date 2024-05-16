@@ -15,7 +15,6 @@ const ProductsFounded = ({product}) => {
     });
 
     useEffect(() => {
-        
             setValue("_id", product._id);
             setValue("title", product.title);
             setValue("description", product.description);
@@ -25,9 +24,7 @@ const ProductsFounded = ({product}) => {
             setValue("stock", product.stock);
             setValue("code", product.code);
             setValue("status", product.status);
-
     }, [])
-
 
     return (
         <div key={product._id}>

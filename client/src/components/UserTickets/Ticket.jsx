@@ -6,15 +6,19 @@ const Ticket = ({ ticket }) => {
             <table >
                 <thead>
                     <tr>
-                        <th>Código</th>
+                        <th>Código del pago</th>
+                        <th>Método de pago</th>
                         <th>Fecha</th>
+                        <th>Estado</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th>{(ticket.code).slice(11)}</th>
-                        <th>{(ticket.purchase_datetime).slice(0, -19)}</th>
+                        <th>{ticket.payment_id}</th>
+                        <th>{ticket.payment_type}</th>
+                        <th>{ticket.purchase_datetime}</th>
+                        <th>{ticket.status}</th>
                         <th></th>
                     </tr>
                 </tbody>
@@ -22,7 +26,9 @@ const Ticket = ({ ticket }) => {
                     <tr>
                         <th></th>
                         <th></th>
-                        <th>${ticket.amount}</th>
+                        <th></th>
+                        <th></th>
+                        <th>${ticket.transaction_amount}</th>
                     </tr>
                 </tfoot>
             </table>

@@ -12,8 +12,13 @@ export default class TicketsService {
         }
     };
 
-    purchaseTicket = async (purchaserEmail, purchaseDatetime, cart) => {
-        const result = await this.ticketsRepo.purchaseTicket(purchaserEmail, purchaseDatetime, cart);
+    preferenceItems = async (cart) => {
+        const result = await this.ticketsRepo.preferenceItems(cart);
+        return result;
+    };
+
+    purchaseTicket = async (email, status, paymentId, paymentType) => {
+        const result = await this.ticketsRepo.purchaseTicket(email, status, paymentId, paymentType);
         return result;
     };
 

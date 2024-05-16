@@ -11,7 +11,6 @@ export default function System() {
     const { addProduct, productsFound, searchProduct, user, usersFiltered, cleanUsers, setUsersFiltered, inactiveUsers, setInactiveUsers } = useContext(DataContext);
     const [selector, setSelector] = useState(true);
     
-
     const {
         register,
         handleSubmit,
@@ -101,12 +100,9 @@ export default function System() {
                         </form>
 
                         <div className="bajas-modif-main">
-
                             {
                                 productsFound.length === 0 ?
-
                                     <p>No se realizó un búsqueda / No se encontró el producto</p> :
-
                                     productsFound.map((obj) => {
                                         return (
                                             <ProductsFounded key={obj._id} product={obj} />

@@ -54,6 +54,6 @@ export default async function appLoader(app) {
     });
 
     app.use(errorHandler);
-
+    
     return app;
 }

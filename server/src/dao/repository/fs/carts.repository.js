@@ -1,11 +1,7 @@
 import fs from "fs";
-import UserService from "./users.repository.js";
 import ProductService from "./products.repository.js";
-import TicketsService from "./tickets.repository.js";
 
 const productService = new ProductService();
-const ticketService = new TicketsService();
-const userService = new UserService();
 
 class Cart {
     constructor(id, products) {
@@ -169,69 +165,6 @@ export default class CartService {
             throw error;
         }
     };
-
-    async purchaseTicket(purchaserEmail, purchaseDatetime, cart) {
-        try {
-            let unavaliableProducts = []
-            let avaliableProducts = []
-
-            let products = await productService.getAllProducts();
-
-            cart.products.forEach(cartProd => {
-                products.forEach(prod => {
-                    if (cartProd.product._id === prod._id) {
-                        if (prod.stock >= cartProd.quantity) {
-                            prod.stock = prod.stock - cartProd.quantity
-                            avaliableProducts.push(cartProd)
-                        } else if (prod.stock <= cartProd.quantity) {
-                            unavaliableProducts.push(cartProd.product)
-                        }
-                    }
-                })
-            })
-            
-            await productService.guardarProductos(products);
-
-            const newTicket = {
-                code: purchaseDatetime + (Math.floor(Math.random() * 100 + 1)).toString(),
-                purchase_datetime: purchaseDatetime,
-                amount: avaliableProducts.length === 0 ? 0 : (avaliableProducts.reduce((acc, prodPrice) => acc += (prodPrice.product.price * prodPrice.quantity), 0)).toFixed(2),
-                purchaser: purchaserEmail
-            }
-
-            const ticket = avaliableProducts.length === 0 ? "Sin Stock" : await ticketService.saveTicket(newTicket)
-            
-            const userByEmail = await userService.getUser(purchaserEmail)
-            const carts = await this.getCarts();
-            const cartIndex = carts.findIndex(cart => cart._id === parseInt(userByEmail.cart));
-
-            let newValues = []
-            function filterprod(prod) {
-                unavaliableProducts.forEach(item => {
-                    if (item._id === prod.product._id) {
-                        prod["product"] = item._id
-                        newValues.push(prod)
-                    }
-                })
-            }
-            cart.products.filter(filterprod)
-            carts[cartIndex]["products"] = newValues
-            await this.saveCarts(carts)
-            const updatedCart = await this.getCartById(userByEmail.cart);
-            return ({ ticket: ticket, cart: updatedCart })
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getUserTickets(userEmail) {
-        try {
-            const userTickets = await ticketService.getUserTickets(userEmail)
-            return userTickets;
-        } catch (error) {
-            throw error;
-        }
-    }
 
     async #setUltimoId() {
         try {

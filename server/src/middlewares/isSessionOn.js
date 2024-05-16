@@ -1,4 +1,4 @@
-export const isSessionOn = () => {//middleware para evitar volver al login o signin cuando está el usuario logueado con jwt
+export const isSessionOn = () => {
     return async (req, res, next) => {
         const token = req.cookies.cookieToken;
         if (token === undefined) {

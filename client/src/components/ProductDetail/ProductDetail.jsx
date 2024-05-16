@@ -4,7 +4,6 @@ import { DataContext } from "../context/dataContext";
 import Counter from "../Counter/Counter";
 
 export default function ProductDetail() {
-
     const { handleAdd, getProduct, productDetail, user } = useContext(DataContext);
     const [quantityProd, setQuantityProd] = useState(1);
     const { pid } = useParams();
@@ -13,9 +12,7 @@ export default function ProductDetail() {
         getProduct(pid)
     }, [])
 
-
     return (
-
         <div className="product-card-detalle">
             {productDetail === null ? <p>Error al buscar el producto, intente nuevamente</p> :
                 <>

@@ -7,7 +7,8 @@ import { userPassJwt } from "../middlewares/userPassJwt.js";
 const ticketsController = new TicketsController(ticketsService, cartsService)
 const router = Router();
 
-router.post("/:cid/purchase", userPassJwt(), handlePolicies(["USER"]), ticketsController.purchaseCart);
-router.get("/:userEmail", userPassJwt(), handlePolicies(["USER"]), ticketsController.getUserTickets);
+router.get("/createpreference/:cid", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), ticketsController.createPreference);
+router.get("/success", userPassJwt(), handlePolicies(["PUBLIC"]), ticketsController.orderSuccess);
+router.get("/:userEmail", userPassJwt(), handlePolicies(["USER", "PREMIUM"]), ticketsController.getUserTickets);
 
 export default router;

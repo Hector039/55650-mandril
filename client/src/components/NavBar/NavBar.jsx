@@ -4,21 +4,17 @@ import Logo from "./assets/logo.png";
 import FacebookIcon from "./assets/facebook-icon.jpg";
 import InstagramIcon from "./assets/instagram-icon.jpg";
 import WhatsappIcon from "./assets/WhatsApp.svg.png";
-//import { useEffect, useState } from "react";
-//import getDolars from "../../apisThirdParty/apiDolar.js";
+import { useEffect, useState, useContext } from "react";
+import getDolars from "../../apisThirdParty/apiDolar.js";
 import { DateTime } from "luxon";
 import { DataContext } from "../context/dataContext";
-import { useContext, useEffect } from "react";
 
 
 export default function NavBar() {
-
     const { user, logout, userTypeSelector, userAvatar, setUserAvatar } = useContext(DataContext);
-
     const dt = DateTime.now().setLocale('es').toLocaleString(DateTime.DATE_MED);
-
-    //const [dolars, setDolars] = useState([]);
-    /* 
+    const [dolars, setDolars] = useState([]);
+     
         useEffect(() => {
             async function axiosData() {
                 let data = await getDolars();
@@ -26,9 +22,7 @@ export default function NavBar() {
             }
             axiosData();
         }, [])
-     */
-
-        
+     
     useEffect(() => { setUserAvatar(userAvatar) }, [])
 
     return (
@@ -36,7 +30,7 @@ export default function NavBar() {
             <div className="top-navbar">
 
                 <p>Cotizaciones:</p>
-                {/* {
+                {
                     dolars.length === 0 ? <p>error consiguiendo las cotizaciones...</p> :
                         <div className="marquee marquee--hover-pause">
                             <ul className="marquee-content">
@@ -51,7 +45,7 @@ export default function NavBar() {
                                 <li>{dolars[4].nombre}: ${dolars[4].compra} - ${dolars[4].venta}</li>
                             </ul>
                         </div>
-                } */}
+                } 
                 <div className="fecha-container"><p className="fecha-navbar">{dt}</p></div>
 
                 <Link to={"https://www.facebook.com/"} target="_blank" rel="noreferrer" className="network-icon">
@@ -79,10 +73,7 @@ export default function NavBar() {
                     {user != null && (user.role === "user" || user.role === "premium") &&
                         <><NavLink to={"/cart"} className="navbar-item" style={({ isActive }) => { return { fontWeight: isActive ? "bold" : "" } }}>Carrito</NavLink>
                             <CartWidget /></>}
-
                 </div>
-               
-
                     {user !== null && <div className="logout-container">
 
                         {user?.photo === undefined ? <NavLink to={"/account"} className="button-top-navbar" style={({ isActive }) => {
@@ -93,10 +84,7 @@ export default function NavBar() {
                             }}><img src={user.photo} className="profile-photo" alt="User profile photo" />{user.email}</NavLink>}
                         {user.role === "premium" && <h3 className="user-type-text">Eres {user.role}! </h3>}
                         <button onClick={logout}>Cerrar sesión</button>
-
                     </div>}
-
-               
             </div>
             {user !== null && <div className="logout-container">
              {user.role !== "admin" && <button onClick={() => userTypeSelector(user.email)} className="user-type-selector">{user.role === "user" ? "Quiero ser PREMIUM!" : "Quiero ser STANDARD" }</button>}

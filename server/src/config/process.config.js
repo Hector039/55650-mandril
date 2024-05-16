@@ -36,7 +36,9 @@ const getEnvironment = () => {
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
         MAILER_USER: process.env.MAILER_USER,
-        MAILER_PASSWORD: process.env.MAILER_PASSWORD
+        MAILER_PASSWORD: process.env.MAILER_PASSWORD,
+        MP_ACCESS_TOKEN: process.env.MP_ACCESS_TOKEN,
+        NGROK_TOKEN: process.env.NGROK_TOKEN
 };
 };
 

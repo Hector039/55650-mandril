@@ -3,7 +3,7 @@ import getEnvironment from "../config/process.config.js";
 
 const env = getEnvironment();
 
-export const userPassJwt = () => {//middleware para enviar tanto el usuario logueado, como un usuario invitado, sin enviar errores
+export const userPassJwt = () => {
     return async (req, res, next) => {
         const token = req.cookies.cookieToken;
         if (token !== undefined) {

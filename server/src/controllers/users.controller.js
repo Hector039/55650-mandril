@@ -249,8 +249,8 @@ export default class UsersController {
                     code: TErrors.INVALID_TYPES,
                 });
             }
-            //await mailer({ mail: email, name: user.firstName },
-            //`Haz click en el enlace para restaurar tu contraseña: <a href="http://localhost:5173/forgot/${email}">Restaurar</a>`)
+            await mailer({ mail: email, name: user.firstName },
+            `Haz click en el enlace para restaurar tu contraseña: <a href="http://localhost:5173/forgot/${email}">Restaurar</a>`)
             res.cookie("tempCookie", "temporalCookie", { maxAge: 1000 * 60 * 60 }).status(200).send(`Se envió la solicitud de restauración a ${email}`);
         } catch (error) {
             next(error)
@@ -295,7 +295,7 @@ export default class UsersController {
                 });
             }
             await this.usersService.updateUser(email, createHash(password));
-            //await mailer({ mail: email, name: user.firstName }, "Se cambió tu contraseña.")
+            await mailer({ mail: email, name: user.firstName }, "Se cambió tu contraseña.")
             res.status(200).send("Se cambió la contraseña correctamente.");
         } catch (error) {
             next(error)

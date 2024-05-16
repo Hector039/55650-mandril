@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { profilesImgPath } from "../../data/profiles/pathProfiles.js";
 
 const userCollection = "users";
 

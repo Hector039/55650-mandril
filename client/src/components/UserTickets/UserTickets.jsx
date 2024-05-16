@@ -5,10 +5,10 @@ import Ticket from './Ticket'
 
 const UserTickets = () => {
     const { getUserTickets, ticket } = useContext(DataContext);
-    const { userEmail } = useParams();
+    const { email } = useParams();
 
     useEffect(() => {
-        getUserTickets(userEmail)
+        getUserTickets(email)
     }, [])
 
     return (

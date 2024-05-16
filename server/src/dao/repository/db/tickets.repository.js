@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export default class TicketsRepository {
     constructor(ticketModel, userModel, productModel, cartModel) {
         this.ticketsModel = ticketModel;
@@ -5,7 +7,7 @@ export default class TicketsRepository {
         this.productsModel = productModel;
         this.cartsModel = cartModel;
     }
-    
+
     async saveTicket(ticket) {
         try {
             let newTicket = new this.ticketsModel(ticket);
@@ -16,16 +18,43 @@ export default class TicketsRepository {
         }
     };
 
-    async purchaseTicket(purchaserEmail, purchaseDatetime, cart) {
+    async preferenceItems(cart) {
+        try {
+            let avaliableProducts = []
+            let products = await this.productsModel.find().lean();
+            cart.products.forEach(cartProd => {
+                products.forEach(prod => {
+                    if ((cartProd.product._id).toString() === (prod._id).toString()) {
+                        if (prod.stock >= cartProd.quantity) avaliableProducts.push(cartProd)
+                    }
+                })
+            })
+            if (avaliableProducts.length > 0) {
+                const preferenceItems = avaliableProducts.map(prod => {
+                    return {
+                        title: prod.product.title,
+                        quantity: Number(prod.quantity),
+                        unit_price: Number(prod.product.price),
+                        currency_id: "ARS"
+                    }
+                })
+                return preferenceItems
+            }
+            return null
+        } catch (error) {
+            throw (error)
+        }
+    }
+
+    async purchaseTicket(email, status, paymentId, paymentType) {
         try {
             let unavaliableProducts = []
             let avaliableProducts = []
             let ids = []
 
-            cart.products.forEach(prod => {
-                ids.push(prod.product._id)
-            });
-
+            const user = await this.usersModel.findOne({ email: email })
+            const cart = await this.cartsModel.findById(user.cart).populate("products.product").lean();
+            cart.products.forEach(prod => ids.push(prod.product._id));
             const prodDataBase = await this.productsModel.find({ '_id': { $in: ids } });
 
             cart.products.forEach(productInCart => {
@@ -41,20 +70,18 @@ export default class TicketsRepository {
                 })
             })
 
-            prodDataBase.forEach( async prod => {
-                await this.productsModel.updateOne({ _id: prod._id }, { stock: prod.stock });
+            prodDataBase.forEach(async prod => await this.productsModel.updateOne({ _id: prod._id }, { stock: prod.stock }));
+
+            if (avaliableProducts.length > 0) {
+                await this.saveTicket({
+                payment_id: paymentId,
+                purchase_datetime: moment().format("DD MM YYYY h:mm:ss a").replaceAll(" ", "_"),
+                transaction_amount: (avaliableProducts.reduce((acc, prodPrice) => acc += (prodPrice.product.price * prodPrice.quantity), 0)).toFixed(2),
+                payer: email,
+                status: status,
+                payment_type: paymentType
             })
-
-            const newTicket = {
-                code: purchaseDatetime + (Math.floor(Math.random() * 100 + 1)).toString(),
-                purchase_datetime: purchaseDatetime,
-                amount: avaliableProducts.length === 0 ? 0 : (avaliableProducts.reduce((acc, prodPrice) => acc += (prodPrice.product.price * prodPrice.quantity), 0)).toFixed(2),
-                purchaser: purchaserEmail
             }
-
-            const ticket = avaliableProducts.length === 0 ? "Sin Stock" : await this.saveTicket(newTicket)
-
-            const userByEmail = await this.usersModel.findOne({ email: purchaserEmail })
 
             const unavaliableProdsMap = unavaliableProducts.map(prod => {
                 return {
@@ -62,22 +89,17 @@ export default class TicketsRepository {
                     quantity: prod.quantity
                 }
             })
-
-            await this.cartsModel.replaceOne({ _id: userByEmail.cart }, { products: unavaliableProdsMap });
-            const updatedCart = await this.cartsModel.findById(userByEmail.cart);
-            return ({ ticket: ticket, cart: updatedCart })
+            
+            await this.cartsModel.replaceOne({ _id: user.cart }, { products: unavaliableProdsMap });
+            return
         } catch (error) {
             throw error;
         }
     }
-    
+
     async getUserTickets(userEmail) {
         try {
-            const user = await this.usersModel.findOne({ email: userEmail })
-            if (user === null) {
-                throw new Error("El usuario no existe")
-            }
-            const userTickets = await this.ticketsModel.find({ purchaser: userEmail });
+            const userTickets = await this.ticketsModel.find({ payer: userEmail });
             return userTickets;
         } catch (error) {
             throw error;

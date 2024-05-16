@@ -4,15 +4,11 @@ import { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 
 export default function Forgot() {
-
     const { email } = useParams()
-
     const { forgot } = useContext(DataContext);
-
     const { register, handleSubmit } = useForm({ mode: "onBlur" });
 
     return (
-        <>
             <div className="cuenta-registrarse">
                 <h2 className="cuenta-title">Restaurar contraseña:</h2>
                 <form onSubmit={handleSubmit(forgot)}>
@@ -27,9 +23,5 @@ export default function Forgot() {
                 </form>
                 
             </div>
-
-
-        </>
-
     )
 }

@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar/NavBar";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Contact from "./components/Contact/Contact";
 import UserTickets from "./components/UserTickets/UserTickets";
+import Footer from "./components/Footer/Footer"
 import { ToastContainer } from 'react-toastify';
 import './App.css'
 import PassRestoration from "./components/Forgot/passRestoration";
@@ -32,6 +33,7 @@ export default function App() {
           <Route exact path={"/realtimeproducts"} element={<System />} />
           <Route exact path={"/contact"} element={<Contact />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
 
       <ToastContainer
@@ -48,7 +50,6 @@ export default function App() {
       />
 
     </DataProvider>
-
   )
 }
 

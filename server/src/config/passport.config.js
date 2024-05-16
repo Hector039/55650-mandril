@@ -129,9 +129,9 @@ const initializePassport = () => {
                     cart
                 });
 
-                /* await mailer({ mail: email, name: firstName },
+                await mailer({ mail: email, name: firstName },
                     `Bienvenido a nuestro e-commerce!, para terminar el registro, verifica tu cuenta: <a href="http://localhost:8080/api/sessions/userverification/${email}">Activar cuenta</a>`
-                ) */
+                )
                 return done(null, email);
             } catch (error) {
                 return done(error, null);

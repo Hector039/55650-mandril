@@ -21,7 +21,6 @@ export default function User({ user }) {
 
     return (
         <div className="product-card">
-            {/* <div className="product-card-main"> */}
             <input type="text" name="_id" disabled {...register("_id")} />
             <p>Nombre completo: {user.firstName} {user.lastName}</p>
             <p>E-mail: {user.email}</p>
@@ -34,7 +33,6 @@ export default function User({ user }) {
             {user.verified ? <p>Estado: Verificado</p> : <p>Estado: No verificado</p>}
             <p>Última conexión: {user.last_connection}</p>
             <button className="sistema-boton-eliminar" onClick={() => deleteUser(user._id)}>Eliminar usuario</button>
-            {/* </div> */}
         </div>
     )
 }

@@ -47,7 +47,8 @@
         "cart": 36,
         "verified": true,
         "documents": [],
-        "last_connection": "09/05/2024, 10:33:02"
+        "last_connection": "15 05 2024, 10:56:29 pm",
+        "avatar": "http://localhost:8080/vladi@gmail.com_15_5_2024_www.YTS.MX.jpg"
     },
     {
         "_id": 17,
@@ -59,7 +60,7 @@
         "cart": 39,
         "verified": true,
         "documents": [],
-        "last_connection": "10 05 2024, 8:21:42 pm",
+        "last_connection": "15 05 2024, 10:51:17 pm",
         "avatar": "http://localhost:8080/pala@gmail.comMon_May 06 2024www.YTS.MX.jpg"
     }
 ]

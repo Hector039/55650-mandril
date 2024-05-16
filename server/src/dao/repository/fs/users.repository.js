@@ -1,5 +1,4 @@
 import fs from "fs";
-import { profilesImgPath } from "../../../data/profiles/pathProfiles.js";
 
 class User {
     constructor(id, firstName, lastName, email, password, role, idgoogle, idgithub, cart, verified, documents, last_connection, avatar) {

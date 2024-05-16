@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import withReactContent from 'sweetalert2-react-content'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
 
 const MySwal = withReactContent(Swal)
 export const DataContext = createContext([]);
@@ -12,7 +13,7 @@ export const DataContext = createContext([]);
 const urlProd = "products"
 const urlProdSearch = "products/searchproducts"
 const urlCart = "carts"
-const urlBuyCart = "tickets"
+const urlBuyCart = "tickets/createpreference"
 const urlUserLogin = "sessions/login"
 const urlUserLogout = "sessions/logout"
 const urlUserRegister = "sessions/signin"
@@ -281,50 +282,25 @@ export const DataProvider = ({ children }) => {
     }
 
     function buyCart(cid) {
-        const purchaseDate = DateTime.now().setLocale('es').toString();
-        MySwal.fire({
-            title: "Confirmar compra?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Comprar!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.post(urlBuyCart + "/" + cid + "/purchase", { purchaseDatetime: purchaseDate }, { withCredentials: true })
+                initMercadoPago(import.meta.env.VITE_MP_PUBLIC_TOKEN, { locale: "es-AR"});
+                axios.get(urlBuyCart + "/" + cid, { withCredentials: true })
                     .then((response) => {
-                        if (response.data.ticket.code === undefined) {
-                            MySwal.fire({
-                                title: "Compra no realizada.",
-                                html: `
-                                    <p>ID ticket: ${response.data.ticket}</p>
-                                    <p>Ningún producto de tu carrito está disponible.</p>
-                                    `,
-                                icon: "warning"
-                            })
-                            return
-                        }
                         MySwal.fire({
-                            title: "Compra confirmada!",
-                            html: `
-                                <p>ID ticket: ${response.data.ticket.code}</p>
-                                <p>Fecha: ${response.data.ticket.purchase_datetime}</p>
-                                <p>Total: ${response.data.ticket.amount}</p>
-                                <p>Los productos no disponibles no se procesaron.</p>
-                                `,
-                            text: "Te enviaremos un mail con el ticket de tu pedido.",
-                            icon: "success"
+                            title: "Confirmar compra?",
+                            text: "Los items no disponibles no se procesarán y permanecerán en tu carrito.",
+                            icon: "warning",
+                            html: <Wallet initialization={{ preferenceId: response.data.id }} customization={{ texts: { valueProp: 'smart_option' } }} />,
+                            showCancelButton: true,
+                            showConfirmButton: false,
+                            cancelButtonColor: "#d33"
                         })
-                        setCart(response.data.cart.products)
-                        cartQuantity(response.data.cart.products)
                     })
                     .catch(error => {
+                        if (error.response.data.code === 4) return toast.error(error.response.data.message);
                         toast.error('Ocurrió un error inesperado. Intenta de nuevo');
                         console.log(error)
                     })
             }
-        });
-    }
 
     const getUserTickets = (userEmail) => {
         axios.get(urlUserTicket + "/" + userEmail, { withCredentials: true })
